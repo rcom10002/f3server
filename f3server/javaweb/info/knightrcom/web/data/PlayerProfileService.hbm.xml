@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="PLAYER_PROFILE">
+	<![CDATA[
+select
+    `PROFILE_ID`,
+    `NUMBER`,
+    `NAME`,
+    `USER_ID` AS `USER_ID`,
+    `PASSWORD`,
+    `CURRENT_SCORE`,
+    `LEVEL`,
+    `RLS_PATH`,
+    `ROLE`,
+    `STATUS`,
+    DATE_FORMAT(`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") AS `CREATE_TIME`,
+    `CREATE_BY`,
+    DATE_FORMAT(`UPDATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") AS `UPDATE_TIME`,
+    `UPDATE_BY` 
+from
+    `player_profile`
+order by `CREATE_TIME` desc
+    ]]>
+    </sql-query>
+	<sql-query name="PLAYER_PROFILE_COUNT">
+SELECT COUNT(*) AS RECORD_COUNT
+  FROM player_profile
+    </sql-query>
+</hibernate-mapping>
