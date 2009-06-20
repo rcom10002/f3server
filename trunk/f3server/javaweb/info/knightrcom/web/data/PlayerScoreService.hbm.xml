@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="SCORE_INFO">
+	<![CDATA[
+SELECT CASE 
+         WHEN player_score.score > 0
+         THEN "胜利"
+         WHEN player_score.score < 0
+         THEN "失败"
+         WHEN player_score.score = 0
+         THEN "平局"
+         ELSE "未知"
+       END AS winandlose,
+       player_score.score        AS score,
+       player_score.system_score AS systemscore,
+       game_record.game_id       AS gameId,
+       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE player_profile.profile_id = ?
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.score > 0
+         THEN 1
+         WHEN player_score.score < 0
+         THEN -1
+         WHEN player_score.score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+ ORDER BY player_score.create_time desc
+    ]]>
+	</sql-query>
+	<sql-query name="SCORE_INFO_COUNT">
+	<![CDATA[
+SELECT COUNT(*) AS RECORD_COUNT
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE player_profile.profile_id = ?
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.score > 0
+         THEN 1
+         WHEN player_score.score < 0
+         THEN -1
+         WHEN player_score.score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+    ]]>
+	</sql-query>
+	<sql-query name="CUSTOM_INFO">
+    SELECT *
+      FROM player_profile
+	</sql-query>
+</hibernate-mapping>
