@@ -58,9 +58,11 @@ public class F3Server {
     public static final int MAX_CONNECTION_LIMIT = 1000;
 
     /**
-     * @param args
+     * 启动服务器
+     * 
+     * @param args 启动参数
      */
-    public static void main(String[] args) throws Exception {
+    public static void startServer(String[] args) throws Exception {
 
         ResourceBundle bundle = ResourceBundle.getBundle("info.knightrcom.sc");
         SECURITY_CONFIGURATION = bundle.getString("SECURITY_CONFIGURATION");
@@ -89,6 +91,9 @@ public class F3Server {
         HibernateSessionFactory.init();
     }
 
+    /**
+     * 关闭服务器
+     */
     public static void shutdownServer() {
         try {
             acceptor.unbind();
