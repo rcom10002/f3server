@@ -121,7 +121,7 @@ public class F3Servlet extends HttpServlet {
                     F3SWebServiceProxy.registerWebService(thisClass.getSimpleName(), (F3SWebService)thisClass.newInstance());
                 }
             }
-            F3Server.main(null);
+            F3Server.startServer(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
