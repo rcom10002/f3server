@@ -7,7 +7,6 @@ import info.knightrcom.util.ModelUtil;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +22,7 @@ import org.apache.mina.transport.socket.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 /**
- * 
+ * f3server - Flex Simple Socket Server
  */
 public class F3Server {
 
@@ -73,6 +72,7 @@ public class F3Server {
         addMdc(chain, mdcInjectionFilter);
 
         // 启用SSL功能
+        // TODO 该功能暂时不启用，因为as3对SSL支持尚不成熟
         if (USE_SSL) {
             addSSLSupport(chain);
         }
@@ -100,7 +100,6 @@ public class F3Server {
         }
     }
 
-    // FIXME CORRECT THIS SECTION WITH SSL
     private static void addSSLSupport(DefaultIoFilterChainBuilder chain) throws Exception {
         SslFilter sslFilter = new SslFilter(BogusSslContextFactory.getInstance(true));
         chain.addLast("sslFilter", sslFilter);
