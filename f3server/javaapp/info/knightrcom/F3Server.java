@@ -75,6 +75,8 @@ public class F3Server {
 
         // 启用SSL功能
         // TODO 该功能暂时不启用，因为as3对SSL支持尚不成熟
+        // Keep in mind most web servers with TLS support are not serving a crossdomain.xml policy file that
+        // would allow a flash movie loaded from the internet to access them.
         if (USE_SSL) {
             addSSLSupport(chain);
         }
