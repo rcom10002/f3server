@@ -99,8 +99,7 @@ public class F3Server {
     public static void shutdownServer() {
         try {
             acceptor.unbind();
-
-            log.info("GFS Server has shutdown");
+            log.info("F3S Server has shutdown");
             System.exit(0);
         } catch (Exception ex) {
             log.error(ex.getMessage());
