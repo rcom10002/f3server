@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.security.AccessController;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import sun.security.action.GetPropertyAction;
 
 /**
  * 
@@ -133,7 +137,7 @@ public class F3Servlet extends HttpServlet {
      * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
-    private Class[] getClasses(String packageName) throws ClassNotFoundException {
+    private Class[] getClasses(String packageName) throws Exception {
         ArrayList<Class> classes = new ArrayList<Class>();
         // Get a File object for the package
         File directory = null;
@@ -142,12 +146,15 @@ public class F3Servlet extends HttpServlet {
             if (cld == null) {
                 throw new ClassNotFoundException("Can't get class loader.");
             }
+            // TODO 
             String path = '/' + packageName.replace('.', '/');
             URL resource = cld.getResource(path);
             if (resource == null) {
                 throw new ClassNotFoundException("No resource for " + path);
             }
-            directory = new File(resource.getFile());
+            directory = new File(URLDecoder.decode(
+            		resource.getPath().replaceFirst("^/", ""), 
+            		(String)AccessController.doPrivileged(new GetPropertyAction("file.encoding"))));
         } catch (NullPointerException x) {
             throw new ClassNotFoundException(packageName + " (" + directory + ") does not appear to be a valid package");
         }
