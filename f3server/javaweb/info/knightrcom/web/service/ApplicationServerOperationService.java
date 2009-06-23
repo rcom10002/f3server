@@ -44,32 +44,32 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 	/**
 	 * 启动游戏应用服务器
 	 */
-	public void START_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String START_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		F3Server.startServer(null);
         EntityInfo<Object> info = new EntityInfo<Object>();
     	info.setResult(F3SWebServiceResult.SUCCESS);
-        toXML(info);
+        return toXML(info);
 	}
 
 	/**
 	 * 停止游戏应用服务器
 	 */
-	public void STOP_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception  {
+	public String STOP_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception  {
 		F3Server.shutdownServer();
         EntityInfo<Object> info = new EntityInfo<Object>();
     	info.setResult(F3SWebServiceResult.SUCCESS);
-        toXML(info);
+    	return toXML(info);
 	}
 
 	/**
 	 * 重启游戏应用服务器
 	 */
-	public void RESTART_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception  {
+	public String RESTART_APPLICATION_SERVER(HttpServletRequest request, HttpServletResponse response) throws Exception  {
 		F3Server.shutdownServer();
 		F3Server.startServer(null);
         EntityInfo<Object> info = new EntityInfo<Object>();
     	info.setResult(F3SWebServiceResult.SUCCESS);
-        toXML(info);
+    	return toXML(info);
 	}
 
 }
