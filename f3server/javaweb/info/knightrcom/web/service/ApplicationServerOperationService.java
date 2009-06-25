@@ -104,7 +104,6 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 	}
 
 	private static abstract class OperateExecutePlan extends ExecutePlan {
-
 		@Override
 		public Object beforeTryPart() {
 	        EntityInfo<Object> info = new EntityInfo<Object>();
