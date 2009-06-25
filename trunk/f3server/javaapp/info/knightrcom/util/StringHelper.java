@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * 字符串工具类
+ */
 public class StringHelper {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
