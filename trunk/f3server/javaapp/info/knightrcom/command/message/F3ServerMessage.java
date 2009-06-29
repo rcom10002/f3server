@@ -2,6 +2,8 @@ package info.knightrcom.command.message;
 
 import info.knightrcom.command.handler.F3ServerInMessageHandler;
 import info.knightrcom.command.message.game.FightLandlordGameMessage;
+import info.knightrcom.command.message.game.PushdownWinGameMessage;
+import info.knightrcom.command.message.game.QiongWinGameMessage;
 import info.knightrcom.command.message.game.Red5GameMessage;
 import info.knightrcom.util.HandlerDispatcher;
 
@@ -22,7 +24,11 @@ public abstract class F3ServerMessage {
         /** 红五 */
         RED5GAME, 
         /** 斗地主 */
-        FIGHT_LANDLORD;
+        FIGHT_LANDLORD,
+        /** 推到胡 */
+        PUSHDOWN_WIN, 
+        /** 穷胡 */
+        QIONG_WIN;
     }
 
     private IoSession currentSession;
@@ -113,6 +119,10 @@ public abstract class F3ServerMessage {
             resultMessage = new Red5GameMessage();
         } else if (MessageType.FIGHT_LANDLORD.ordinal() == messageType) {
             resultMessage = new FightLandlordGameMessage();
+        } else if (MessageType.PUSHDOWN_WIN.ordinal() == messageType) {
+            resultMessage = new PushdownWinGameMessage();
+        } else if (MessageType.QIONG_WIN.ordinal() == messageType) {
+            resultMessage = new QiongWinGameMessage();
         } 
         if (resultMessage == null) {
             throw new RuntimeException("Unsupport message type!!!");
