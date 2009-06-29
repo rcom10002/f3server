@@ -1,15 +1,11 @@
 package info.knightrcom.model.game.pushdownwin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.game.red5.Red5Poker;
 import info.knightrcom.model.plaything.MahjongValue;
-import info.knightrcom.model.plaything.PokerColor;
-import info.knightrcom.model.plaything.PokerValue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 推到胡麻将
@@ -37,33 +33,32 @@ public class PushdownWinMahjong {
      */
     public static PushdownWinMahjong[][] shuffle() {
         // 准备洗牌用的麻将
-        List<MahjongValue> mahjongs = new ArrayList<MahjongValue>();
+        List<PushdownWinMahjong> mahjongs = new ArrayList<PushdownWinMahjong>();
         // 每张牌重复四次
         for (int i = 0; i < 4; i++) {
             for (MahjongValue mahjongValue: MahjongValue.values()) {
-            	mahjongs.add(mahjongValue);
+            	mahjongs.add(new PushdownWinMahjong(mahjongValue));
             }
         }
         // 开始随机洗牌
         Collections.shuffle(mahjongs);
-        System.out.println();
-        // 开始发牌
-        PushdownWinMahjong[][] eachShuffledPokers = new PushdownWinMahjong[PushdownWinGame.PLAYER_COGAME_NUMBER][34];
-        int currentSide = 0;
-        for (int i = 0; i < mahjongs.size(); i+=Red5Game.PLAYER_COGAME_NUMBER) {
-            for (int j = 0; j < eachShuffledPokers.length; j++) {
-                if (i + j == mahjongs.size()) {
-                    break;
-                }
-                eachShuffledPokers[j][currentSide] = mahjongs.get(i + j);
+        // 开始发牌，每人13张牌
+        PushdownWinMahjong[][] eachShuffledPokers = new PushdownWinMahjong[PushdownWinGame.PLAYER_COGAME_NUMBER + 1][13];
+        for (int i = 0; i < PushdownWinGame.PLAYER_COGAME_NUMBER; i++) {
+            for (int j = 0; j < 13; j++) {
+            	eachShuffledPokers[i][j] = mahjongs.remove(mahjongs.size() - 1);
             }
-            currentSide++;
         }
+        PushdownWinMahjong[] canvasMahjongs = new PushdownWinMahjong[mahjongs.size()];
+        mahjongs.toArray(canvasMahjongs);
+        eachShuffledPokers[PushdownWinGame.PLAYER_COGAME_NUMBER] = canvasMahjongs;
         return eachShuffledPokers;
     }
-public static void main(String[] args) {
-	shuffle();
-}
+
+    public static void main(String[] args) {
+    	shuffle();
+    }
+
     /**
      * 按GM需求洗牌
      * 
