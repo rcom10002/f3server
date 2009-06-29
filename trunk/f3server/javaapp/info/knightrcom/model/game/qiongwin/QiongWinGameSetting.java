@@ -1,6 +1,5 @@
 package info.knightrcom.model.game.qiongwin;
 
-import info.knightrcom.model.game.pushdownwin.PushdownWinGameSetting;
 
 public enum QiongWinGameSetting {
 
