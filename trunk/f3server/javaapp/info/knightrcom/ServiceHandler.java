@@ -4,6 +4,8 @@ import info.knightrcom.command.handler.F3ServerInMessageHandler;
 import info.knightrcom.command.handler.PlatformInMessageHandler;
 import info.knightrcom.command.handler.PlayerInMessageHandler;
 import info.knightrcom.command.handler.game.FightLandlordGameInMessageHandler;
+import info.knightrcom.command.handler.game.PushdownWinGameInMessageHandler;
+import info.knightrcom.command.handler.game.QiongWinGameInMessageHandler;
 import info.knightrcom.command.handler.game.Red5GameInMessageHandler;
 import info.knightrcom.command.message.EchoMessage;
 import info.knightrcom.command.message.F3ServerMessage;
@@ -11,6 +13,8 @@ import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.PlayerMessage;
 import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.command.message.game.FightLandlordGameMessage;
+import info.knightrcom.command.message.game.PushdownWinGameMessage;
+import info.knightrcom.command.message.game.QiongWinGameMessage;
 import info.knightrcom.command.message.game.Red5GameMessage;
 import info.knightrcom.model.game.Game;
 import info.knightrcom.model.game.GamePool;
@@ -55,6 +59,8 @@ public class ServiceHandler extends DemuxingIoHandler {
         this.addReceivedMessageHandler(PlayerMessage.class, new PlayerInMessageHandler());
         this.addReceivedMessageHandler(Red5GameMessage.class, new Red5GameInMessageHandler());
         this.addReceivedMessageHandler(FightLandlordGameMessage.class, new FightLandlordGameInMessageHandler());
+        this.addReceivedMessageHandler(PushdownWinGameMessage.class, new PushdownWinGameInMessageHandler());
+        this.addReceivedMessageHandler(QiongWinGameMessage.class, new QiongWinGameInMessageHandler());
         Iterator<MessageHandler<?>> itr = this.getReceivedMessageHandlerMap().values().iterator();
         while (itr.hasNext()) {
             F3ServerInMessageHandler handler = (F3ServerInMessageHandler)itr.next();
