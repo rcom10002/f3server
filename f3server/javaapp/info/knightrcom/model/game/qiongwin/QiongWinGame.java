@@ -1,11 +1,11 @@
-package info.knightrcom.model.game.pushdownwin;
+package info.knightrcom.model.game.qiongwin;
 
 import info.knightrcom.model.game.Game;
 
 /**
- * 推到胡
+ * 穷胡
  */
-public class PushdownWinGame extends Game<PushdownWinGameSetting> {
+public class QiongWinGame extends Game<QiongWinGameSetting> {
 
     /**
      * 玩家个数
