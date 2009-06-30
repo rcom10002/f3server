@@ -16,25 +16,23 @@ import static org.hibernate.criterion.Example.create;
  * transactions. Each of these methods provides additional information for how
  * to configure it for the desired type of transaction control.
  * 
- * @see info.knightrcom.data.metadata.RechargeHistory
+ * @see info.knightrcom.data.metadata.ModelHistory
  * @author MyEclipse Persistence Tools
  */
 
-public class RechargeHistoryDAO extends BaseHibernateDAO {
-    private static final Log log = LogFactory.getLog(RechargeHistoryDAO.class);
+public class ModelHistoryDAO extends BaseHibernateDAO {
+    private static final Log log = LogFactory.getLog(ModelHistoryDAO.class);
 
     // property constants
-    public static final String PROFILE_ID = "profileId";
-
     public static final String OPERATOR = "operator";
 
-    public static final String SCORE = "score";
+    public static final String CONTENT = "content";
 
     public static final String CREATE_BY = "createBy";
 
     public static final String UPDATE_BY = "updateBy";
 
-    public void save(RechargeHistory transientInstance) {
+    public void save(ModelHistory transientInstance) {
         log.debug("saving RechargeHistory instance");
         try {
             getSession().save(transientInstance);
@@ -45,7 +43,7 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public void delete(RechargeHistory persistentInstance) {
+    public void delete(ModelHistory persistentInstance) {
         log.debug("deleting RechargeHistory instance");
         try {
             getSession().delete(persistentInstance);
@@ -56,10 +54,10 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public RechargeHistory findById(java.lang.String id) {
+    public ModelHistory findById(java.lang.String id) {
         log.debug("getting RechargeHistory instance with id: " + id);
         try {
-            RechargeHistory instance = (RechargeHistory) getSession().get("info.knightrcom.data.metadata.RechargeHistory", id);
+            ModelHistory instance = (ModelHistory) getSession().get("info.knightrcom.data.metadata.RechargeHistory", id);
             return instance;
         } catch (RuntimeException re) {
             log.error("get failed", re);
@@ -67,10 +65,10 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<RechargeHistory> findByExample(RechargeHistory instance) {
+    public List<ModelHistory> findByExample(ModelHistory instance) {
         log.debug("finding RechargeHistory instance by example");
         try {
-            List<RechargeHistory> results = (List<RechargeHistory>) getSession().createCriteria("info.knightrcom.data.metadata.RechargeHistory").add(create(instance)).list();
+            List<ModelHistory> results = (List<ModelHistory>) getSession().createCriteria("info.knightrcom.data.metadata.RechargeHistory").add(create(instance)).list();
             log.debug("find by example successful, result size: " + results.size());
             return results;
         } catch (RuntimeException re) {
@@ -92,23 +90,19 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<RechargeHistory> findByProfileId(Object profileId) {
-        return findByProperty(PROFILE_ID, profileId);
-    }
-
-    public List<RechargeHistory> findByOperator(Object operator) {
+    public List<ModelHistory> findByOperator(Object operator) {
         return findByProperty(OPERATOR, operator);
     }
 
-    public List<RechargeHistory> findByScore(Object score) {
-        return findByProperty(SCORE, score);
+    public List<ModelHistory> findByContent(Object score) {
+        return findByProperty(CONTENT, score);
     }
 
-    public List<RechargeHistory> findByCreateBy(Object createBy) {
+    public List<ModelHistory> findByCreateBy(Object createBy) {
         return findByProperty(CREATE_BY, createBy);
     }
 
-    public List<RechargeHistory> findByUpdateBy(Object updateBy) {
+    public List<ModelHistory> findByUpdateBy(Object updateBy) {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
@@ -124,10 +118,10 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public RechargeHistory merge(RechargeHistory detachedInstance) {
+    public ModelHistory merge(ModelHistory detachedInstance) {
         log.debug("merging RechargeHistory instance");
         try {
-            RechargeHistory result = (RechargeHistory) getSession().merge(detachedInstance);
+            ModelHistory result = (ModelHistory) getSession().merge(detachedInstance);
             log.debug("merge successful");
             return result;
         } catch (RuntimeException re) {
@@ -136,7 +130,7 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public void attachDirty(RechargeHistory instance) {
+    public void attachDirty(ModelHistory instance) {
         log.debug("attaching dirty RechargeHistory instance");
         try {
             getSession().saveOrUpdate(instance);
@@ -147,7 +141,7 @@ public class RechargeHistoryDAO extends BaseHibernateDAO {
         }
     }
 
-    public void attachClean(RechargeHistory instance) {
+    public void attachClean(ModelHistory instance) {
         log.debug("attaching clean RechargeHistory instance");
         try {
             getSession().lock(instance, LockMode.NONE);

@@ -12,20 +12,16 @@ import javax.persistence.TemporalType;
  * RechargeHistory entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "recharge_history", catalog = "f3s")
-public class RechargeHistory extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
+@Table(name = "model_history", catalog = "f3s")
+public class ModelHistory extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String rechargeId;
-
-    private String profileId;
+    private String modelId;
 
     private String operator;
 
-    private Integer score;
-
-    private Date bizDate;
+    private String content;
 
     private Date createTime;
 
@@ -38,21 +34,19 @@ public class RechargeHistory extends info.knightrcom.data.SimplePojoImpl impleme
     // Constructors
 
     /** default constructor */
-    public RechargeHistory() {
+    public ModelHistory() {
     }
 
     /** minimal constructor */
-    public RechargeHistory(String rechargeId) {
-        this.rechargeId = rechargeId;
+    public ModelHistory(String modelId) {
+        this.modelId = modelId;
     }
 
     /** full constructor */
-    public RechargeHistory(String rechargeId, String profileId, String operator, Integer score, Date bizDate, Date createTime, String createBy, Date updateTime, String updateBy) {
-        this.rechargeId = rechargeId;
-        this.profileId = profileId;
+    public ModelHistory(String modelId, String operator, String content, Date createTime, String createBy, Date updateTime, String updateBy) {
+        this.modelId = modelId;
         this.operator = operator;
-        this.score = score;
-        this.bizDate = bizDate;
+        this.content = content;
         this.createTime = createTime;
         this.createBy = createBy;
         this.updateTime = updateTime;
@@ -61,22 +55,13 @@ public class RechargeHistory extends info.knightrcom.data.SimplePojoImpl impleme
 
     // Property accessors
     @Id
-    @Column(name = "RECHARGE_ID", unique = true, nullable = false, length = 100)
-    public String getRechargeId() {
-        return this.rechargeId;
+    @Column(name = "MODEL_ID", unique = true, nullable = false, length = 100)
+    public String getModelId() {
+        return this.modelId;
     }
 
-    public void setRechargeId(String rechargeId) {
-        this.rechargeId = rechargeId;
-    }
-
-    @Column(name = "PROFILE_ID", length = 100)
-    public String getProfileId() {
-        return this.profileId;
-    }
-
-    public void setProfileId(String profileId) {
-        this.profileId = profileId;
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
     }
 
     @Column(name = "OPERATOR", length = 100)
@@ -88,23 +73,13 @@ public class RechargeHistory extends info.knightrcom.data.SimplePojoImpl impleme
         this.operator = operator;
     }
 
-    @Column(name = "SCORE")
-    public Integer getScore() {
-        return this.score;
+    @Column(name = "CONTENT")
+    public String getContent() {
+        return this.content;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
-    }
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "BIZ_DATE", length = 10)
-    public Date getBizDate() {
-        return this.bizDate;
-    }
-
-    public void setBizDate(Date bizDate) {
-        this.bizDate = bizDate;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
