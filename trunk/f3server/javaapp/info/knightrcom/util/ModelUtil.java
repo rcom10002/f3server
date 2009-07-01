@@ -1,21 +1,32 @@
 package info.knightrcom.util;
 
+import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.ModelHistory;
+import info.knightrcom.data.metadata.ModelHistoryDAO;
 import info.knightrcom.model.global.AbstractModel;
 import info.knightrcom.model.global.Lobby;
 import info.knightrcom.model.global.Platform;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.mina.core.session.IoSession;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -125,6 +136,47 @@ public class ModelUtil {
     public static void setPlayer(IoSession session, Player player) {
         session.setAttribute(Player.ATTR_NAME, player);
         player.setIosession(session);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public static Properties readProperties() {
+    	Properties properties = new Properties();
+    	try {
+    		Query query = HibernateSessionFactory.getSession().createQuery("from ModelHistory order by createTime desc");
+    		ModelHistory modelHistory = (ModelHistory)query.uniqueResult();
+    		properties.loadFromXML(new ByteArrayInputStream(modelHistory.getContent().getBytes("utf-8")));
+			return properties;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    }
+
+    /**
+     * @param properties
+     */
+    public static void saveProperties(Properties properties) {
+    	try {
+    		HibernateSessionFactory.getSession().beginTransaction();
+    		
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			properties.storeToXML(outStream, null);
+			
+			ModelHistory modelHistory = new ModelHistory();
+			modelHistory.setModelId(UUID.randomUUID().toString());
+			modelHistory.setContent(outStream.toString("utf-8"));
+			modelHistory.setOperator("");
+			modelHistory.setCreateBy("SYSTEM");
+			
+			HibernateSessionFactory.getSession().save(modelHistory);
+			
+			HibernateSessionFactory.getSession().getTransaction().commit();
+		} catch (Exception e) {
+			HibernateSessionFactory.getSession().getTransaction().rollback();
+			throw new RuntimeException(e);
+		}
     }
 
     /**
