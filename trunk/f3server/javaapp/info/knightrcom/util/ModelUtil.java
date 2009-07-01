@@ -2,7 +2,6 @@ package info.knightrcom.util;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.ModelHistory;
-import info.knightrcom.data.metadata.ModelHistoryDAO;
 import info.knightrcom.model.global.AbstractModel;
 import info.knightrcom.model.global.Lobby;
 import info.knightrcom.model.global.Platform;
@@ -15,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -25,8 +23,6 @@ import java.util.UUID;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.mina.core.session.IoSession;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
 import com.thoughtworks.xstream.XStream;
 
