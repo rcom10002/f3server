@@ -1,5 +1,9 @@
 package info.knightrcom.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -352,4 +356,38 @@ public class StringHelper {
         long dl = Math.round(dbl);
         return (double) (dl) / temp;
     }
+
+	/**
+	 * @param istream
+	 * @return
+	 */
+	public static String convertInputStreamToString(InputStream istream) {
+		/*
+		 * To convert the InputStream to String we use the
+		 * BufferedReader.readLine() method. We iterate until the
+		 * BufferedReader return null which means there's no more data to
+		 * read. Each line will appended to a StringBuilder and returned as
+		 * String.
+		 */
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(istream));
+		StringBuilder strBuilder = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				strBuilder.append(line + "\n");
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				istream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return strBuilder.toString();
+	}
 }
