@@ -71,7 +71,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             GamePool.prepareGame(playersInQueue);
             for (Player eachPlayer : playersInQueue) {
                 // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
-                echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
                 echoMessage.setResult(GAME_CREATE);
                 echoMessage.setContent(
                         eachPlayer.getGameId() + "~" + 
@@ -91,7 +91,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             for (int j = 0; j < eachShuffledMahjongs[i].length; j++) {
                 builder.append(eachShuffledMahjongs[i][j].getValue() + ",");
             }
-            echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+            echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
             echoMessage.setResult(GAME_STARTED);
             echoMessage.setContent(builder.toString().replaceFirst(",$", ""));
             sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
@@ -99,7 +99,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             game.appendGameRecord(echoMessage.getContent());
         }
         // 为首次发牌的玩家发送消息
-        echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+        echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
         echoMessage.setResult(GAME_FIRST_PLAY);
         sessionWrite(playersInGame.get(0).getIosession(), echoMessage);
     }
@@ -118,7 +118,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 //                if (currentPlayer.equals(player)) {
 //                    continue;
 //                }
-//                echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+//                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
 //                echoMessage.setResult(GAME_SETTING_UPDATE);
 //                echoMessage.setContent(message.getContent());
 //                sessionWrite(player.getIosession(), echoMessage);
@@ -187,7 +187,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
                 if (currentPlayer.equals(player)) {
                     continue;
                 }
-                echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
                 echoMessage.setResult(GAME_BRING_OUT);
                 echoMessage.setContent(message.getContent());
                 sessionWrite(player.getIosession(), echoMessage);
@@ -218,7 +218,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 //                if (currentPlayer.equals(player)) {
 //                    continue;
 //                }
-//                echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+//                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
 //                echoMessage.setResult(GAME_WINNER_PRODUCED);
 //                echoMessage.setContent(message.getContent());
 //                sessionWrite(player.getIosession(), echoMessage);
@@ -258,7 +258,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             message.setContent(message.getContent() + "~" + game.getGameDetailScore());
             while (itr.hasNext()) {
                 Player player = itr.next();
-                echoMessage = F3ServerMessage.createInstance(MessageType.QIONG_WIN).getEchoMessage();
+                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
                 echoMessage.setResult(GAME_OVER);
                 echoMessage.setContent(message.getContent());
                 sessionWrite(player.getIosession(), echoMessage);
