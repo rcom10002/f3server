@@ -16,7 +16,7 @@ drop table if exists PLAYER_PROFILE;
 
 drop table if exists PLAYER_SCORE;
 
-drop table if exists RECHARGE_HISTORY;
+drop table if exists MODEL_HISTORY;
 
 create table GAME_FEEDBACK
 (
@@ -119,18 +119,16 @@ create table PLAYER_SCORE
    primary key (SCORE_ID)
 );
 
-create table RECHARGE_HISTORY
+create table MODEL_HISTORY
 (
-   RECHARGE_ID          VARCHAR(100) not null,
-   PROFILE_ID           VARCHAR(100),
+   MODEL_ID             VARCHAR(100) not null,
    OPERATOR             VARCHAR(100),
-   SCORE                INT,
-   BIZ_DATE             DATE,
+   CONTENT              TEXT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
-   primary key (RECHARGE_ID)
+   primary key (MODEL_ID)
 );
 
 alter table GAME_FEEDBACK add constraint FK_GAME_FEEDBACK_TO_GAME_RECORD foreign key (GAME_ID)
@@ -144,6 +142,7 @@ alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_PLAYER_PROFILE foreig
 
 alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_GAME_RECORD foreign key (GAME_ID)
       references GAME_RECORD (GAME_ID) on delete restrict on update restrict;
-
+/*
 alter table RECHARGE_HISTORY add constraint FK_RECHARGE_HISTORY_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
       references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
+*/
