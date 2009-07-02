@@ -37,15 +37,17 @@
 	<property name="cache.use_query_cache">false</property>
 
 	<mapping class="info.knightrcom.data.metadata.PlayerProfile" />
-	<mapping class="info.knightrcom.data.metadata.RechargeHistory" />
 	<mapping class="info.knightrcom.data.metadata.GameRecord" />
 	<mapping class="info.knightrcom.data.metadata.GameFeedback" />
 	<mapping class="info.knightrcom.data.metadata.GlobalConfig" />
 	<mapping class="info.knightrcom.data.metadata.PeriodlySum" />
 	<mapping class="info.knightrcom.data.metadata.PlayerScore" />
-	<mapping resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
-	<mapping resource="info/knightrcom/web/data/PlayerScoreService.hbm.xml" />
-	<mapping resource="info/knightrcom/web/data/PlayerProfileService.hbm.xml" />
+	<mapping
+		resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
+	<mapping
+		resource="info/knightrcom/web/data/PlayerScoreService.hbm.xml" />
+	<mapping
+		resource="info/knightrcom/web/data/PlayerProfileService.hbm.xml" />
 
 </session-factory>
 
