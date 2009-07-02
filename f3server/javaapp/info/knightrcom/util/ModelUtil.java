@@ -144,7 +144,22 @@ public class ModelUtil {
     /**
      * 从数据库中读取配置文件内容
      * 
-     * @return
+     * @return XML格式
+     */
+    public static String readPropertiesToXML() {
+        try {
+            Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig order by createTime desc");
+            GlobalConfig config = (GlobalConfig)query.list().get(0);
+            return config.getValue();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从数据库中读取配置文件内容
+     * 
+     * @return Properties类型对象
      */
     public static Properties readProperties() {
     	Properties properties = new Properties();
@@ -159,9 +174,34 @@ public class ModelUtil {
     }
 
     /**
+     * 将XML格式配置信息保存到数据库中
+     * 
+     * @param xml
+     * @return 新的GlobalConfig对象id
+     */
+    public static String savePropertiesFromXML(String xml) {
+        try {
+            HibernateSessionFactory.getSession().beginTransaction();
+
+            GlobalConfig config = new GlobalConfig();
+            config.setGlobalConfigId(UUID.randomUUID().toString());
+            config.setValue(xml);
+
+            HibernateSessionFactory.getSession().save(config);
+
+            HibernateSessionFactory.getSession().getTransaction().commit();
+            return config.getGlobalConfigId();
+        } catch (Exception e) {
+            HibernateSessionFactory.getSession().getTransaction().rollback();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 把配置文件内容保存到数据库中
      * 
      * @param properties
+     * @return 新的GlobalConfig对象id
      */
     public static String saveProperties(Properties properties) {
     	try {
