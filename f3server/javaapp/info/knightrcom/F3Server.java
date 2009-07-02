@@ -58,12 +58,26 @@ public class F3Server {
     public static final int MAX_CONNECTION_LIMIT = 1000;
 
     /**
+     * 启动应用服务器
+     * 
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+        startServer(args);
+    }
+
+    /**
      * 启动服务器
      * 
      * @param args 启动参数
      */
     public static void startServer(String[] args) throws Exception {
 
+        // Hibernate初始化
+        HibernateSessionFactory.init();
+
+        // 加载Flex安全信息
         ResourceBundle bundle = ResourceBundle.getBundle("info.knightrcom.sc");
         SECURITY_CONFIGURATION = bundle.getString("SECURITY_CONFIGURATION");
 
@@ -83,14 +97,12 @@ public class F3Server {
         addCodec(chain);
         addLogger(chain);
 
-        // 监听绑定
+        // 绑定处理器和监听
         Platform platform = ModelUtil.createPlatform();
         acceptor.setHandler(new ServiceHandler(platform));
         acceptor.bind(new InetSocketAddress(PORT));
         log.info("LISTENING ON PORT " + PORT);
 
-        // 启动Hibernate
-        HibernateSessionFactory.init();
     }
 
     /**
