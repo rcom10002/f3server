@@ -1,6 +1,6 @@
 package info.knightrcom.test;
 
-import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.util.ModelUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
@@ -10,12 +10,6 @@ import java.util.ResourceBundle;
 import junit.framework.TestCase;
 
 public class ModelDescriptorManipulateTest extends TestCase {
-
-	protected void setUp() throws Exception {
-		HibernateSessionFactory.init();
-		HibernateSessionFactory.getSession().beginTransaction();
-		super.setUp();
-	}
 
 	/**
 	 * Test properties file's writing ability.
@@ -31,10 +25,8 @@ public class ModelDescriptorManipulateTest extends TestCase {
 			String value = bundle.getString(key);
 			properties.put(key, value);
 		}
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		properties.storeToXML(bytes, null);
-		String result = bytes.toString("utf-8");
-		System.out.println(result);
+
+		ModelUtil.saveProperties(properties);
 	}
 
 	/**
@@ -43,23 +35,9 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testReadProperties() throws Exception {
-		ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getName().replaceFirst("\\.\\w+$", "") + ".test_model_defination");
-		Properties properties = new Properties();
-		Enumeration<String> keyEnum = bundle.getKeys();
-		while (keyEnum.hasMoreElements()) {
-			String key = keyEnum.nextElement();
-			String value = bundle.getString(key);
-			properties.put(key, value);
-		}
+	    Properties properties = ModelUtil.readProperties();
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		properties.storeToXML(bytes, null);
-		String result = bytes.toString("utf-8");
-		System.out.println(result);
-	}
-
-	protected void tearDown() throws Exception {
-		HibernateSessionFactory.getSession().getTransaction().commit();
-		HibernateSessionFactory.closeSession();
-		super.tearDown();
+		System.out.println(bytes.toString("utf-8"));
 	}
 }
