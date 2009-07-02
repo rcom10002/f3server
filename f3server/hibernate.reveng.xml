@@ -5,4 +5,7 @@
 <type-mapping>
 	<sql-type jdbc-type="TIMESTAMP" hibernate-type="timestamp"></sql-type>
 </type-mapping>
+
+
+
 </hibernate-reverse-engineering>
