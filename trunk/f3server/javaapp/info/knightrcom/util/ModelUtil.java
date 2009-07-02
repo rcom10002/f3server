@@ -1,7 +1,7 @@
 package info.knightrcom.util;
 
 import info.knightrcom.data.HibernateSessionFactory;
-import info.knightrcom.data.metadata.ModelHistory;
+import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.model.global.AbstractModel;
 import info.knightrcom.model.global.Lobby;
 import info.knightrcom.model.global.Platform;
@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,11 +54,19 @@ public class ModelUtil {
      */
     public static Platform createPlatform() throws FileNotFoundException, IOException {
         // 获取匹配信息
-        ResourceBundle bundle = ResourceBundle.getBundle(ModelUtil.class.getPackage().getName() + ".model_defination");
-        String platformConfig = (String) bundle.getString("PLATFORM");
-        String[] lobbyConfigArray = ((String) bundle.getString("LOBBY")).split(";");
-        String[] roomConfigArray = ((String) bundle.getString("ROOM")).split(";");
-        int maxPlayerNumber = Integer.parseInt((String) bundle.getString("MAX_PLAYER_NUMBER"));
+        // MOD 2009/07/02 BEGIN
+//        ResourceBundle bundle = ResourceBundle.getBundle(ModelUtil.class.getPackage().getName() + ".model_defination");
+//        String platformConfig = (String) bundle.getString("PLATFORM");
+//        String[] lobbyConfigArray = ((String) bundle.getString("LOBBY")).split(";");
+//        String[] roomConfigArray = ((String) bundle.getString("ROOM")).split(";");
+//        int maxPlayerNumber = Integer.parseInt((String) bundle.getString("MAX_PLAYER_NUMBER"));
+
+        Properties config = readProperties();
+        String platformConfig = config.getProperty("PLATFORM");
+        String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        int maxPlayerNumber = Integer.parseInt(config.getProperty("MAX_PLAYER_NUMBER"));
+        // MOD 2009/07/02 END
 
         // 创建模型
         platform = ModelUtil.createFromConfigString(Platform.class, platformConfig);
@@ -135,15 +142,16 @@ public class ModelUtil {
     }
 
     /**
+     * 从数据库中读取配置文件内容
      * 
      * @return
      */
     public static Properties readProperties() {
     	Properties properties = new Properties();
     	try {
-    		Query query = HibernateSessionFactory.getSession().createQuery("from ModelHistory order by createTime desc");
-    		ModelHistory modelHistory = (ModelHistory)query.uniqueResult();
-    		properties.loadFromXML(new ByteArrayInputStream(modelHistory.getContent().getBytes("utf-8")));
+    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig order by createTime desc");
+    		GlobalConfig config = (GlobalConfig)query.list().get(0);
+    		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
 			return properties;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -151,24 +159,25 @@ public class ModelUtil {
     }
 
     /**
+     * 把配置文件内容保存到数据库中
+     * 
      * @param properties
      */
-    public static void saveProperties(Properties properties) {
+    public static String saveProperties(Properties properties) {
     	try {
     		HibernateSessionFactory.getSession().beginTransaction();
     		
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			properties.storeToXML(outStream, null);
 			
-			ModelHistory modelHistory = new ModelHistory();
-			modelHistory.setModelId(UUID.randomUUID().toString());
-			modelHistory.setContent(outStream.toString("utf-8"));
-			modelHistory.setOperator("");
-			modelHistory.setCreateBy("SYSTEM");
+			GlobalConfig config = new GlobalConfig();
+			config.setGlobalConfigId(UUID.randomUUID().toString());
+			config.setValue(outStream.toString("utf-8"));
 			
-			HibernateSessionFactory.getSession().save(modelHistory);
+			HibernateSessionFactory.getSession().save(config);
 			
 			HibernateSessionFactory.getSession().getTransaction().commit();
+			return config.getGlobalConfigId();
 		} catch (Exception e) {
 			HibernateSessionFactory.getSession().getTransaction().rollback();
 			throw new RuntimeException(e);
