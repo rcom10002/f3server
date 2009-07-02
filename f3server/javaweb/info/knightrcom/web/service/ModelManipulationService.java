@@ -1,11 +1,5 @@
 package info.knightrcom.web.service;
 
-import info.knightrcom.util.ModelUtil;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,21 +38,28 @@ public class ModelManipulationService extends F3SWebService<Object> {
         
     }
 
-    public static void main(String[] args) {
-        new ModelManipulationService().STORE_PROPERTY(null, null);
-    }
-    
-    public String STORE_PROPERTY(HttpServletRequest request, HttpServletResponse response) {
-        String pathPrefix = ModelUtil.class.getPackage().getName();
-        // String path = pathPrefix + ".model_defination.properties";
-        String path = pathPrefix.replace(".", "/") + "/model_defination.properties";
-        try {
-            Properties properties = new Properties();
-            properties.load(ClassLoader.getSystemClassLoader().getResourceAsStream(path));
-            properties.store(new FileOutputStream("filename.properties"), null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    /**
+     * 读取配置信息
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    public String READ_PROPERTY(HttpServletRequest request, HttpServletResponse response) {
+        // ModelUtil.readProperties(properties);
         return null;
     }
+    
+    /**
+     * 保存配置信息
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    public String SAVE_PROPERTY(HttpServletRequest request, HttpServletResponse response) {
+        // ModelUtil.saveProperties(properties);
+        return null;
+    }
+
 }
