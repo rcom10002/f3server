@@ -82,26 +82,30 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         }
         // 根据当前触发游戏开始的玩家所携带的游戏id来取得游戏实例
         PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-        List<Player> playersInGame = game.getPlayers();
         // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
         PushdownWinMahjong[][] eachShuffledMahjongs = PushdownWinMahjong.shuffle();
         // 开始发牌 
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < eachShuffledMahjongs.length; i++) {
-            StringBuilder builder = new StringBuilder();
             for (int j = 0; j < eachShuffledMahjongs[i].length; j++) {
                 builder.append(eachShuffledMahjongs[i][j].getValue() + ",");
             }
+            builder.deleteCharAt(builder.length() - 1);
+            builder.append("~");
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        for (Player eachPlayer : game.getPlayers()) {
             echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
             echoMessage.setResult(GAME_STARTED);
             echoMessage.setContent(builder.toString().replaceFirst(",$", ""));
-            sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
-            // 记录游戏初始时玩家手中的牌信息
-            game.appendGameRecord(echoMessage.getContent());
+            sessionWrite(eachPlayer.getIosession(), echoMessage);
         }
+        // 记录游戏初始时玩家手中的牌信息
+        game.appendGameRecord(echoMessage.getContent());
         // 为首次发牌的玩家发送消息
         echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
         echoMessage.setResult(GAME_FIRST_PLAY);
-        sessionWrite(playersInGame.get(0).getIosession(), echoMessage);
+        sessionWrite(game.getPlayerNumberMap().get(1).getIosession(), echoMessage);
     }
 
     @Override
@@ -147,31 +151,6 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 
     @Override
     public void GAME_START(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
-//        // 更改当前游戏状态
-//        Player currentPlayer = ModelUtil.getPlayer(session);
-//        PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-//        List<Player> players = game.getPlayers();
-//        // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
-//        boolean isFirstOut = false;
-//        Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
-//        for (int i = 0; i < eachShuffledPokers.length; i++) {
-//            // 开始发牌
-//            StringBuilder builder = new StringBuilder();
-//            for (int j = 0; j < eachShuffledPokers[i].length; j++) {
-//                builder.append(eachShuffledPokers[i][j] + ",");
-//            }
-//            echoMessage = F3ServerMessage.createInstance(MessageType.MSG_PushdownWinGame).getEchoMessage();
-//            echoMessage.setResult(GAME_STARTED);
-//            echoMessage.setContent(builder.toString().replaceFirst(",$", ""));
-//            sessionWrite(players.get(i).getIosession(), echoMessage);
-//            if (!isFirstOut && builder.indexOf(PushdownWinGame.START_POKER.toString()) > -1) {
-//                // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则为首次发牌的玩家发送消息
-//                echoMessage = F3ServerMessage.createInstance(MessageType.MSG_PushdownWinGame).getEchoMessage();
-//                echoMessage.setResult(GAME_FIRST_PLAY);
-//                sessionWrite(players.get(i).getIosession(), echoMessage);
-//                isFirstOut = true;
-//            }
-//        }
     }
 
     @Override
@@ -199,33 +178,6 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 
     @Override
     public void GAME_WIN(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
-//    	// TODO REMOVE THIS FUNCTION FOR NO QUIREMENTS
-//        // 向游戏中的其他玩家发送消息
-//        Player currentPlayer = ModelUtil.getPlayer(session);
-//        PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-//        // 判断是否为最终获胜
-//        if (!PushdownWinGameSetting.NO_RUSH.equals(game.getSetting())) {
-//            // 游戏为独牌或天独的时，立即结束当前游戏
-//            GAME_WIN_AND_END(session, message, echoMessage);
-//            return;
-//        }
-//        game.addWinnerNumber(String.valueOf(currentPlayer.getCurrentNumber()));
-//        List<Player> players = game.getPlayers();
-//        synchronized (players) {
-//            Iterator<Player> itr = players.iterator();
-//            while (itr.hasNext()) {
-//                Player player = itr.next();
-//                if (currentPlayer.equals(player)) {
-//                    continue;
-//                }
-//                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
-//                echoMessage.setResult(GAME_WINNER_PRODUCED);
-//                echoMessage.setContent(message.getContent());
-//                sessionWrite(player.getIosession(), echoMessage);
-//            }
-//            // 记录当前牌序
-//            game.appendGameRecord(message.getContent());
-//        }
     }
 
     @Override
@@ -285,6 +237,5 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 
     @Override
     public void GAME_CHEAT_FOUND(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
-        // TODO Auto-generated method stub
     }
 }
