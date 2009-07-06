@@ -24,7 +24,7 @@ public class HibernateNamedQueryTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testNamedQuery() throws ParseException {
-        HibernateSessionFactory.getConfiguration().configure("info/knightrcom/test/hibernate-test.cfg.xml");
+        HibernateSessionFactory.setConfigFile("info/knightrcom/test/hibernate-test.cfg.xml");
         Query query = HibernateSessionFactory.getSession().getNamedQuery("mySqlQuery");
         // query.setMaxResults(2);
         // query.setFirstResult(2 * 1);
@@ -37,6 +37,7 @@ public class HibernateNamedQueryTest extends TestCase {
         stream.alias(Entity.class.getSimpleName(), Entity.class);
         System.out.println(stream.toXML(list));
     }
+
     public static class Entity {
 
         private String name;
