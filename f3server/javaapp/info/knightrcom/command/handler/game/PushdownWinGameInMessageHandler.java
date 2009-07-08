@@ -68,7 +68,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             });
             playersInQueue = playersInQueue.subList(0, PushdownWinGame.PLAYER_COGAME_NUMBER);
             // 根据玩家当前的所在的房间进来开始游戏
-            GamePool.prepareGame(playersInQueue);
+            GamePool.preparePushdownWinGame(playersInQueue);
             for (Player eachPlayer : playersInQueue) {
                 // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
                 echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
@@ -105,7 +105,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         // 为首次发牌的玩家发送消息
         echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
         echoMessage.setResult(GAME_FIRST_PLAY);
-        sessionWrite(game.getPlayerNumberMap().get(1).getIosession(), echoMessage);
+        sessionWrite(game.getPlayerNumberMap().get("1").getIosession(), echoMessage);
     }
 
     @Override

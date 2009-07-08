@@ -1,6 +1,7 @@
 package info.knightrcom.model.game;
 
 import info.knightrcom.model.game.fightlandlord.FightLandlordGame;
+import info.knightrcom.model.game.pushdownwin.PushdownWinGame;
 import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
@@ -63,7 +64,33 @@ public class GamePool {
         game.setMinGameStartMark(minGameMarks);
         postInitProcess(game);
     }
-    
+
+    /**
+     * 处理游戏中的通用设置，将特殊设置放于私有方法postInitProcess中
+     * 
+     * @param players
+     */
+    public static synchronized void preparePushdownWinGame(List<Player> players) {
+        // 创建游戏信息
+        PushdownWinGame game = new PushdownWinGame();
+        String gameId = game.getId();
+        games.put(gameId, game);
+        int i = 0;
+        for (Player player : players) {
+            player.setGameId(gameId);
+            player.setCurrentStatus(GameStatus.PLAYING);
+            player.setCurrentNumber(++i);
+            game.involvePlayer(player);
+            game.getPlayerNumberMap().put(String.valueOf(i), player);
+        }
+        // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
+        int gameMark = players.get(0).getParent().getGameMark();
+        game.setGameMark(gameMark);
+        int minGameStartMark = players.get(0).getParent().getMinGameMarks();
+        game.setMinGameStartMark(minGameStartMark);
+        postInitProcess(game);
+    }
+
     /**
      * 
      */
