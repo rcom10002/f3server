@@ -20,6 +20,12 @@ public class GameConfigureConstant {
 	public static final String ROOM_PARENT = "parent";
 	
 	public static final String ROOM_ID = "id";
+
+	public static final String ROOM_NAME = "name";
+
+	public static final String ROOM_ROUND_MARK = "roundMark";
+
+	public static final String ROOM_MIN_MARKS = "minMarks";
 	
 	public static final String GAME_TYPE_NAME_POKER = "Poker";
 	
