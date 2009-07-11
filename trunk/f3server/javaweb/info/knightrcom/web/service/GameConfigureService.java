@@ -132,6 +132,68 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return READ_GAME_CONFIGURE(request, response);
     }
 
+    
+    
+    @SuppressWarnings("unchecked")
+	public String READ_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	// 游戏类型
+    	String gameType = request.getParameter("GAME_TYPE");
+    	// 设置页码
+        int currentPage = 1;
+        if (request.getParameter("CURRENT_PAGE").matches("[1-9]\\d*")) {
+            currentPage = new Integer(request.getParameter("CURRENT_PAGE")).intValue();
+        }
+    	Properties config = ModelUtil.readProperties();
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        List<Map> roomList = new ArrayList<Map>();
+        for (String roomConfig : roomConfigArray) {
+        	Map room = createFromConfigString(roomConfig, null);
+        	switch (Integer.valueOf(gameType)) {
+			case 0:
+				// 红五
+				if (GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+						&& room.get(GameConfigureConstant.ROOM_ID).toString().length() >= GameConfigureConstant.GAME_TYPE_VALUE_RED5.length()
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_RED5.equals(room.get(GameConfigureConstant.ROOM_ID).toString().substring(0,GameConfigureConstant.GAME_TYPE_VALUE_RED5.length()))) {
+	        		roomList.add(room);
+	        	}
+				break;
+			case 1:
+				// 斗地主
+				if (GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+						&& room.get(GameConfigureConstant.ROOM_ID).toString().length() >= GameConfigureConstant.GAME_TYPE_VALUE_FIGHTLANDLORD.length()
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_FIGHTLANDLORD.equals(room.get(GameConfigureConstant.ROOM_ID).toString().substring(0,GameConfigureConstant.GAME_TYPE_VALUE_FIGHTLANDLORD.length()))) {
+	        		roomList.add(room);
+	        	}
+				break;
+			case 2:
+				// 麻将[穷胡]
+				if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+	        		roomList.add(room);
+	        	}
+				break;
+			case 3:
+				// 麻将[推倒]
+				if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+	        		roomList.add(room);
+	        	}
+				break;
+			default:
+				break;
+			}
+        	
+        	
+        }
+        EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        info.setEntity(roomList);
+        info.getPagination().setPageSize(roomList.size());
+        info.getPagination().setTotalRecord(roomList.size()*roomList.size());
+        info.getPagination().setCurrentPage(currentPage);
+        return toXML(info, getAliasTypes());
+    }
+    
     public String UPDATE_RED5_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
         return null;
     }

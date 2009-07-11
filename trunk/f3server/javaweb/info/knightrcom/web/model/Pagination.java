@@ -80,10 +80,10 @@ public class Pagination {
     public int getTotalPage() {
         if (totalRecord < 1) {
             totalPage = 0;
-        } else if (totalRecord % DEFAULT_PAGE_SIZE == 0) {
-            totalPage = totalRecord / DEFAULT_PAGE_SIZE;
+        } else if (totalRecord % getPageSize() == 0) {
+            totalPage = totalRecord / getPageSize();
         } else {
-            totalPage = totalRecord / DEFAULT_PAGE_SIZE + 1;
+            totalPage = totalRecord / getPageSize() + 1;
         }
         return totalPage;
     }
