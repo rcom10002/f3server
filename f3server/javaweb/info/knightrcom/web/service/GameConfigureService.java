@@ -182,8 +182,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 			default:
 				break;
 			}
-        	
-        	
         }
         EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
         info.setResult(F3SWebServiceResult.SUCCESS);
@@ -194,21 +192,106 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return toXML(info, getAliasTypes());
     }
     
-    public String UPDATE_RED5_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    @SuppressWarnings("unchecked")
+	public String UPDATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	updateGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
     }
 
     public String UPDATE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    	updateGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
     }
 
     public String UPDATE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    	updateGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
     }
 
     public String UPDATE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    	updateGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
     }
+    
+    
+    
+    
+    /**
+     * 通用四种游戏的参数设置
+     * @param request
+     */
+    @SuppressWarnings("unchecked")
+	public void updateGameRoomConfigure(HttpServletRequest request) {
+    	String lobbyId = request.getParameter("LOBBY_ID");
+        String lobbyName = request.getParameter("LOBBY_NAME");
+        String gameId = request.getParameter("GAME_ID");
+        String gameName = request.getParameter("GAME_NAME");
+        String roundMark = request.getParameter("ROUND_MARK");
+        String minMarks = request.getParameter("MIN_MARKS");
+        // 根据LOBBY—ID读取数据源
+        Properties config = ModelUtil.readProperties();
+        
+        // 重构Property
+        Properties properties = new Properties();
+        properties.setProperty("PLATFORM", config.getProperty("PLATFORM"));
+        properties.setProperty("LOBBY", config.getProperty("LOBBY"));
+        // 移除旧值更新新值
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        List<Map> roomList = new ArrayList<Map>();
+        for (String roomConfig : roomConfigArray) {
+        	Map room = createFromConfigString(roomConfig, null);
+        	// 根据游戏类型及游戏ID各自设置其游戏参数
+			if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+        			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+				if (room.containsKey(GameConfigureConstant.LOBBY_NAME)) {
+	        		room.remove(GameConfigureConstant.LOBBY_NAME);
+	        		room.put(GameConfigureConstant.LOBBY_NAME, lobbyName);
+        		}
+        		if (room.containsKey(GameConfigureConstant.ROOM_NAME)) {
+	        		room.remove(GameConfigureConstant.ROOM_NAME);
+	        		room.put(GameConfigureConstant.ROOM_NAME, gameName);
+        		}
+        		if (room.containsKey(GameConfigureConstant.ROOM_ROUND_MARK)) {
+	        		room.remove(GameConfigureConstant.ROOM_ROUND_MARK);
+	        		room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
+        		}
+        		if (room.containsKey(GameConfigureConstant.ROOM_MIN_MARKS)) {
+	        		room.remove(GameConfigureConstant.ROOM_MIN_MARKS);
+	        		room.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
+        		}
+        	}
+        	roomList.add(room);
+        }
+        // 更新后的新值重构成configString
+        properties.setProperty("ROOM", createFromList(roomList));
+        
+        properties.setProperty("MAX_PLAYER_NUMBER", config.getProperty("MAX_PLAYER_NUMBER"));
+        
+        // 数据更新至DB
+        try {
+        	// 删除原始记录
+        	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+    		HibernateSessionFactory.getSession().delete(criteria.list().get(0));
+    		// 插入新记录
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    		properties.storeToXML(outStream, null);
+			GlobalConfig globalconfig = new GlobalConfig();
+			globalconfig.setGlobalConfigId(UUID.randomUUID().toString());
+			globalconfig.setValue(outStream.toString("utf-8"));
+			HibernateSessionFactory.getSession().save(globalconfig);
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * ConfigString -> Map
      * @param configString
