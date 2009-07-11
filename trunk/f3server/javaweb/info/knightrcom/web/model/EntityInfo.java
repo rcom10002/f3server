@@ -81,6 +81,4 @@ public class EntityInfo<T> {
      */
     public void setEntity(T entity) {
         this.entity = entity;
-    }
-
-}
+    }}

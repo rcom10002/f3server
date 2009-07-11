@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="GLOBAL_CONFIG">
+	<![CDATA[
+		SELECT
+		    `GLOBAL_CONFIG_ID`,
+		    `NUMBER`,
+		    `NAME`,
+		    `VALUE`,
+		    `STATUS`,
+		    DATE_FORMAT(`CREATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS `CREATE_TIME`,
+		    `CREATE_BY`,
+		    DATE_FORMAT(`UPDATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS `UPDATE_TIME`,
+		    `UPDATE_BY` 
+		FROM
+		    `GLOBAL_CONFIG`
+		ORDER BY `CREATE_TIME` DESC
+    ]]>
+	</sql-query>
+	<sql-query name="GLOBAL_CONFIG_COUNT">
+	<![CDATA[
+		SELECT COUNT(*) AS RECORD_COUNT
+		  FROM GLOBAL_CONFIG
+    ]]>
+	</sql-query>
+</hibernate-mapping>

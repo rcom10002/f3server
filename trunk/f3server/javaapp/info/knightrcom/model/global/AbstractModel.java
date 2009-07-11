@@ -33,6 +33,8 @@ public  class AbstractModel<PT, CT> {
     protected final String modelCategory;
 
     protected String displayIndex;
+    
+    protected String roomCount;
 
     protected int childLimit = -1;
 
@@ -183,5 +185,19 @@ public  class AbstractModel<PT, CT> {
     public void setDisplayIndex(String displayIndex) {
         this.displayIndex = displayIndex;
     }
+
+	/**
+	 * @return the roomCount
+	 */
+	public String getRoomCount() {
+		return roomCount;
+	}
+
+	/**
+	 * @param roomCount the roomCount to set
+	 */
+	public void setRoomCount(String roomCount) {
+		this.roomCount = roomCount;
+	}
 
 }
