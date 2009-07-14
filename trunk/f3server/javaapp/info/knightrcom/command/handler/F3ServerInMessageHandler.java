@@ -59,6 +59,7 @@ public abstract class F3ServerInMessageHandler implements MessageHandler<F3Serve
      */
     protected void sessionWrite(IoSession session, EchoMessage echoMessage) {
         if (!NO_ECHO_RESULT.equals(echoMessage.getResult())) {
+            log.info("Unencoded Message: " + HandlerDispatcher.respondMessage(echoMessage));
             session.write(EncryptionUtil.Base64Encode(HandlerDispatcher.respondMessage(echoMessage)));
         } else {
             log.warn("警告：服务器处理结束，但未向客户端发送任何回馈结果！");
