@@ -11,7 +11,7 @@ public class MahjongDealForGameStartTest extends TestCase {
 	 */
 	public void testShuffle() throws Exception {
 		PushdownWinMahjong[][] mahjongs = PushdownWinMahjong.shuffle();
-		printValues(mahjongs);
+		printValues(mahjongs, "SHUFFLE");
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class MahjongDealForGameStartTest extends TestCase {
 	 */
 	public void testMahjongsAtGameStart() throws Exception {
         PushdownWinMahjong[][] eachShuffledMahjongs = PushdownWinMahjong.shuffle();
-		printValues(eachShuffledMahjongs);
+		printValues(eachShuffledMahjongs, "GAME_START");
 		new PushdownWinGameInMessageHandler();
         // 开始发牌
         StringBuilder builder = new StringBuilder();
@@ -34,8 +34,8 @@ public class MahjongDealForGameStartTest extends TestCase {
         System.out.println("SESSION CONTENT: " + builder.toString().replaceFirst(",$", ""));
 	}
 
-	private void printValues(PushdownWinMahjong[][] mahjongs) {
-	    System.out.println("<<< DAIS");
+	private void printValues(PushdownWinMahjong[][] mahjongs, String title) {
+	    System.out.println(title + " <<< DAIS");
 		for (PushdownWinMahjong[] currentMahjongs : mahjongs) {
 			for (PushdownWinMahjong mahjong : currentMahjongs) {
 				System.out.print(mahjong.getValue() + "\t\t");
