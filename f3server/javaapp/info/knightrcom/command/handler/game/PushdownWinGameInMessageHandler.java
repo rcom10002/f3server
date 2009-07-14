@@ -15,6 +15,7 @@ import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.StringHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -186,7 +187,20 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         // 游戏结束，向游戏中的其他玩家发送消息
         Player currentPlayer = ModelUtil.getPlayer(session);
         PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-        // 消息格式：胜者，牌，败者，是否自摸
+        // 消息格式：无内容
+        if (StringHelper.isEmpty(message.getContent())) {
+            // 流局，扑
+//            synchronized (players) {
+//                while (itr.hasNext()) {
+//                    Player player = itr.next();
+//                    echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
+//                    echoMessage.setResult(GAME_OVER);
+//                    echoMessage.setContent(message.getContent());
+//                    sessionWrite(player.getIosession(), echoMessage);
+//                }
+//            }
+        }
+        // 消息格式：胜者~牌~败者~是否自摸
         String[] results = message.getContent().split("~");
         List<Player> players = game.getPlayers();
         // 记录当前牌序
