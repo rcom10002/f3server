@@ -24,6 +24,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
+@SuppressWarnings("unchecked")
 public class GameConfigureService extends F3SWebService<List<Map>> {
 
     @Override
@@ -52,7 +53,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         
     }
     
-    @SuppressWarnings("unchecked")
 	public String READ_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	// 设置页码
         int currentPage = 1;
@@ -74,8 +74,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         info.getPagination().setCurrentPage(currentPage);
         return toXML(info, getAliasTypes());
     }
-    
-    @SuppressWarnings("unchecked")
+
 	public String UPDATE_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
         String lobbyId = request.getParameter("LOBBY_ID");
         String lobbyName = request.getParameter("LOBBY_NAME");
@@ -132,9 +131,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return READ_GAME_CONFIGURE(request, response);
     }
 
-    
-    
-    @SuppressWarnings("unchecked")
 	public String READ_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	// 游戏类型
     	String gameType = request.getParameter("GAME_TYPE");
@@ -191,8 +187,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         info.getPagination().setCurrentPage(currentPage);
         return toXML(info, getAliasTypes());
     }
-    
-    @SuppressWarnings("unchecked")
+
 	public String UPDATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	updateGameRoomConfigure(request);
         return READ_GAME_CONFIGURE(request, response);
@@ -220,7 +215,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * 通用四种游戏的参数设置
      * @param request
      */
-    @SuppressWarnings("unchecked")
 	public void updateGameRoomConfigure(HttpServletRequest request) {
     	String lobbyId = request.getParameter("LOBBY_ID");
         String lobbyName = request.getParameter("LOBBY_NAME");
@@ -298,7 +292,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * @param exclusion
      * @return
      */
-    @SuppressWarnings("unchecked")
 	private Map createFromConfigString(String configString, String exclusion) {
         try {
             Map bean = new HashMap();
@@ -323,7 +316,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * @param list
      * @return
      */
-    @SuppressWarnings("unchecked")
 	private String createFromList(List<Map> list) {
         try {
         	StringBuffer strbuf = new StringBuffer();
