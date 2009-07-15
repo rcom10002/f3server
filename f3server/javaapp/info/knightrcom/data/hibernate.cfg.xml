@@ -35,7 +35,6 @@
 	<property name="c3p0.testConnectionOnCheckin">true</property>
 	<property name="cache.use_second_level_cache">false</property>
 	<property name="cache.use_query_cache">false</property>
-	<property name="hibernate.dialect">info.knightrcom.web.model.CustomDialect</property>  
 	<mapping class="info.knightrcom.data.metadata.PlayerProfile" />
 	<mapping class="info.knightrcom.data.metadata.GameRecord" />
 	<mapping class="info.knightrcom.data.metadata.GameFeedback" />
