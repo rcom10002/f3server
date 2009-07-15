@@ -8,13 +8,13 @@ import info.knightrcom.web.model.EntityInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,8 +63,19 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
         List<Map> lobbyList = new ArrayList<Map>();
         for (String lobbyConfig : lobbyConfigArray) {
-        	Map lobby = createFromConfigString(lobbyConfig, null);
-        	lobbyList.add(lobby);
+        	Map map = createFromConfigString(lobbyConfig, null);
+        	
+        	// 获取房间数
+        	String[] roomConfigArray = config.getProperty("ROOM").split(";");
+            List<Map> roomList = new ArrayList<Map>();
+            for (String roomConfig : roomConfigArray) {
+            	Map room = createFromConfigString(roomConfig, null);
+            	if (map.get(GameConfigureConstant.LOBBY_ID).equals(room.get(GameConfigureConstant.ROOM_PARENT))) {
+            		roomList.add(room);
+            	}
+            }
+        	map.put(GameConfigureConstant.LOBBY_ROOMCOUNT, roomList.size());
+        	lobbyList.add(map);
         }
         EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
         info.setResult(F3SWebServiceResult.SUCCESS);
@@ -101,10 +112,10 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		lobby.remove(GameConfigureConstant.LOBBY_DISPLAYINDEX);
 	        		lobby.put(GameConfigureConstant.LOBBY_DISPLAYINDEX, lobbyDisplayIndex);
         		}
-        		if (lobby.containsKey(GameConfigureConstant.LOBBY_ROOMCOUNT)) {
-	        		lobby.remove(GameConfigureConstant.LOBBY_ROOMCOUNT);
-	        		lobby.put(GameConfigureConstant.LOBBY_ROOMCOUNT, lobbyRoomCount);
-        		}
+//        		if (lobby.containsKey(GameConfigureConstant.LOBBY_ROOMCOUNT)) {
+//	        		lobby.remove(GameConfigureConstant.LOBBY_ROOMCOUNT);
+//	        		lobby.put(GameConfigureConstant.LOBBY_ROOMCOUNT, lobbyRoomCount);
+//        		}
         	} 
         	lobbyList.add(lobby);
         }
@@ -115,16 +126,15 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         
         // 数据更新至DB
         try {
-        	// 删除原始记录
+        	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-    		HibernateSessionFactory.getSession().delete(criteria.list().get(0));
-    		// 插入新记录
+        	GlobalConfig globalConfig = (GlobalConfig) criteria.list().get(0);
+    		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
-			GlobalConfig globalconfig = new GlobalConfig();
-			globalconfig.setGlobalConfigId(UUID.randomUUID().toString());
-			globalconfig.setValue(outStream.toString("utf-8"));
-			HibernateSessionFactory.getSession().save(globalconfig);
+    		globalConfig.setValue(outStream.toString("utf-8"));
+    		globalConfig.setUpdateTime(new Date());
+			HibernateSessionFactory.getSession().save(globalConfig);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -263,15 +273,14 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         
         // 数据更新至DB
         try {
-        	// 删除原始记录
+        	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-    		HibernateSessionFactory.getSession().delete(criteria.list().get(0));
-    		// 插入新记录
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
-			GlobalConfig globalconfig = new GlobalConfig();
-			globalconfig.setGlobalConfigId(UUID.randomUUID().toString());
 			globalconfig.setValue(outStream.toString("utf-8"));
+			globalconfig.setUpdateTime(new Date());
 			HibernateSessionFactory.getSession().save(globalconfig);
         } catch (Exception e) {
 			e.printStackTrace();
@@ -310,7 +319,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
             return null;
         }
     }
-    
+	
     /**
      * LIST -> ConfigString
      * @param list
