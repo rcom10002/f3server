@@ -21,7 +21,6 @@ import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.mina.core.session.IoSession;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 
 import com.thoughtworks.xstream.XStream;
@@ -174,22 +173,6 @@ public class ModelUtil {
 		}
     }
 
-    /**
-     * 从数据库中删除配置文件内容
-     * 
-     */
-    public static void deleteAllGlobalConfig() {
-    	try {
-            HibernateSessionFactory.getSession().beginTransaction();
-    		Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-    		HibernateSessionFactory.getSession().delete(criteria.list().get(0));
-    		HibernateSessionFactory.getSession().getTransaction().commit();
-        } catch (Exception e) {
-            HibernateSessionFactory.getSession().getTransaction().rollback();
-            throw new RuntimeException(e);
-        }
-    }
-    
     /**
      * 将XML格式配置信息保存到数据库中
      * 
