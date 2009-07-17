@@ -3,11 +3,14 @@ package info.knightrcom;
 import info.knightrcom.web.service.F3SWebService;
 import info.knightrcom.web.service.F3SWebServiceProxy;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.security.AccessController;
 import java.util.ArrayList;
@@ -93,17 +96,49 @@ public class F3Servlet extends HttpServlet {
      */
     public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 输出流编码设置
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("text/xml; charset=utf-8");
-        PrintWriter out = response.getWriter();
+    	PrintWriter out = null;
         try {
-            F3SWebServiceProxy.doService(request, response);
+            response.setCharacterEncoding("utf-8");
+            request.setCharacterEncoding("utf-8");
+            if (request.getRequestURI().matches("^.*html.f3s$")) {
+            	// html文件请求
+                response.setContentType("text/html; charset=utf-8");
+                // out = response.getWriter();
+                String deletePattern = "^/.*/|.{4}$";
+                String forwardURI = request.getRequestURI().replaceAll(deletePattern, "");
+                request.getRequestDispatcher(forwardURI).forward(request, response);
+            } else {
+            	// f3s服务
+                response.setContentType("text/xml; charset=utf-8");
+                out = response.getWriter();
+                F3SWebServiceProxy.doService(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
+        } finally {
+        	if (out != null) {
+        		out.close();
+        	}
         }
-        out.flush();
-        out.close();
+    }
+
+    /**
+     * @param relativeUrl
+     * @return
+     * @throws Exception
+     */
+    public String getStaticText(String relativeUrl) throws Exception {
+        URL staticTextConnection = new URL(relativeUrl);
+        URLConnection yahooConnection = staticTextConnection.openConnection();
+        BufferedReader reader =  new BufferedReader(new InputStreamReader(yahooConnection.getInputStream()));
+        String inputLine;
+        StringBuilder builder = new StringBuilder();
+        while ((inputLine = reader.readLine()) != null) {
+        	builder.append(inputLine);
+        }
+        reader.close();
+        return builder.toString();
     }
 
     /**
