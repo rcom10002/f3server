@@ -1,20 +1,203 @@
 package info.knightrcom.model.game.pushdownwin;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.criterion.Restrictions;
+
+import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.GameRecord;
+import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.data.metadata.PlayerProfileDAO;
+import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.model.game.Game;
+import info.knightrcom.model.global.Player;
 
 /**
  * 推到胡
  */
 public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 
+    /** 番分 */
+    private int multipleMark;
+
     /**
      * 玩家个数
      */
     public static final int PLAYER_COGAME_NUMBER = 4;
-	
+
 	@Override
 	public void persistScore() {
+        log.debug("计算积分 START");
+        // 取得玩家以及游戏等信息
+        List<Player> players = this.getPlayers();
+        String winnerNumber = getWinnerNumbers().substring(0, 1);
+        boolean isFinalSettingPlayerWon = this.getSetting().getPlayerNumber().equals(winnerNumber);
+        Iterator<Player> itr = players.iterator();
+        // 创建游戏记录
+        GameRecord gameRecord = new GameRecord();
+        gameRecord.setGameId(UUID.randomUUID().toString());
+        gameRecord.setGameId(this.getId());
+        gameRecord.setGameType(PushdownWinGame.class.getSimpleName());
+        gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        gameRecord.setWinnerNumbers(this.getWinnerNumbers());
+        // TODO DROP THIS LINE => gameRecord.setScore(score);
+        // THE FOLLOWING LINES WERE SET IN THE LAST LINE OF EACH PRIVATE METHOD 
+        // gameRecord.setPlayers();
+        // gameRecord.setSystemScore(systemScore);
+        gameRecord.setRecord(this.getGameRecord());
+        // 根据当前游戏规则进行分数计算
+        if (PushdownWinGameSetting.NARROW_VICTORY.equals(this.getSetting())) {
+            // 自摸
+            persistNarrowWinScore(itr, gameRecord);
+        } else {
+            // 点泡
+            persistClearWinScore(itr, gameRecord, false);
+        }
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
+        log.debug("计算积分 END");
 	}
+
+    /**
+     * 计算非独牌时的游戏积分
+     * 
+     * @param itr
+     * @param gameRecord
+     */
+    private void persistNarrowWinScore(Iterator<Player> itr, GameRecord gameRecord) {
+        // 不独
+        int gameMark = this.getGameMark();
+        String playerIds = "";
+        while (itr.hasNext()) {
+            // 取得玩家信息
+            Player player = itr.next();
+            String playerId = player.getId();
+            PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
+            int playerPlace = getWinnerNumbers().replace("~", "").indexOf(player.getCurrentNumber()) + 1;
+            playerIds += player.getCurrentNumber() + "~" + playerId + "~";
+            // 假设此局的大小为“X”，如果没有玩家叫牌，那么
+            // 第一个出完牌的玩家赢2X，第二位出完牌的玩家赢X，第三为出完牌的玩家输X，最后一 位玩家输2X
+            int resultScore = 0;
+            int systemScore = 0;
+            switch (playerPlace) {
+            case 1:
+                // 第一名
+                resultScore = 2 * gameMark;
+                break;
+            case 2:
+                // 第二名
+                resultScore = 1 * gameMark;
+                break;
+            case 3:
+                // 第三名
+                resultScore = -1 * gameMark;
+                break;
+            case 4:
+                // 第四名
+                resultScore = -2 * gameMark;
+                break;
+            default:
+                break;
+            }
+            // 保存玩家得分信息
+            PlayerScore playerScore = new PlayerScore();
+            playerScore.setScoreId(UUID.randomUUID().toString());
+            playerScore.setProfileId(playerProfile.getProfileId());
+            playerScore.setGameId(gameRecord.getGameId());
+            playerScore.setUserId(playerProfile.getUserId());
+            playerScore.setCurrentNumber(playerProfile.getNumber());
+            playerScore.setScore(resultScore);
+            playerScore.setSystemScore(systemScore);
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            HibernateSessionFactory.getSession().merge(playerProfile);
+            HibernateSessionFactory.getSession().merge(playerScore);
+            // 保存内存模型玩家得分信息
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+        }
+        gameRecord.setPlayers(playerIds);
+    }
+
+    /**
+     * 计算独牌时的游戏积分
+     * 
+     * @param itr
+     * @param gameRecord
+     * @param isFinalSettingPlayerWon
+     */
+    private void persistClearWinScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
+        // 独牌
+        int gameMark = this.getGameMark();
+        String playerIds = "";
+        // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到3X+3X+3X，反之叫牌者输9X
+        while (itr.hasNext()) {
+            // 取得玩家信息
+            Player player = itr.next();
+            String playerId = player.getId();
+            PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
+            playerIds += player.getCurrentNumber() + "~" + playerId + "~";
+            // 基本分
+            
+            // 每番分
+            int resultScore = 0;
+            int systemScore = 0;
+            if (isFinalSettingPlayerWon) {
+                // 独牌成功
+                if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
+                    // 为独牌玩家设置积分
+                    resultScore = 1 * 3 * 3 * gameMark;
+                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                } else {
+                    // 为其他玩家设置积分
+                    resultScore = -1 * 3 * gameMark;
+                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                }
+            } else {
+                // 独牌失败
+                if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
+                    // 为其他玩家设置积分
+                    resultScore = 1 * 3 * gameMark;
+                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                } else {
+                    // 为独牌玩家设置积分
+                    resultScore = -1 * 3 * 3 * gameMark;
+                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                }
+            }
+            // 保存玩家得分信息
+            PlayerScore playerScore = new PlayerScore();
+            playerScore.setScoreId(UUID.randomUUID().toString());
+            playerScore.setProfileId(playerProfile.getProfileId());
+            playerScore.setGameId(gameRecord.getGameId());
+            playerScore.setUserId(playerProfile.getUserId());
+            playerScore.setCurrentNumber(playerProfile.getNumber());
+            playerScore.setScore(resultScore);
+            playerScore.setSystemScore(systemScore);
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            HibernateSessionFactory.getSession().merge(playerProfile);
+            HibernateSessionFactory.getSession().merge(playerScore);
+            // 保存内存模型玩家得分信息
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+        }
+        gameRecord.setPlayers(playerIds);
+    }
+
+    /**
+     * @return the multipleMark
+     */
+    public int getMultipleMark() {
+        return multipleMark;
+    }
+
+    /**
+     * @param multipleMark the multipleMark to set
+     */
+    public void setMultipleMark(int multipleMark) {
+        this.multipleMark = multipleMark;
+    }
 
 //	　　88番
 //	　　1．大四喜　由4副风刻（杠）组成的和牌。不计圈风刻、门风刻、三风刻、碰碰和。

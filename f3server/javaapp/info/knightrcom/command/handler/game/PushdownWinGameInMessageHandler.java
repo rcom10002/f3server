@@ -111,43 +111,10 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
 
     @Override
     public void GAME_SETTING(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
-//    	// TODO REMOVE THIS FUNCTION FOR NO QUIREMENTS
-//        // 在游戏开始前进行本次设置[独牌|不独|天独]
-//        Player currentPlayer = ModelUtil.getPlayer(session);
-//        PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-//        List<Player> players = game.getPlayers();
-//        synchronized (players) {
-//            Iterator<Player> itr = players.iterator();
-//            while (itr.hasNext()) {
-//                Player player = itr.next();
-//                if (currentPlayer.equals(player)) {
-//                    continue;
-//                }
-//                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
-//                echoMessage.setResult(GAME_SETTING_UPDATE);
-//                echoMessage.setContent(message.getContent());
-//                sessionWrite(player.getIosession(), echoMessage);
-//            }
-//            // 记录当前牌序
-//            game.appendGameRecord(message.getContent());
-//        }
     }
 
     @Override
     public void GAME_SETTING_FINISH(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
-//    	// TODO REMOVE THIS FUNCTION FOR NO QUIREMENTS
-//        // 玩家游戏设置结束
-//        Player currentPlayer = ModelUtil.getPlayer(session);
-//        PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-//        String[] results = message.getContent().split("~");
-//        // 游戏最终设置的玩家序号，首次发牌玩家序号
-//        String playerNumber = results[0];
-//        // 当前游戏设置
-//        int settingValue = Integer.parseInt(results[1]); 
-//        PushdownWinGameSetting setting = PushdownWinGameSetting.fromOrdinal(settingValue);
-//        setting.setPlayerNumber(playerNumber);
-//        game.setSetting(setting);
-//        log.debug(setting);
     }
 
     @Override
@@ -190,31 +157,23 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         // 消息格式：无内容
         if (StringHelper.isEmpty(message.getContent())) {
             // 流局，扑
-//            synchronized (players) {
-//                while (itr.hasNext()) {
-//                    Player player = itr.next();
-//                    echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
-//                    echoMessage.setResult(GAME_OVER);
-//                    echoMessage.setContent(message.getContent());
-//                    sessionWrite(player.getIosession(), echoMessage);
-//                }
-//            }
         }
-        // 消息格式：胜者~牌~败者~是否自摸
+        // 消息格式：1.胜者~牌~败者(胡别的玩家牌) 2.胜者~牌(自摸) 3.无消息内容(流局，扑)
         String[] results = message.getContent().split("~");
         List<Player> players = game.getPlayers();
         // 记录当前牌序
         game.appendGameRecord(message.getContent());
         synchronized (players) {
             // 设置名次并计算积分
-        	int gameWinSetting = new Integer(results[2]).intValue();
-        	if (PushdownWinGameSetting.CLEAR_VICTORY.equals(PushdownWinGameSetting.fromOrdinal(gameWinSetting))) {
+        	if (results.length == 3) {
                 // 自摸
         		game.addWinnerNumber(results[0]);
+                game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
         	} else {
         		// 点炮
                 game.addWinnerNumber(results[0]);
                 game.addWinnerNumber(results[2]);
+                game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
         	}
             // 保存游戏积分
             game.persistScore();
