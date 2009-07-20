@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -63,13 +64,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
         List<Map> lobbyList = new ArrayList<Map>();
         for (String lobbyConfig : lobbyConfigArray) {
-        	Map map = createFromConfigString(lobbyConfig, null);
+        	Map map = readFromConfigString(lobbyConfig, null);
         	
         	// 获取房间数
         	String[] roomConfigArray = config.getProperty("ROOM").split(";");
             List<Map> roomList = new ArrayList<Map>();
             for (String roomConfig : roomConfigArray) {
-            	Map room = createFromConfigString(roomConfig, null);
+            	Map room = readFromConfigString(roomConfig, null);
             	if (map.get(GameConfigureConstant.LOBBY_ID).equals(room.get(GameConfigureConstant.ROOM_PARENT))) {
             		roomList.add(room);
             	}
@@ -102,7 +103,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
         List<Map> lobbyList = new ArrayList<Map>();
         for (String lobbyConfig : lobbyConfigArray) {
-        	Map lobby = createFromConfigString(lobbyConfig, null);
+        	Map lobby = saveFromConfigString(lobbyConfig, null);
         	if (lobby.get(GameConfigureConstant.LOBBY_ID).equals(lobbyId)) {
         		if (lobby.containsKey(GameConfigureConstant.LOBBY_NAME)) {
 	        		lobby.remove(GameConfigureConstant.LOBBY_NAME);
@@ -153,7 +154,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         List<Map> roomList = new ArrayList<Map>();
         for (String roomConfig : roomConfigArray) {
-        	Map room = createFromConfigString(roomConfig, null);
+        	Map room = readFromConfigString(roomConfig, null);
         	switch (Integer.valueOf(gameType)) {
 			case 0:
 				// 红五
@@ -243,7 +244,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         List<Map> roomList = new ArrayList<Map>();
         for (String roomConfig : roomConfigArray) {
-        	Map room = createFromConfigString(roomConfig, null);
+        	Map room = saveFromConfigString(roomConfig, null);
         	// 根据游戏类型及游戏ID各自设置其游戏参数
 			if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
         			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
@@ -289,21 +290,46 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
     
     
     
-    
+	/**
+	 * Read Status
+     * ConfigString -> Map
+     * @param configString
+     * @param exclusion
+     * @return
+     */
+	private Map readFromConfigString(String configString, String exclusion) {
+        try {
+            Map bean = new HashMap();
+            String[] configProperties = configString.split(",");
+            for (String currentConfig : configProperties) {
+                String propName = currentConfig.split("=")[0];
+                String propValue = currentConfig.split("=")[1];
+                if (exclusion != null && exclusion.equals(propName)) {
+                    continue;
+                }
+                bean.put(propName, propValue);
+            }
+            return bean;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     
     
     
     
     
     /**
+     * Save Status
      * ConfigString -> Map
      * @param configString
      * @param exclusion
      * @return
      */
-	private Map createFromConfigString(String configString, String exclusion) {
+	private Map saveFromConfigString(String configString, String exclusion) {
         try {
-            Map bean = new HashMap();
+            Map bean = new LinkedHashMap();
             String[] configProperties = configString.split(",");
             for (String currentConfig : configProperties) {
                 String propName = currentConfig.split("=")[0];
@@ -346,7 +372,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	}
         	String result = strbuf.toString();
         	if (result != null && result.length() > 0) {
-        		return result.substring(0, result.length() - 1);
+//        		return result.substring(0, result.length() - 1);
+        		result = result.replaceAll(";$", "");
         	}
         	return result;
         } catch (Exception e) {
