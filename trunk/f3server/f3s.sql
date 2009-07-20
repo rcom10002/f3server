@@ -10,6 +10,8 @@ drop table if exists GAME_RECORD;
 
 drop table if exists GLOBAL_CONFIG;
 
+drop table if exists LOG_INFO;
+
 drop table if exists PERIODLY_SUM;
 
 drop table if exists PLAYER_PROFILE;
@@ -61,6 +63,24 @@ create table GLOBAL_CONFIG
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (GLOBAL_CONFIG_ID)
+);
+
+create table LOG_INFO
+(
+   LOG_ID               VARCHAR(100) not null,
+   NUMBER               VARCHAR(100),
+   CAPTION              VARCHAR(100),
+   KEY_CAUSE1           VARCHAR(100),
+   KEY_CAUSE2           VARCHAR(100),
+   KEY_CAUSE3           VARCHAR(100),
+   INFO                 TEXT,
+   TYPE                 VARCHAR(100),
+   STATUS               TINYINT,
+   CREATE_TIME          DATETIME,
+   CREATE_BY            VARCHAR(100),
+   UPDATE_TIME          DATETIME,
+   UPDATE_BY            VARCHAR(100),
+   primary key (LOG_ID)
 );
 
 create table PERIODLY_SUM
