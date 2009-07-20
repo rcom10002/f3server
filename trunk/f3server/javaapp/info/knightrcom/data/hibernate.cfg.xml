@@ -41,6 +41,7 @@
 	<mapping class="info.knightrcom.data.metadata.GlobalConfig" />
 	<mapping class="info.knightrcom.data.metadata.PeriodlySum" />
 	<mapping class="info.knightrcom.data.metadata.PlayerScore" />
+	<mapping class="info.knightrcom.data.metadata.LogInfo" />
 	<mapping
 		resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
 	<mapping
