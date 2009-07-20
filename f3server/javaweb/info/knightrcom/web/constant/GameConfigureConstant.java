@@ -23,6 +23,8 @@ public class GameConfigureConstant {
 
 	public static final String ROOM_NAME = "name";
 
+	public static final String ROOM_DISPLAY_INDEX = "displayIndex";
+
 	public static final String ROOM_ROUND_MARK = "roundMark";
 
 	public static final String ROOM_MIN_MARKS = "minMarks";
