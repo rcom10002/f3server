@@ -91,7 +91,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String lobbyId = request.getParameter("LOBBY_ID");
         String lobbyName = request.getParameter("LOBBY_NAME");
         String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
-        String lobbyRoomCount = request.getParameter("LOBBY_ROOMCOUNT");
+//        String lobbyRoomCount = request.getParameter("LOBBY_ROOMCOUNT");
         // 根据LOBBY—ID读取数据源
         Properties config = ModelUtil.readProperties();
         
@@ -199,21 +199,41 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return toXML(info, getAliasTypes());
     }
 
+	public String CREATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	createGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
+    }
+	
 	public String UPDATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	updateGameRoomConfigure(request);
         return READ_GAME_CONFIGURE(request, response);
     }
 
+	public String CREATE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	createGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
+    }
+	
     public String UPDATE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	updateGameRoomConfigure(request);
         return READ_GAME_CONFIGURE(request, response);
     }
 
+    public String CREATE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	createGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
+    }
+    
     public String UPDATE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	updateGameRoomConfigure(request);
         return READ_GAME_CONFIGURE(request, response);
     }
 
+    public String CREATE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+    	createGameRoomConfigure(request);
+        return READ_GAME_CONFIGURE(request, response);
+    }
+    
     public String UPDATE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	updateGameRoomConfigure(request);
         return READ_GAME_CONFIGURE(request, response);
@@ -231,6 +251,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String lobbyName = request.getParameter("LOBBY_NAME");
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
+        String displayIndex = request.getParameter("DISPLAY_INDEX");
         String roundMark = request.getParameter("ROUND_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // 根据LOBBY—ID读取数据源
@@ -256,6 +277,10 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		room.remove(GameConfigureConstant.ROOM_NAME);
 	        		room.put(GameConfigureConstant.ROOM_NAME, gameName);
         		}
+        		if (room.containsKey(GameConfigureConstant.ROOM_DISPLAY_INDEX)) {
+	        		room.remove(GameConfigureConstant.ROOM_DISPLAY_INDEX);
+	        		room.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, displayIndex);
+        		}
         		if (room.containsKey(GameConfigureConstant.ROOM_ROUND_MARK)) {
 	        		room.remove(GameConfigureConstant.ROOM_ROUND_MARK);
 	        		room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
@@ -267,6 +292,66 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	}
         	roomList.add(room);
         }
+        // 更新后的新值重构成configString
+        properties.setProperty("ROOM", createFromList(roomList));
+        
+        properties.setProperty("MAX_PLAYER_NUMBER", config.getProperty("MAX_PLAYER_NUMBER"));
+        
+        // 数据更新至DB
+        try {
+        	// 获取原始记录
+        	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		// 更新记录
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    		properties.storeToXML(outStream, null);
+			globalconfig.setValue(outStream.toString("utf-8"));
+			globalconfig.setUpdateTime(new Date());
+			HibernateSessionFactory.getSession().save(globalconfig);
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+	
+	/**
+     * 通用四种游戏的参数设置
+     * @param request
+     */
+	public void createGameRoomConfigure(HttpServletRequest request) {
+    	String lobbyId = request.getParameter("LOBBY_ID");
+        String gameId = request.getParameter("GAME_ID");
+        String gameName = request.getParameter("GAME_NAME");
+        String displayIndex = request.getParameter("DISPLAY_INDEX");
+        String roundMark = request.getParameter("ROUND_MARK");
+        String minMarks = request.getParameter("MIN_MARKS");
+        // 根据LOBBY—ID读取数据源
+        Properties config = ModelUtil.readProperties();
+        
+        // 重构Property
+        Properties properties = new Properties();
+        properties.setProperty("PLATFORM", config.getProperty("PLATFORM"));
+        properties.setProperty("LOBBY", config.getProperty("LOBBY"));
+        // 移除旧值更新新值
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        List<Map> roomList = new ArrayList<Map>();
+        for (String roomConfig : roomConfigArray) {
+        	Map room = saveFromConfigString(roomConfig, null);
+        	// 根据游戏类型及游戏ID各自设置其游戏参数
+			if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+        			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+				// id 相同，禁止新增
+				return;
+        	}
+        	roomList.add(room);
+        }
+        Map room = new LinkedHashMap();
+        room.put(GameConfigureConstant.ROOM_PARENT, lobbyId);
+        room.put(GameConfigureConstant.ROOM_ID, gameId);
+        room.put(GameConfigureConstant.ROOM_NAME, gameName);
+        room.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, displayIndex);
+        room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
+        room.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
+        roomList.add(room);
         // 更新后的新值重构成configString
         properties.setProperty("ROOM", createFromList(roomList));
         
