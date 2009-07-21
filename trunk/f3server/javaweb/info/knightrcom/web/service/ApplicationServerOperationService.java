@@ -55,8 +55,11 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 		OperateExecutePlan executePlan = new OperateExecutePlan() {
 			@Override
 			public Object tryPart() throws Exception {
+				if (F3Server.isRunning()) {
+					return newEntityInfo(F3SWebServiceResult.UPDATE_WARNING);
+				}
 				F3Server.startServer(null);
-				return null;
+				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
         return toXML((EntityInfo<Object>)executePlan.execute());
@@ -75,8 +78,11 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 		OperateExecutePlan executePlan = new OperateExecutePlan() {
 			@Override
 			public Object tryPart() throws Exception {
+				if (!F3Server.isRunning()) {
+					return newEntityInfo(F3SWebServiceResult.UPDATE_WARNING);
+				}
 				F3Server.shutdownServer();
-				return null;
+				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
         return toXML((EntityInfo<Object>)executePlan.execute());
@@ -97,7 +103,7 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 			public Object tryPart() throws Exception {
 				F3Server.shutdownServer();
 				F3Server.startServer(null);
-				return null;
+				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
         return toXML((EntityInfo<Object>)executePlan.execute());

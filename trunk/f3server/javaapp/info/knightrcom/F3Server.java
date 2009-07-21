@@ -57,6 +57,8 @@ public class F3Server {
 
     public static final int MAX_CONNECTION_LIMIT = 1000;
 
+    public static boolean RUNNING = false;
+
     /**
      * 启动应用服务器
      * 
@@ -68,11 +70,24 @@ public class F3Server {
     }
 
     /**
+     * 判断服务器是否处于运行状态
+     * 
+     * @return
+     */
+    public static boolean isRunning() {
+    	return RUNNING;
+    }
+
+    /**
      * 启动服务器
      * 
      * @param args 启动参数
      */
     public static void startServer(String[] args) throws Exception {
+
+    	if (RUNNING) {
+    		return;
+    	}
 
         // Hibernate初始化
         HibernateSessionFactory.init();
@@ -103,6 +118,8 @@ public class F3Server {
         acceptor.bind(new InetSocketAddress(PORT));
         log.info("LISTENING ON PORT " + PORT);
 
+        log.info("F3S SERVER HAS STARTED!");
+        RUNNING = true;
     }
 
     /**
@@ -110,14 +127,18 @@ public class F3Server {
      */
     public static void shutdownServer() {
         try {
+        	if (!RUNNING) {
+        		return;
+        	}
             acceptor.unbind();
-            log.info("F3S Server has shutdown");
-            System.exit(0);
+            acceptor.dispose();
+            log.info("F3S SERVER HAS SHUTDOWN!");
+            RUNNING = false;
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
     }
-
+    
     private static void addSSLSupport(DefaultIoFilterChainBuilder chain) throws Exception {
         SslFilter sslFilter = new SslFilter(BogusSslContextFactory.getInstance(true));
         chain.addLast("sslFilter", sslFilter);
