@@ -159,6 +159,11 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
             // 流局，扑
         }
         // 消息格式：1.胜者~牌~败者(胡别的玩家牌) 2.胜者~牌(自摸) 3.无消息内容(流局，扑)
+        if (StringHelper.isEmpty(message.getContent()) || "null".equalsIgnoreCase(message.getContent())) {
+            // 流局
+            // FIXME persist the record and destory game instance
+            return;
+        }
         String[] results = message.getContent().split("~");
         List<Player> players = game.getPlayers();
         // 记录当前牌序
@@ -196,6 +201,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
     }
 
     @Override
+    @HibernateTransactionSupport
     public void GAME_PLAYER_LOST_CONNECTION(IoSession session, PushdownWinGameMessage message, EchoMessage echoMessage) throws Exception {
         // 通知其他玩家并为其他玩家分配分数
         Player player = ModelUtil.getPlayer(session);
