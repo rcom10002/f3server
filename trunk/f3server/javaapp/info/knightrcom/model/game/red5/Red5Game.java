@@ -118,10 +118,10 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
-            playerScore.setScore(resultScore);
+            playerScore.setCurrentNumber(player.getCurrentNumber());
+            playerScore.setScore(resultScore); // 玩家当前得分
             playerScore.setSystemScore(systemScore);
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总分数
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -180,10 +180,10 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
-            playerScore.setScore(resultScore);
+            playerScore.setCurrentNumber(player.getCurrentNumber());
+            playerScore.setScore(resultScore); // 玩家当前得分
             playerScore.setSystemScore(systemScore);
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -241,10 +241,10 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
-            playerScore.setScore(resultScore);
+            playerScore.setCurrentNumber(player.getCurrentNumber());
+            playerScore.setScore(resultScore); // 玩家当前得分
             playerScore.setSystemScore(systemScore);
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -302,10 +302,10 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
-            playerScore.setScore(resultScore);
+            playerScore.setCurrentNumber(player.getCurrentNumber());
+            playerScore.setScore(resultScore); // 玩家当前得分
             playerScore.setSystemScore(systemScore);
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue());
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
