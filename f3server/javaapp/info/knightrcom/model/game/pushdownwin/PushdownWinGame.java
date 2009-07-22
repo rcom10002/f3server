@@ -2,6 +2,7 @@ package info.knightrcom.model.game.pushdownwin;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.hibernate.criterion.Restrictions;
@@ -32,8 +33,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         log.debug("计算积分 START");
         // 取得玩家以及游戏等信息
         List<Player> players = this.getPlayers();
-        String winnerNumber = getWinnerNumbers().substring(0, 1);
-        boolean isFinalSettingPlayerWon = this.getSetting().getPlayerNumber().equals(winnerNumber);
+        // boolean isFinalSettingPlayerWon = this.getSetting().getPlayerNumber().equals(winnerNumber);
         Iterator<Player> itr = players.iterator();
         // 创建游戏记录
         GameRecord gameRecord = new GameRecord();
@@ -50,24 +50,34 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         // 根据当前游戏规则进行分数计算
         if (PushdownWinGameSetting.NARROW_VICTORY.equals(this.getSetting())) {
             // 自摸
-            persistNarrowWinScore(itr, gameRecord);
+            String winnerNumber = getWinnerNumbers().substring(0, 1);
+            String loserNumber = getWinnerNumbers().substring(2, 3);
+            persistNarrowWinScore(itr, gameRecord, winnerNumber, loserNumber);
         } else {
             // 点泡
-            persistClearWinScore(itr, gameRecord, false);
+            persistClearWinScore(itr, gameRecord, getWinnerNumbers());
         }
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
 	}
+48.2     39.4 13940996048
+61       30.5 15940910189
+35660141 大连鹏宇咨询
 
+W1,NORTH,T9,W9,T8,NORTH,T3,B9,WHITE,T1,W7,EAST,B7~WHITE,GREEN,W3,T2,RED,B2,RED,T3,T5,B1,W2,B8,B9~B6,W2,B5,B5,W7,T7,T6,T3,T9,W9,B2,W6,B5~T8,T7,RED,T3,WEST,W3,B6,B2,SOUTH,B3,EAST,B4,B4~W8,T5,B1,T4,T8,B1,WHITE,W3,SOUTH,WEST,W5,W2,B2,T1,B8,W9,NORTH,RED,W7,W1,B8,T6,B6,B5,B9,T4,W7,T5,T6,WEST,NORTH,T6,W1,T8,T2,SOUTH,B4,W4,B3,B8,T7,W9,W4,T9,T1,B9,EAST,T7,WEST,W8,B7,SOUTH,T4,B3,GREEN,W6,B3,W8,W6,B7,W8,W6,B6,W5,B1,T2,W3,B4,W5,GREEN,T2,W2,EAST,T9,B7,W4,WHITE,W4,GREEN,T4,T1,T5,W5,W1;1~W8;1~EAST~2;2~T5;2~GREEN~3;3~B1;3~T3~4;4~T4;4~RED~1;1~T8;1~WHITE~2;2~B1;2~WHITE~3;3~WHITE;3~WHITE~4;4~W3;4~EAST~1;1~SOUTH;1~SOUTH~2;2~WEST;2~WEST~3;3~W5;3~W2~4;4~W2;4~SOUTH~1;1~B2;1~W1~2;2~T1;2~B2~3;3~B8;3~W9~4;4~W9;4~WEST~1;1~NORTH;1~B2~2;2~RED;2~B9~3;3~W7;3~B1~4;4~W1;4~W9~1;1~B8;1~T1~2;2~T6;2~B8~3;3~B6;3~B5~4;4~B5;4~W3~1;1~B9;1~B9~2;2~T4;2~T5~3;3~W7;3~B2~4;4~T5;4~T7~1;1~T6;1~T3~2;2~WEST;2~WEST~3;3~NORTH;3~NORTH~4;4~T6;4~T3~1;1~W1;1~W1~2;2~W1~1;
+
+2-1
     /**
-     * 计算非独牌时的游戏积分
+     * 计算点炮时的游戏积分
      * 
      * @param itr
      * @param gameRecord
+     * @param winnerNumber
+     * @param loserNumber
      */
-    private void persistNarrowWinScore(Iterator<Player> itr, GameRecord gameRecord) {
-        // 不独
+    private void persistNarrowWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber, String loserNumber) {
+        // 点炮
         int gameMark = this.getGameMark();
         String playerIds = "";
         while (itr.hasNext()) {
@@ -121,14 +131,14 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
     }
 
     /**
-     * 计算独牌时的游戏积分
+     * 计算自摸时的游戏积分
      * 
      * @param itr
      * @param gameRecord
-     * @param isFinalSettingPlayerWon
+     * @param winnerNumber
      */
-    private void persistClearWinScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
-        // 独牌
+    private void persistClearWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber) {
+        // 自摸
         int gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到3X+3X+3X，反之叫牌者输9X
@@ -140,31 +150,20 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
             // 基本分
             
-            // 每番分
+            // 取得底分与每番分
+            final int basicScore = 20;
+            final int pointScore = 10;
             int resultScore = 0;
             int systemScore = 0;
-            if (isFinalSettingPlayerWon) {
-                // 独牌成功
-                if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
-                    // 为独牌玩家设置积分
-                    resultScore = 1 * 3 * 3 * gameMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
-                } else {
-                    // 为其他玩家设置积分
-                    resultScore = -1 * 3 * gameMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
-                }
+            int points = new Random().nextInt(10);
+            // 计算番数
+            resultScore = basicScore + pointScore * points;
+            if (winnerNumber.equals(player.getCurrentNumber())) {
+                // 为自摸玩家设置积分
+                playerProfile.setCurrentScore(resultScore);
             } else {
-                // 独牌失败
-                if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
-                    // 为其他玩家设置积分
-                    resultScore = 1 * 3 * gameMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
-                } else {
-                    // 为独牌玩家设置积分
-                    resultScore = -1 * 3 * 3 * gameMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
-                }
+                // 为其他玩家设置积分
+                playerProfile.setCurrentScore(-1 * resultScore);
             }
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();

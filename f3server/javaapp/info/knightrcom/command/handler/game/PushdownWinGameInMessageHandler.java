@@ -170,15 +170,15 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         game.appendGameRecord(message.getContent());
         synchronized (players) {
             // 设置名次并计算积分
-        	if (results.length == 3) {
+        	if (results.length == 2) {
                 // 自摸
         		game.addWinnerNumber(results[0]);
-                game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
+                game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
         	} else {
         		// 点炮
                 game.addWinnerNumber(results[0]);
                 game.addWinnerNumber(results[2]);
-                game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
+                game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
         	}
             // 保存游戏积分
             game.persistScore();
