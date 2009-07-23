@@ -32,6 +32,8 @@ public class PlayerScoreDAO extends BaseHibernateDAO {
 
     public static final String CURRENT_NUMBER = "currentNumber";
 
+    public static final String ORG_SCORE = "orgScore";
+
     public static final String SCORE = "score";
 
     public static final String SYSTEM_SCORE = "systemScore";
@@ -114,6 +116,10 @@ public class PlayerScoreDAO extends BaseHibernateDAO {
 
     public List<PlayerScore> findByCurrentNumber(Object currentNumber) {
         return findByProperty(CURRENT_NUMBER, currentNumber);
+    }
+
+    public List<PlayerScore> findByOrgScore(Object orgScore) {
+        return findByProperty(ORG_SCORE, orgScore);
     }
 
     public List<PlayerScore> findByScore(Object score) {
