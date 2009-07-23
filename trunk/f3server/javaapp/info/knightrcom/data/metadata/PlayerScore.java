@@ -27,6 +27,8 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
 
     private String currentNumber;
 
+    private Integer orgScore;
+
     private Integer score;
 
     private Integer systemScore;
@@ -53,12 +55,13 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** full constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer score, Integer systemScore, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer orgScore, Integer score, Integer systemScore, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
         this.userId = userId;
         this.currentNumber = currentNumber;
+        this.orgScore = orgScore;
         this.score = score;
         this.systemScore = systemScore;
         this.status = status;
@@ -113,6 +116,15 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
 
     public void setCurrentNumber(String currentNumber) {
         this.currentNumber = currentNumber;
+    }
+
+    @Column(name = "ORG_SCORE")
+    public Integer getOrgScore() {
+        return this.orgScore;
+    }
+
+    public void setOrgScore(Integer orgScore) {
+        this.orgScore = orgScore;
     }
 
     @Column(name = "SCORE")
