@@ -3,6 +3,7 @@ drop database if exists f3s;
 create database f3s CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 use f3s;
+
 drop table if exists GAME_FEEDBACK;
 
 drop table if exists GAME_RECORD;
@@ -86,7 +87,6 @@ create table PERIODLY_SUM
 (
    PERIODLY_ID          VARCHAR(100) not null,
    PROFILE_ID           VARCHAR(100),
-   GAME_ID              VARCHAR(100),
    NUMBER               VARCHAR(100),
    START_DATE           DATE,
    END_DATE             DATE,
@@ -127,6 +127,7 @@ create table PLAYER_SCORE
    GAME_ID              VARCHAR(100),
    USER_ID              VARCHAR(100),
    CURRENT_NUMBER       VARCHAR(1),
+   ORG_SCORE            INT,
    SCORE                INT,
    SYSTEM_SCORE         INT,
    STATUS               TINYINT,
@@ -142,9 +143,6 @@ alter table GAME_FEEDBACK add constraint FK_GAME_FEEDBACK_TO_GAME_RECORD foreign
 
 alter table PERIODLY_SUM add constraint FK_PERIODLY_SUM_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
       references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
-
-alter table PERIODLY_SUM add constraint FK_PERIODLY_SUM_TO_GAME_RECORD foreign key (GAME_ID)
-      references GAME_RECORD (GAME_ID) on delete restrict on update restrict;
 
 alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
       references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
