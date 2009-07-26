@@ -7,6 +7,7 @@ import info.knightrcom.model.global.Lobby;
 import info.knightrcom.model.global.Platform;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
+import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -212,6 +213,7 @@ public class ModelUtil {
 			
 			GlobalConfig config = new GlobalConfig();
 			config.setGlobalConfigId(UUID.randomUUID().toString());
+			config.setName(GameConfigureConstant.GLOBAL_CONFIG_NAME);
 			config.setValue(outStream.toString("utf-8"));
 			
 			HibernateSessionFactory.getSession().save(config);

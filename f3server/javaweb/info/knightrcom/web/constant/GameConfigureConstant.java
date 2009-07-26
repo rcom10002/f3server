@@ -1,6 +1,8 @@
 package info.knightrcom.web.constant;
 
 public class GameConfigureConstant {
+	public static final String GLOBAL_CONFIG_NAME = "GlobalConfig";
+	
 	public static final String PLAYFORM = "PLAYFORM";
 	
 	public static final String LOBBY = "LOBBY";
