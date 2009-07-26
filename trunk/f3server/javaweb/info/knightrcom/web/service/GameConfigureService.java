@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
@@ -54,6 +55,12 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         
     }
     
+    /**
+	 * 游戏大厅读取
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public String READ_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	// 设置页码
         int currentPage = 1;
@@ -86,12 +93,17 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         info.getPagination().setCurrentPage(currentPage);
         return toXML(info, getAliasTypes());
     }
-
+	
+	/**
+	 * 游戏大厅保存
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public String UPDATE_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
         String lobbyId = request.getParameter("LOBBY_ID");
         String lobbyName = request.getParameter("LOBBY_NAME");
         String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
-//        String lobbyRoomCount = request.getParameter("LOBBY_ROOMCOUNT");
         // 根据LOBBY—ID读取数据源
         Properties config = ModelUtil.readProperties();
         
@@ -113,10 +125,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		lobby.remove(GameConfigureConstant.LOBBY_DISPLAYINDEX);
 	        		lobby.put(GameConfigureConstant.LOBBY_DISPLAYINDEX, lobbyDisplayIndex);
         		}
-//        		if (lobby.containsKey(GameConfigureConstant.LOBBY_ROOMCOUNT)) {
-//	        		lobby.remove(GameConfigureConstant.LOBBY_ROOMCOUNT);
-//	        		lobby.put(GameConfigureConstant.LOBBY_ROOMCOUNT, lobbyRoomCount);
-//        		}
         	} 
         	lobbyList.add(lobby);
         }
@@ -129,6 +137,56 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         try {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
+        	GlobalConfig globalConfig = (GlobalConfig) criteria.list().get(0);
+    		// 更新记录
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    		properties.storeToXML(outStream, null);
+    		globalConfig.setValue(outStream.toString("utf-8"));
+    		globalConfig.setUpdateTime(new Date());
+			HibernateSessionFactory.getSession().save(globalConfig);
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+        return READ_GAME_CONFIGURE(request, response);
+    }
+	
+	/**
+	 * 游戏大厅删除
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public String DELETE_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+        String lobbyId = request.getParameter("LOBBY_ID");
+        // 根据LOBBY—ID读取数据源
+        Properties config = ModelUtil.readProperties();
+        
+        // 重构Property
+        Properties properties = new Properties();
+        properties.setProperty("PLATFORM", config.getProperty("PLATFORM"));
+        
+        // 移除旧值更新新值
+        String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
+        List<Map> lobbyList = new ArrayList<Map>();
+        for (String lobbyConfig : lobbyConfigArray) {
+        	Map lobby = saveFromConfigString(lobbyConfig, null);
+        	// 被删除的不重新写入
+        	if (lobby.get(GameConfigureConstant.LOBBY_ID).equals(lobbyId)) {
+        		continue;
+        	} 
+        	lobbyList.add(lobby);
+        }
+        // 更新后的新值重构成configString
+        properties.setProperty("LOBBY", createFromList(lobbyList));
+        properties.setProperty("ROOM", config.getProperty("ROOM"));
+        properties.setProperty("MAX_PLAYER_NUMBER", config.getProperty("MAX_PLAYER_NUMBER"));
+        
+        // 数据更新至DB
+        try {
+        	// 获取原始记录
+        	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
         	GlobalConfig globalConfig = (GlobalConfig) criteria.list().get(0);
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -142,6 +200,12 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return READ_GAME_CONFIGURE(request, response);
     }
 
+	/**
+	 * 房间读取
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public String READ_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
     	// 游戏类型
     	String gameType = request.getParameter("GAME_TYPE");
@@ -175,14 +239,16 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 			case 2:
 				// 麻将[穷胡]
 				if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
-	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+						&& room.get(GameConfigureConstant.ROOM_ID).toString().length() >= GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG.length()
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG.equals(room.get(GameConfigureConstant.ROOM_ID).toString().substring(0,GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG.length()))) {
 	        		roomList.add(room);
 	        	}
 				break;
 			case 3:
 				// 麻将[推倒]
 				if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
-	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+						&& room.get(GameConfigureConstant.ROOM_ID).toString().length() >= GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN.length()
+	        			&& GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN.equals(room.get(GameConfigureConstant.ROOM_ID).toString().substring(0,GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN.length()))) {
 	        		roomList.add(room);
 	        	}
 				break;
@@ -199,56 +265,123 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return toXML(info, getAliasTypes());
     }
 
+	// 红五
 	public String CREATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	createGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	createGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, GameConfigureConstant.GAME_TYPE_VALUE_RED5, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
 	
 	public String UPDATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	updateGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	updateGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
+        return READ_ROOM_CONFIGURE(request, response);
+    }
+	
+	public String DELETE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+		deleteGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
 
+	// 斗地主
 	public String CREATE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	createGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	createGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, GameConfigureConstant.GAME_TYPE_VALUE_FIGHTLANDLORD, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
 	
     public String UPDATE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	updateGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	updateGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
+        return READ_ROOM_CONFIGURE(request, response);
+    }
+    
+    public String DELETE_FIGHT_LANDLORD_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+		deleteGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
 
+    // 推倒
     public String CREATE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	createGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	createGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_PUSHDOWN, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
     
     public String UPDATE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	updateGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	updateGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, request);
+        return READ_ROOM_CONFIGURE(request, response);
+    }
+    
+    public String DELETE_PUSHDOWN_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+		deleteGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
 
+    // 穷胡
     public String CREATE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	createGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	createGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, GameConfigureConstant.GAME_TYPE_VALUE_MAHJONG_QIONG, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
     
     public String UPDATE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
-    	updateGameRoomConfigure(request);
-        return READ_GAME_CONFIGURE(request, response);
+    	updateGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, request);
+        return READ_ROOM_CONFIGURE(request, response);
     }
     
+    public String DELETE_QIONG_WIN_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+		deleteGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_MAHJONG, request);
+        return READ_ROOM_CONFIGURE(request, response);
+    }
     
+    /**
+     * 通用四种游戏的参数设置
+     * @param lobbyId
+     * @param request
+     */
+	public void deleteGameRoomConfigure(String lobbyId, HttpServletRequest request) {
+		String gameId = request.getParameter("GAME_ID");
+		// 根据LOBBY—ID读取数据源
+        Properties config = ModelUtil.readProperties();
+        // 重构Property
+        Properties properties = new Properties();
+        properties.setProperty("PLATFORM", config.getProperty("PLATFORM"));
+        properties.setProperty("LOBBY", config.getProperty("LOBBY"));
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        List<Map> roomList = new ArrayList<Map>();
+        for (String roomConfig : roomConfigArray) {
+        	Map room = saveFromConfigString(roomConfig, null);
+        	// 被删除的房间不加载
+			if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
+        			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
+	        	continue;
+			}
+			roomList.add(room);
+        }
+        // 更新后的新值重构成configString
+        properties.setProperty("ROOM", createFromList(roomList));
+        
+        properties.setProperty("MAX_PLAYER_NUMBER", config.getProperty("MAX_PLAYER_NUMBER"));
+        
+        // 数据更新至DB
+        try {
+        	// 获取原始记录
+        	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		// 更新记录
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+    		properties.storeToXML(outStream, null);
+			globalconfig.setValue(outStream.toString("utf-8"));
+			globalconfig.setUpdateTime(new Date());
+			HibernateSessionFactory.getSession().save(globalconfig);
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
     
     /**
      * 通用四种游戏的参数设置
+     * @param lobbyId
      * @param request
      */
-	public void updateGameRoomConfigure(HttpServletRequest request) {
-    	String lobbyId = request.getParameter("LOBBY_ID");
-        String lobbyName = request.getParameter("LOBBY_NAME");
+	public void updateGameRoomConfigure(String lobbyId, HttpServletRequest request) {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
         String displayIndex = request.getParameter("DISPLAY_INDEX");
@@ -269,10 +402,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 根据游戏类型及游戏ID各自设置其游戏参数
 			if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) 
         			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
-				if (room.containsKey(GameConfigureConstant.LOBBY_NAME)) {
-	        		room.remove(GameConfigureConstant.LOBBY_NAME);
-	        		room.put(GameConfigureConstant.LOBBY_NAME, lobbyName);
-        		}
         		if (room.containsKey(GameConfigureConstant.ROOM_NAME)) {
 	        		room.remove(GameConfigureConstant.ROOM_NAME);
 	        		room.put(GameConfigureConstant.ROOM_NAME, gameName);
@@ -301,6 +430,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         try {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
     		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -315,15 +445,18 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	
 	/**
      * 通用四种游戏的参数设置
+     * @param lobbyId
+     * @param prefixGameId
      * @param request
      */
-	public void createGameRoomConfigure(HttpServletRequest request) {
-    	String lobbyId = request.getParameter("LOBBY_ID");
+	public void createGameRoomConfigure(String lobbyId, String prefixGameId, HttpServletRequest request) {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
         String displayIndex = request.getParameter("DISPLAY_INDEX");
         String roundMark = request.getParameter("ROUND_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
+        // add flag
+        boolean bool = true;
         // 根据LOBBY—ID读取数据源
         Properties config = ModelUtil.readProperties();
         
@@ -342,16 +475,20 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 				// id 相同，禁止新增
 				return;
         	}
+			if (bool && lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT))){
+				Map newRoom = new LinkedHashMap();
+		        newRoom.put(GameConfigureConstant.ROOM_PARENT, lobbyId);
+		        newRoom.put(GameConfigureConstant.ROOM_ID, prefixGameId + gameId);
+		        newRoom.put(GameConfigureConstant.ROOM_NAME, gameName);
+		        newRoom.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, displayIndex);
+		        newRoom.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
+		        newRoom.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
+		        roomList.add(newRoom);
+		        bool = !bool;
+			}
         	roomList.add(room);
         }
-        Map room = new LinkedHashMap();
-        room.put(GameConfigureConstant.ROOM_PARENT, lobbyId);
-        room.put(GameConfigureConstant.ROOM_ID, gameId);
-        room.put(GameConfigureConstant.ROOM_NAME, gameName);
-        room.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, displayIndex);
-        room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
-        room.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
-        roomList.add(room);
+        
         // 更新后的新值重构成configString
         properties.setProperty("ROOM", createFromList(roomList));
         
@@ -361,6 +498,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         try {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
     		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
