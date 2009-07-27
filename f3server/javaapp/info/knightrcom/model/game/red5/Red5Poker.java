@@ -63,7 +63,7 @@ public class Red5Poker {
         // 准备洗牌用的扑克
         List<Red5Poker> pokers = new ArrayList<Red5Poker>();
         // 10至大王的索引为7到15
-        List<PokerValue> list = Arrays.asList(PokerValue.values()).subList(12, 15);
+        List<PokerValue> list = Arrays.asList(PokerValue.values()).subList(7, 15);
         // 准备两副扑克
         for (int i = 0; i < 2; i++) {
             for (PokerValue pokerValue : list) {
