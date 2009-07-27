@@ -6,9 +6,6 @@ import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.model.game.Game;
-import info.knightrcom.model.game.fightlandlord.FightLandlordGameSetting;
-import info.knightrcom.model.game.fightlandlord.FightLandlordPoker;
-import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.plaything.PokerColor;
 import info.knightrcom.model.plaything.PokerValue;
@@ -59,7 +56,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         GameRecord gameRecord = new GameRecord();
         gameRecord.setGameId(UUID.randomUUID().toString());
         gameRecord.setGameId(this.getId());
-        gameRecord.setGameType(Red5Game.class.getSimpleName());
+        gameRecord.setGameType(FightLandlordGame.class.getSimpleName());
         gameRecord.setGameSetting((short)this.getSetting().ordinal());
         gameRecord.setWinnerNumbers(this.getWinnerNumbers());
         // TODO DROP THIS LINE => gameRecord.setScore(score);
@@ -77,6 +74,8 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          * 地主把牌出完，其余两家一张牌都没出，分数×2 ；
          * 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。 
          */
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
         // 在相应几分房间的分数 * 当前局叫的牌的底分
         if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
@@ -91,8 +90,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
 //        	gameMark *= 3;
         }
-        // 保存游戏历史记录
-        HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
     }
 
