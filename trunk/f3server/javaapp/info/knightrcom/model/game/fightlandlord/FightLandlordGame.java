@@ -74,8 +74,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          * 地主把牌出完，其余两家一张牌都没出，分数×2 ；
          * 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。 
          */
-        // 保存游戏历史记录
-        HibernateSessionFactory.getSession().merge(gameRecord);
         // 在相应几分房间的分数 * 当前局叫的牌的底分
         if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
@@ -90,6 +88,8 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
 //        	gameMark *= 3;
         }
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
     }
 
