@@ -56,6 +56,8 @@ public class Red5Game extends Game<Red5GameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSystemScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
         // 根据当前游戏规则进行分数计算
         if (Red5GameSetting.NO_RUSH.equals(this.getSetting())) {
             persistNoRushScore(itr, gameRecord);
@@ -66,8 +68,6 @@ public class Red5Game extends Game<Red5GameSetting> {
         } else if (Red5GameSetting.EXTINCT_RUSH.equals(this.getSetting())) {
             persistExtinctRushScore(itr, gameRecord, isFinalSettingPlayerWon);
         }
-        // 保存游戏历史记录
-        HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
     }
 
