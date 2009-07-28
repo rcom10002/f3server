@@ -123,6 +123,8 @@ public class FightLandlordGameInMessageHandler extends
 			echoMessage.setContent(builder.toString().replaceFirst(",$", "~")
 					+ pokerNumberOfEachPlayer);
 			sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
+			 // 记录游戏初始时玩家手中的牌信息
+            game.appendGameRecord(echoMessage.getContent());
 			if (!isFirstOut
 					&& builder
 							.indexOf(FightLandlordGame.START_POKER.getValue()) > -1) {
