@@ -76,13 +76,13 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          */
         // 在相应几分房间的分数 * 当前局叫的牌的底分
         if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * 1);
+        	this.setGameMark(this.getGameMark() * 1 * multiple);
         } else if (FightLandlordGameSetting.ONE_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * 1);
+        	this.setGameMark(this.getGameMark() * 1 * multiple);
         } else if (FightLandlordGameSetting.TWO_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * 2);
+        	this.setGameMark(this.getGameMark() * 2 * multiple);
         } else if (FightLandlordGameSetting.THREE_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * 3);
+        	this.setGameMark(this.getGameMark() * 3 * multiple);
         }
     	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
     	// 保存游戏历史记录
