@@ -57,6 +57,7 @@ public class GamePool {
             player.setCurrentStatus(GameStatus.PLAYING);
             player.setCurrentNumber(++i);
             game.involvePlayer(player);
+            game.getPlayerNumberMap().put(String.valueOf(i), player);
         }
         int gameMark = players.get(0).getParent().getGameMark();
         game.setGameMark(gameMark);

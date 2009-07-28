@@ -64,6 +64,8 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSystemScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
         // 根据当前游戏规则进行分数计算
         /**
          * 一幅牌计分：
@@ -85,8 +87,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         	this.setGameMark(this.getGameMark() * 3 * multiple);
         }
     	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
-    	// 保存游戏历史记录
-        HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
     }
 
