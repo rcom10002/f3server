@@ -385,7 +385,12 @@ public class FightLandlordGameInMessageHandler extends
 				// 3分，添加获胜者
 				game.addWinnerNumber(results[0]);
 			}
+			// 保存游戏积分
+            game.persistScore();
+            // 显示游戏积分
 			Iterator<Player> itr = players.iterator();
+			// 构造积分显示信息
+            message.setContent(message.getContent() + "~" + game.getGameDetailScore());
 			// 设置玩家得分
 			while (itr.hasNext()) {
 				Player player = itr.next();
@@ -402,13 +407,6 @@ public class FightLandlordGameInMessageHandler extends
 		log.debug(game.getWinnerNumbers());
 		GamePool
 				.distroyGame(currentPlayer.getGameId(), FightLandlordGame.class);
-
-		// echoMessage =
-		// F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
-		// echoMessage.setResult(GAME_OVER);
-		// // 显示游戏积分
-		// echoMessage.setContent(message.getContent());
-		// sessionWrite(session, echoMessage);
 	}
 
 	@Override
