@@ -114,7 +114,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
+            playerScore.setCurrentNumber(player.getCurrentNumber());
             if (winnerNumber.equals(player.getCurrentNumber())) {
             	playerScore.setScore(resultScore); // 玩家当前得分
             } else if (loserNumber.equals(player.getCurrentNumber())) {
@@ -176,7 +176,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber(playerProfile.getNumber());
+            playerScore.setCurrentNumber(player.getCurrentNumber());
             if (winnerNumber.equals(player.getCurrentNumber())) {
             	playerScore.setScore(resultScore * 3); // 玩家当前得分
             } else {
