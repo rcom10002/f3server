@@ -138,7 +138,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
         	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-        	GlobalConfig globalConfig = (GlobalConfig) criteria.list().get(0);
+        	GlobalConfig globalConfig = (GlobalConfig) criteria.uniqueResult();
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
@@ -187,7 +187,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
         	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-        	GlobalConfig globalConfig = (GlobalConfig) criteria.list().get(0);
+        	GlobalConfig globalConfig = (GlobalConfig) criteria.uniqueResult();
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
@@ -363,7 +363,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
         	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.uniqueResult();
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
@@ -431,7 +431,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
         	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.uniqueResult();
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
@@ -499,7 +499,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	// 获取原始记录
         	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
         	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-    		GlobalConfig globalconfig = (GlobalConfig)criteria.list().get(0);
+    		GlobalConfig globalconfig = (GlobalConfig)criteria.uniqueResult();
     		// 更新记录
     		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     		properties.storeToXML(outStream, null);
