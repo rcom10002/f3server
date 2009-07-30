@@ -1,60 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
+	<hibernate-mapping>
+	<sql-query name="INSERT_PERIODLY_SUM">
+	<![CDATA[
+		INSERT INTO PERIODLY_SUM 
+		SELECT * FROM (
+			SELECT USER_ID userId,
+			       TOTAL_SUM.TIMES totalTimes,
+			       TOTAL_SUM.SCORES totalScores,
+			       WIN_SUM.TIMES winTimes,
+			       WIN_SUM.SCORES winScores,
+			       LOSE_SUM.TIMES loseTimes,
+			       LOSE_SUM.SCORES loseScores,
+			       DRAW_SUM.TIMES drawTimes,
+			       DRAW_SUM.SCORES drawScores
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE > 0
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE < 0
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE = 0
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
+		) V
+    ]]>
+	</sql-query>
 	<sql-query name="REPORT_SCORE_INFO">
 	<![CDATA[
-SELECT CASE 
-         WHEN player_score.score > 0
-         THEN "胜利"
-         WHEN player_score.score < 0
-         THEN "失败"
-         WHEN player_score.score = 0
-         THEN "平局"
-         ELSE "未知"
-       END AS winandlose,
-       player_score.score        AS score,
-       player_score.system_score AS systemscore,
-       game_record.game_id       AS gameId,
-       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
-FROM   player_profile
-       LEFT JOIN player_score
-         ON player_score.profile_id = player_profile.profile_id
-       LEFT JOIN game_record
-         ON player_score.game_id = game_record.game_id
- WHERE (player_profile.profile_id = ? or ? is null)
-   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
-   AND (CASE 
-         WHEN player_score.score > 0
-         THEN 1
-         WHEN player_score.score < 0
-         THEN -1
-         WHEN player_score.score = 0
-         THEN 0
-        END = ?
-        OR 999 = ?)
- ORDER BY player_score.create_time desc
+			SELECT USER_ID userId,
+			       TOTAL_SUM.TIMES totalTimes,
+			       TOTAL_SUM.SCORES totalScores,
+			       WIN_SUM.TIMES winTimes,
+			       WIN_SUM.SCORES winScores,
+			       LOSE_SUM.TIMES loseTimes,
+			       LOSE_SUM.SCORES loseScores,
+			       DRAW_SUM.TIMES drawTimes,
+			       DRAW_SUM.SCORES drawScores
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE > 0
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE < 0
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE = 0
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
     ]]>
 	</sql-query>
 	<sql-query name="REPORT_SCORE_INFO_COUNT">
 	<![CDATA[
-SELECT COUNT(*) AS RECORD_COUNT
-FROM   player_profile
-       LEFT JOIN player_score
-         ON player_score.profile_id = player_profile.profile_id
-       LEFT JOIN game_record
-         ON player_score.game_id = game_record.game_id
- WHERE (player_profile.profile_id = ? or ? is null)
-   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
-   AND (CASE 
-         WHEN player_score.score > 0
-         THEN 1
-         WHEN player_score.score < 0
-         THEN -1
-         WHEN player_score.score = 0
-         THEN 0
-        END = ?
-        OR 999 = ?)
+		SELECT COUNT(V.userId) AS RECORD_COUNT
+		FROM (SELECT USER_ID userId,
+			       TOTAL_SUM.TIMES totalTimes,
+			       TOTAL_SUM.SCORES totalScores,
+			       WIN_SUM.TIMES winTimes,
+			       WIN_SUM.SCORES winScores,
+			       LOSE_SUM.TIMES loseTimes,
+			       LOSE_SUM.SCORES loseScores,
+			       DRAW_SUM.TIMES drawTimes,
+			       DRAW_SUM.SCORES drawScores
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE > 0
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE < 0
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE = 0
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID) V
     ]]>
 	</sql-query>
 </hibernate-mapping>
