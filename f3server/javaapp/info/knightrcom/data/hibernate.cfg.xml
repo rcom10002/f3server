@@ -50,6 +50,8 @@
 		resource="info/knightrcom/web/data/PlayerProfileService.hbm.xml" />
 	<mapping
 		resource="info/knightrcom/web/data/GameConfigureService.hbm.xml" />
+	<mapping
+		resource="info/knightrcom/web/data/ReportScoreService.hbm.xml" />
 </session-factory>
 
 </hibernate-configuration>
