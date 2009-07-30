@@ -12,13 +12,16 @@ public class Room extends AbstractModel<Lobby, Player> {
 
     private Map<GameStatus, Integer> gameStatusNumber = Collections.synchronizedMap(new HashMap<GameStatus, Integer>());
 
+    /** 每番记分 */
+    private String pointMark;
+
     /** 当前房间每局游戏所需要的分数 */
     private String roundMark;
 
     /** 游戏进行所需要的最少底分 */
     private String minMarks;
 
-    /**
+	/**
      * @return
      */
     public Lobby getCurrentLobby() {
@@ -75,6 +78,20 @@ public class Room extends AbstractModel<Lobby, Player> {
         Integer statusNumber = gameStatusNumber.get(status);
         return statusNumber == null ? 0 : statusNumber.intValue();
     }
+
+    /**
+	 * @return the pointMark
+	 */
+	public String getPointMark() {
+		return pointMark;
+	}
+
+	/**
+	 * @param pointMark the pointMark to set
+	 */
+	public void setPointMark(String pointMark) {
+		this.pointMark = pointMark;
+	}
 
     /**
      * @param roundMark the roundMark to set

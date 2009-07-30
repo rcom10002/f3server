@@ -19,11 +19,20 @@ public class GamePool {
     private static final Map<String, Object> games = Collections.synchronizedSortedMap(new TreeMap<String, Object>());
 
     /**
-     * 处理游戏中的通用设置，将特殊设置放于私有方法postInitProcess中
+     * FIXME
      * 
      * @param players
      */
     public static synchronized void prepareGame(List<Player> players) {
+    	
+    }
+
+    /**
+     * 处理游戏中的通用设置，将特殊设置放于私有方法postInitProcess中
+     * 
+     * @param players
+     */
+    public static void prepareRed5Game(List<Player> players) {
         // 创建游戏信息
         Red5Game game = new Red5Game();
         String gameId = game.getId();
@@ -47,7 +56,7 @@ public class GamePool {
     /**
      * @param players
      */
-    public static synchronized void prepareFightLandlordGame(List<Player> players) {
+    public static void prepareFightLandlordGame(List<Player> players) {
         FightLandlordGame game = new FightLandlordGame();
         String gameId = game.getId();
         games.put(gameId, game);
@@ -71,7 +80,7 @@ public class GamePool {
      * 
      * @param players
      */
-    public static synchronized void preparePushdownWinGame(List<Player> players) {
+    public static void preparePushdownWinGame(List<Player> players) {
         // 创建游戏信息
         PushdownWinGame game = new PushdownWinGame();
         String gameId = game.getId();

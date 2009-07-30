@@ -55,12 +55,12 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         gameRecord.setRecord(this.getGameRecord());
         // 根据当前游戏规则进行分数计算
         if (PushdownWinGameSetting.NARROW_VICTORY.equals(this.getSetting())) {
-            // 自摸
+            // 点泡
             String winnerNumber = getWinnerNumbers().substring(0, 1);
             String loserNumber = getWinnerNumbers().substring(2, 3);
             persistNarrowWinScore(itr, gameRecord, winnerNumber, loserNumber);
         } else {
-            // 点泡
+            // 自摸
             persistClearWinScore(itr, gameRecord, getWinnerNumbers());
         }
         // 保存游戏历史记录
@@ -127,7 +127,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
         }
         gameRecord.setPlayers(playerIds);

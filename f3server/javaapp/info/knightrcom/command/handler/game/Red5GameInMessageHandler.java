@@ -68,7 +68,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             });
             playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER);
             // 根据玩家当前的所在的房间进来开始游戏
-            GamePool.prepareGame(playersInQueue);
+            GamePool.prepareRed5Game(playersInQueue);
             for (Player eachPlayer : playersInQueue) {
                 // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
                 echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
