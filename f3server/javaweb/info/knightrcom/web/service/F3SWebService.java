@@ -60,6 +60,7 @@ public abstract class F3SWebService<T> {
     }
 
     /**
+     * 创建要返回的实体对象
      * @param entity
      * @param result
      * @return
