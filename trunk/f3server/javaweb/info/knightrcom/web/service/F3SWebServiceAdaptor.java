@@ -5,38 +5,30 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 
-import info.knightrcom.data.metadata.PlayerProfile;
-
-public abstract class F3SWebServiceAdaptor extends F3SWebService<PlayerProfile> {
+abstract class F3SWebServiceAdaptor<T> extends F3SWebService<T> {
 
 	@Override
 	public Class<?>[] getAliasTypes() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getNamedQuery() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getNamedQueryForCount() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ResultTransformer getResultTransformer() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void processQuerySetting(Query query, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

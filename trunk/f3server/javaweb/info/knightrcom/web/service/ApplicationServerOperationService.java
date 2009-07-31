@@ -1,46 +1,13 @@
 package info.knightrcom.web.service;
 
-import info.knightrcom.F3Server;
+import info.knightrcom.F3ServerProxy;
 import info.knightrcom.util.ExecutePlan;
 import info.knightrcom.web.model.EntityInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
-import org.hibernate.transform.ResultTransformer;
-
-public class ApplicationServerOperationService extends F3SWebService<Object> {
-
-	@Override
-	public Class<?>[] getAliasTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getNamedQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getNamedQueryForCount() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResultTransformer getResultTransformer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void processQuerySetting(Query query, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
+public class ApplicationServerOperationService extends F3SWebServiceAdaptor<Object> {
 
 	/**
 	 * 启动游戏应用服务器
@@ -55,10 +22,10 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 		OperateExecutePlan executePlan = new OperateExecutePlan() {
 			@Override
 			public Object tryPart() throws Exception {
-				if (F3Server.isRunning()) {
+				if (F3ServerProxy.isServerRunning()) {
 					return newEntityInfo(F3SWebServiceResult.UPDATE_WARNING);
 				}
-				F3Server.startServer(null);
+				F3ServerProxy.startServer();
 				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
@@ -78,10 +45,10 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 		OperateExecutePlan executePlan = new OperateExecutePlan() {
 			@Override
 			public Object tryPart() throws Exception {
-				if (!F3Server.isRunning()) {
+				if (!F3ServerProxy.isServerRunning()) {
 					return newEntityInfo(F3SWebServiceResult.UPDATE_WARNING);
 				}
-				F3Server.shutdownServer();
+				F3ServerProxy.stopServer();
 				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
@@ -101,14 +68,17 @@ public class ApplicationServerOperationService extends F3SWebService<Object> {
 		OperateExecutePlan executePlan = new OperateExecutePlan() {
 			@Override
 			public Object tryPart() throws Exception {
-				F3Server.shutdownServer();
-				F3Server.startServer(null);
+				F3ServerProxy.stopServer();
+				F3ServerProxy.startServer();
 				return newEntityInfo(F3SWebServiceResult.UPDATE_SUCCESS);
 			}
 		};
         return toXML((EntityInfo<Object>)executePlan.execute());
 	}
 
+	/**
+	 *
+	 */
 	private static abstract class OperateExecutePlan extends ExecutePlan {
 		@Override
 		public Object beforeTryPart() {
