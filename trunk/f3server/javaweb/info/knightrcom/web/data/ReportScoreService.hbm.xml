@@ -4,8 +4,27 @@
 	<hibernate-mapping>
 	<sql-query name="INSERT_PERIODLY_SUM">
 	<![CDATA[
-		INSERT INTO PERIODLY_SUM 
-			SELECT USER_ID userId,
+		INSERT INTO PERIODLY_SUM(
+		PERIODLY_ID,
+		TITLE,
+		PROFILE_ID, 
+		TOTAL_TIMES,
+		TOTAL_SCORES,
+		WIN_TIMES,
+		WIN_SCORES,
+		LOSE_TIMES,
+		LOSE_SCORES,
+		DRAW_TIMES,
+		DRAW_SCORES,
+		TOTAL_SYSTEM_SCORE,
+		START_DATE,
+		END_DATE,
+		CREATE_DATE,
+		UPDATE_DATE,
+		CREATE_BY,
+		UPDATE_BY
+		) 
+			SELECT UUID(),current_date ||'积分统计', PLAYER_PROFILE.PROFILE_ID,
               CASE
               WHEN TOTAL_SUM.TIMES IS NULL THEN 0
               ELSE TOTAL_SUM.TIMES
@@ -42,7 +61,8 @@
               WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
               ELSE TOTAL_SUM.SYS_SCORE
               END totalSysScore,
-              ? fromTime, ? toTime
+              ? fromTime, ? toTime,
+              CURRENT_DATE, CURRENT_DATE, ?, ?
 			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
 			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES, SUM(SYSTEM_SCORE) SYS_SCORE
 			  FROM PLAYER_SCORE
