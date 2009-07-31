@@ -128,7 +128,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getScore());
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSystemScore());
         }
         gameRecord.setPlayers(playerIds);
     }
@@ -149,7 +149,6 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         int systemScore = 0;
         int points = 0;
         String playerIds = "";
-
         while (itr.hasNext()) {
             // 取得玩家信息
             Player player = itr.next();
@@ -187,8 +186,8 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSystemScore());
         }
         gameRecord.setPlayers(playerIds);
     }
