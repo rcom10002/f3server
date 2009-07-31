@@ -3,9 +3,9 @@ package info.knightrcom.web.service;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PeriodlySum;
 import info.knightrcom.data.metadata.PlayerScore;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.entity.ReportScoreInfo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,13 +18,19 @@ import org.hibernate.transform.Transformers;
 public class ReportScoreService extends F3SWebService<PlayerScore> {
 
 	public void processQuerySetting(Query query, HttpServletRequest request) {
-//        query.setString(0, request.getParameter("CURRENT_PROFILE_ID"));
-//        query.setString(1, request.getParameter("CURRENT_PROFILE_ID"));
-//        query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-//        query.setTimestamp(3, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-//        query.setInteger(4, new Integer(request.getParameter("SHOW_CONDITION")));
-//        query.setInteger(5, new Integer(request.getParameter("SHOW_CONDITION")));
-    }
+		query.setTimestamp(0, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(1, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(3, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setTimestamp(4, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(5, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setTimestamp(6, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(7, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setTimestamp(8, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(9, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setString(10, "%" + StringHelper.escapeSQL(request.getParameter("USER_ID")) + "%");
+        query.setString(11, "%" + StringHelper.escapeSQL(request.getParameter("USER_ID")) + "%");
+	}
 	
     @Override
     public String getNamedQuery() {

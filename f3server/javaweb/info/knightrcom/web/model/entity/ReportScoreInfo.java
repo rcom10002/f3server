@@ -20,6 +20,12 @@ public class ReportScoreInfo {
 	private BigInteger drawTimes;
 	
 	private String drawScores;
+	
+	private String totalSysScore;
+	
+	private String fromTime;
+	
+	private String toTime;
 
 	/**
 	 * @return the userId
@@ -147,6 +153,46 @@ public class ReportScoreInfo {
 		this.drawScores = drawScores;
 	}
 
-	
+	/**
+	 * @return the totalSysScore
+	 */
+	public String getTotalSysScore() {
+		return totalSysScore;
+	}
+
+	/**
+	 * @param totalSysScore the totalSysScore to set
+	 */
+	public void setTotalSysScore(String totalSysScore) {
+		this.totalSysScore = totalSysScore;
+	}
+
+	/**
+	 * @return the fromTime
+	 */
+	public String getFromTime() {
+		return fromTime;
+	}
+
+	/**
+	 * @param fromTime the fromTime to set
+	 */
+	public void setFromTime(String fromTime) {
+		this.fromTime = fromTime;
+	}
+
+	/**
+	 * @return the toTime
+	 */
+	public String getToTime() {
+		return toTime;
+	}
+
+	/**
+	 * @param toTime the toTime to set
+	 */
+	public void setToTime(String toTime) {
+		this.toTime = toTime;
+	}
 	
 }
