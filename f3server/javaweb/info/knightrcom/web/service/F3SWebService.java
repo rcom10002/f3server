@@ -34,6 +34,16 @@ public abstract class F3SWebService<T> {
 
     protected Log log = LogFactory.getLog(this.getClass());
 
+    public abstract void processQuerySetting(Query query, HttpServletRequest request);
+
+    public abstract String getNamedQuery();
+
+    public abstract String getNamedQueryForCount();
+
+    public abstract ResultTransformer getResultTransformer();
+
+    public abstract Class<?>[] getAliasTypes();
+
     /**
      * @param key 简单类名称
      * @param value 方法
@@ -49,15 +59,17 @@ public abstract class F3SWebService<T> {
         }
     }
 
-    public abstract void processQuerySetting(Query query, HttpServletRequest request);
-
-    public abstract String getNamedQuery();
-
-    public abstract String getNamedQueryForCount();
-
-    public abstract ResultTransformer getResultTransformer();
-
-    public abstract Class<?>[] getAliasTypes();
+    /**
+     * @param entity
+     * @param result
+     * @return
+     */
+    protected EntityInfo<T> createEntityInfo(T entity, F3SWebServiceResult result) {
+        EntityInfo<T> info = new EntityInfo<T>();
+        info.setEntity(entity);
+        info.setResult(result);
+        return info;
+    }
 
     @SuppressWarnings("unchecked")
     public String serializeResponseStream(HttpServletRequest request, HttpServletResponse response) {
