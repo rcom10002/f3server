@@ -541,7 +541,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	public void createGameRoomConfigure(String lobbyId, String prefixGameId, HttpServletRequest request) throws IOException {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
-        String displayIndex = request.getParameter("DISPLAY_INDEX");
         String roundMark = request.getParameter("ROUND_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // add flag
@@ -564,12 +563,12 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 				// id 相同，禁止新增
 				return;
         	}
-			if (bool && lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT))){
+			if (bool && lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)) && room.get(GameConfigureConstant.ROOM_ID).toString().indexOf(prefixGameId) >= 0){
 				Map newRoom = new LinkedHashMap();
 		        newRoom.put(GameConfigureConstant.ROOM_PARENT, lobbyId);
 		        newRoom.put(GameConfigureConstant.ROOM_ID, prefixGameId + gameId);
 		        newRoom.put(GameConfigureConstant.ROOM_NAME, gameName);
-		        newRoom.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, displayIndex);
+		        newRoom.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, String.valueOf(getMaxDisplayIndex(lobbyId)));
 		        newRoom.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
 		        newRoom.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
 		        roomList.add(newRoom);
@@ -584,16 +583,16 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         properties.setProperty("MAX_PLAYER_NUMBER", config.getProperty("MAX_PLAYER_NUMBER"));
         
         // 数据更新至DB
-        	// 获取原始记录
-        	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-        	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
-    		GlobalConfig globalconfig = (GlobalConfig)criteria.uniqueResult();
-    		// 更新记录
-    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-    		properties.storeToXML(outStream, null);
-			globalconfig.setValue(outStream.toString("utf-8"));
-			globalconfig.setUpdateTime(new Date());
-			HibernateSessionFactory.getSession().save(globalconfig);
+    	// 获取原始记录
+    	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+    	criteria.add(Expression.eq("name", GameConfigureConstant.GLOBAL_CONFIG_NAME));
+		GlobalConfig globalconfig = (GlobalConfig)criteria.uniqueResult();
+		// 更新记录
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		properties.storeToXML(outStream, null);
+		globalconfig.setValue(outStream.toString("utf-8"));
+		globalconfig.setUpdateTime(new Date());
+		HibernateSessionFactory.getSession().save(globalconfig);
     }
     
     
@@ -688,5 +687,29 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
             e.printStackTrace();
             return null;
         }
+    }
+	
+	/**
+	 * 获取最大房间位置号
+	 * @param lobbyId
+	 * @return
+	 */
+	public int getMaxDisplayIndex(String lobbyId) {
+    	Properties config = ModelUtil.readProperties();
+        String[] roomConfigArray = config.getProperty("ROOM").split(";");
+        int maxDisplayIndex = 0;
+        for (String roomConfig : roomConfigArray) {
+        	Map room = readFromConfigString(roomConfig, null);
+        	if (lobbyId.equals(room.get(GameConfigureConstant.ROOM_PARENT)))  {
+        		int displayIndex = Integer.parseInt((String) room.get(GameConfigureConstant.ROOM_DISPLAY_INDEX));
+        		if (displayIndex > maxDisplayIndex) {
+        			maxDisplayIndex = displayIndex;
+        		}
+        	}
+        }
+        if (maxDisplayIndex != 0 ) {
+        	maxDisplayIndex++;
+        }
+        return maxDisplayIndex;
     }
 }
