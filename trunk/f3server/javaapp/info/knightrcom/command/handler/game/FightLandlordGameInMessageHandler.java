@@ -6,6 +6,7 @@ import info.knightrcom.command.message.F3ServerMessage;
 import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.command.message.game.FightLandlordGameMessage;
+import info.knightrcom.data.HibernateTransactionSupport;
 import info.knightrcom.model.game.GamePool;
 import info.knightrcom.model.game.fightlandlord.FightLandlordGame;
 import info.knightrcom.model.game.fightlandlord.FightLandlordGameSetting;
@@ -143,6 +144,7 @@ public class FightLandlordGameInMessageHandler extends
 				echoMessage.setResult(GAME_FIRST_PLAY);
 				sessionWrite(playersInGame.get(rndIndex).getIosession(), echoMessage);
 				isFirstOut = true;
+				game.appendGameRecord(echoMessage.getContent());
 			}
 		}
 
@@ -356,6 +358,7 @@ public class FightLandlordGameInMessageHandler extends
 	}
 
 	@Override
+    @HibernateTransactionSupport
 	public void GAME_WIN_AND_END(IoSession session,
 			FightLandlordGameMessage message, EchoMessage echoMessage)
 			throws Exception {
