@@ -2,6 +2,47 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<hibernate-mapping>
+	<sql-query name="SELECT_PERIODLY_SUM">
+	<![CDATA[
+		select 
+			periodly_sum.PERIODLY_ID periodlyId,
+			player_profile.USER_ID userId,
+			periodly_sum.NUMBER number,
+			periodly_sum.TITLE title,
+			periodly_sum.START_DATE startDate,
+			periodly_sum.END_DATE endDate,
+			periodly_sum.WIN_TIMES winTimes,
+			periodly_sum.WIN_SCORES winScores,
+			periodly_sum.LOSE_TIMES loseTimes,
+			periodly_sum.LOSE_SCORES loseScores,
+			periodly_sum.DRAW_TIMES drawTimes,
+			periodly_sum.DRAW_SCORES drawScores,
+			periodly_sum.TOTAL_TIMES totalTimes,
+			periodly_sum.TOTAL_SCORES totalScores,
+			periodly_sum.TOTAL_SYSTEM_SCORE totalSystemScore,
+			periodly_sum.STATUS status,
+			periodly_sum.CREATE_TIME createTime,
+			periodly_sum.CREATE_BY createBy,
+			periodly_sum.UPDATE_TIME updateTime,
+			periodly_sum.UPDATE_BY updateBy
+		from
+			periodly_sum left outer join player_profile on periodly_sum.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		ORDER BY player_profile.USER_ID
+	 ]]>
+	</sql-query>
+	<sql-query name="SELECT_PERIODLY_SUM_COUNT">
+	<![CDATA[
+		select count(*) RECORD_COUNT
+		from
+			periodly_sum left outer join player_profile on periodly_sum.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+	 ]]>
+	</sql-query>
 	<sql-query name="INSERT_PERIODLY_SUM">
 	<![CDATA[
 		INSERT INTO PERIODLY_SUM(
@@ -19,8 +60,8 @@
 		TOTAL_SYSTEM_SCORE,
 		START_DATE,
 		END_DATE,
-		CREATE_DATE,
-		UPDATE_DATE,
+		CREATE_TIME,
+		UPDATE_TIME,
 		CREATE_BY,
 		UPDATE_BY
 		) 
@@ -60,9 +101,9 @@
               CASE
               WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
               ELSE TOTAL_SUM.SYS_SCORE
-              END totalSysScore,
-              ? fromTime, ? toTime,
-              CURRENT_DATE, CURRENT_DATE, ?, ?
+              END totalSystemScore,
+              ? startDate, ? endDate,
+              CURRENT_DATE, CURRENT_DATE, 'SYSTEM', 'SYSTEM'
 			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
 			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES, SUM(SYSTEM_SCORE) SYS_SCORE
 			  FROM PLAYER_SCORE
@@ -87,12 +128,13 @@
      			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 			 GROUP BY PROFILE_ID
 			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
-			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?) OR ? IS NULL)
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
     ]]>
 	</sql-query>
 	<sql-query name="REPORT_SCORE_INFO">
 	<![CDATA[
-			SELECT USER_ID userId,
+			SELECT PLAYER_PROFILE.PROFILE_ID profileId,
+			  current_date ||'积分统计' title,
               CASE
               WHEN TOTAL_SUM.TIMES IS NULL THEN 0
               ELSE TOTAL_SUM.TIMES
@@ -128,8 +170,8 @@
               CASE
               WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
               ELSE TOTAL_SUM.SYS_SCORE
-              END totalSysScore,
-              ? fromTime, ? toTime
+              END totalSystemScore,
+              ? startDate, ? endDate
 			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
 			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES, SUM(SYSTEM_SCORE) SYS_SCORE
 			  FROM PLAYER_SCORE
@@ -154,7 +196,7 @@
      			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 			 GROUP BY PROFILE_ID
 			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
-			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?) OR ? IS NULL)
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
     ]]>
 	</sql-query>
 	<sql-query name="REPORT_SCORE_INFO_COUNT">
@@ -185,7 +227,7 @@
      			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 			 GROUP BY PROFILE_ID
 			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
-			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?) OR ? IS NULL)
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
     ]]>
 	</sql-query>
 </hibernate-mapping>
