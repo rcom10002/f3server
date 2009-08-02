@@ -52,7 +52,6 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 
     @Override
     public void processQuerySetting(Query query, HttpServletRequest request) {
-        // TODO Auto-generated method stub
         
     }
     
@@ -474,6 +473,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String gameName = request.getParameter("GAME_NAME");
         String displayIndex = request.getParameter("DISPLAY_INDEX");
         String roundMark = request.getParameter("ROUND_MARK");
+        String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // 根据LOBBY—ID读取数据源
         Properties config = ModelUtil.readProperties();
@@ -502,6 +502,11 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		room.remove(GameConfigureConstant.ROOM_ROUND_MARK);
 	        		room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
         		}
+        		// 如果是麻将类添加番分参数
+		        if (room.containsKey(GameConfigureConstant.ROOM_POINT_MARK) && GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(lobbyId)) {
+		        	room.remove(GameConfigureConstant.ROOM_POINT_MARK);
+	        		room.put(GameConfigureConstant.ROOM_POINT_MARK, pointMark);
+		        }
         		if (room.containsKey(GameConfigureConstant.ROOM_MIN_MARKS)) {
 	        		room.remove(GameConfigureConstant.ROOM_MIN_MARKS);
 	        		room.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
@@ -541,6 +546,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	public void createGameRoomConfigure(String lobbyId, String prefixGameId, HttpServletRequest request) throws IOException {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
+        String pointMark = request.getParameter("POINT_MARK");
         String roundMark = request.getParameter("ROUND_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // add flag
@@ -570,6 +576,10 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        newRoom.put(GameConfigureConstant.ROOM_NAME, gameName);
 		        newRoom.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, String.valueOf(getMaxDisplayIndex(lobbyId)));
 		        newRoom.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
+		        // 如果是麻将类添加番分参数
+		        if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(lobbyId)) {
+		        	newRoom.put(GameConfigureConstant.ROOM_POINT_MARK, pointMark);
+		        }
 		        newRoom.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
 		        roomList.add(newRoom);
 		        bool = !bool;
