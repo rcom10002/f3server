@@ -81,19 +81,11 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
         int recordCount = ((Map<String, BigInteger>)query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).uniqueResult()).get("RECORD_COUNT").intValue();
         // 未查询过时进行积分统计
         if (recordCount == 0) {
-        	insertPeriodlySum(request);
+        	// 将统计出的结果手插入到periodly_sum表 [防止重复查询]
+        	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
+        	processInsertSetting(query, request);
+    		query.executeUpdate();
         }
     	return serializeResponseStream(request, response);
-    }
-    
-    /**
-     * 将统计出的结果手插入到periodly_sum表
-     * 防止重复查询
-     */
-	public void insertPeriodlySum(HttpServletRequest request) {
-    	Query query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
-    	processInsertSetting(query, request);
-		query.executeUpdate();
-		query = null;
     }
 }
