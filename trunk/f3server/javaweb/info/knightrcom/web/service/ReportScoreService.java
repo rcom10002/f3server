@@ -6,8 +6,6 @@ import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.entity.ReportScoreInfo;
 
 import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +90,6 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
      * 将统计出的结果手插入到periodly_sum表
      * 防止重复查询
      */
-    @SuppressWarnings("deprecation")
 	public void insertPeriodlySum(HttpServletRequest request) {
     	Query query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
     	processInsertSetting(query, request);
