@@ -29,6 +29,8 @@ public class GameConfigureConstant {
 
 	public static final String ROOM_ROUND_MARK = "roundMark";
 
+	public static final String ROOM_POINT_MARK = "pointMark";
+	
 	public static final String ROOM_MIN_MARKS = "minMarks";
 	
 	public static final String GAME_TYPE_NAME_POKER = "Poker";
