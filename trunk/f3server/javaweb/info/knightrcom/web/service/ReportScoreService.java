@@ -44,8 +44,11 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
         query.setTimestamp(7, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
         query.setTimestamp(8, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
         query.setTimestamp(9, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+        query.setTimestamp(10, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(11, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+		
         String userId = StringHelper.escapeSQL(request.getParameter("USER_ID")) == null ? "" : StringHelper.escapeSQL(request.getParameter("USER_ID"));
-        query.setString(10, "%" + userId + "%");
+        query.setString(12, "%" + userId + "%");
 	}
 	
     @Override
