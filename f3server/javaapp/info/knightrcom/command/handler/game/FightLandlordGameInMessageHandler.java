@@ -136,6 +136,7 @@ public class FightLandlordGameInMessageHandler extends
 				sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
 				isFirstOut = true;
 			}
+			// FIXME 重新进行逻辑描述，我看不明白，注释太长的话需要用多行表现，那样不需要滚动查看
 			// 由于斗地主在发牌前会扣掉三张底牌，所以可能会将首发牌标志牌扣掉，所以为防止这种情况发生，采用随机设置一个玩家为游戏初始设置玩家
 			if (i == eachShuffledPokers.length - 1 && !isFirstOut) {
 				int rndIndex = new Random().nextInt(eachShuffledPokers.length);
