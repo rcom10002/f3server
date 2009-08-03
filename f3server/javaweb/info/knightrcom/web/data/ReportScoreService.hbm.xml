@@ -9,8 +9,8 @@
 			player_profile.USER_ID userId,
 			periodly_sum.NUMBER number,
 			periodly_sum.TITLE title,
-			periodly_sum.START_DATE startDate,
-			periodly_sum.END_DATE endDate,
+			DATE_FORMAT(periodly_sum.START_DATE, "%Y年%m月%d日") startDate,
+			DATE_FORMAT(periodly_sum.END_DATE, "%Y年%m月%d日") endDate,
 			periodly_sum.WIN_TIMES winTimes,
 			periodly_sum.WIN_SCORES winScores,
 			periodly_sum.LOSE_TIMES loseTimes,
@@ -65,7 +65,16 @@
 		CREATE_BY,
 		UPDATE_BY
 		) 
-			SELECT UUID(),current_date ||'积分统计', PLAYER_PROFILE.PROFILE_ID,
+			SELECT UUID(), 
+				concat('积分统计(',
+				  concat(DATE_FORMAT(?, "%Y年%m月%d日"),
+				     concat('至',
+				        concat(DATE_FORMAT(?, "%Y年%m月%d日")
+				        ,')')
+				     )
+				  )
+				), 
+				PLAYER_PROFILE.PROFILE_ID,
               CASE
               WHEN TOTAL_SUM.TIMES IS NULL THEN 0
               ELSE TOTAL_SUM.TIMES
