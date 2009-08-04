@@ -88,17 +88,26 @@ create table PERIODLY_SUM
    PERIODLY_ID          VARCHAR(100) not null,
    PROFILE_ID           VARCHAR(100),
    NUMBER               VARCHAR(100),
-   START_DATE           DATE,
-   END_DATE             DATE,
-   SCORE                INT,
-   SYSTEM_SCORE         INT,
+   TITLE                VARCHAR(100) not null,
+   START_DATE           DATE not null,
+   END_DATE             DATE not null,
+   WIN_TIMES            INT not null,
+   WIN_SCORES           INT not null,
+   LOSE_TIMES           INT not null,
+   LOSE_SCORES          INT not null,
+   DRAW_TIMES           INT not null,
+   DRAW_SCORES          INT not null,
+   TOTAL_TIMES          INT not null,
+   TOTAL_SCORES         INT not null,
+   TOTAL_SYSTEM_SCORE   INT not null,
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (PERIODLY_ID)
-);
+)
+type = InnoDB;
 
 create table PLAYER_PROFILE
 (
