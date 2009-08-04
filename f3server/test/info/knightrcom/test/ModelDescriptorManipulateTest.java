@@ -33,6 +33,23 @@ public class ModelDescriptorManipulateTest extends TestCase {
 
 		ModelUtil.saveProperties(properties);
 	}
+	
+	/**
+	 * Test properties file's writing ability. about server param
+	 * 
+	 * @throws Exception
+	 */
+	public void testSaveServerParamProperties() throws Exception {
+		ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getName().replaceFirst("\\.\\w+$", "") + ".test_server_param_model_defination");
+		Properties properties = new Properties();
+		Enumeration<String> keyEnum = bundle.getKeys();
+		while (keyEnum.hasMoreElements()) {
+			String key = keyEnum.nextElement();
+			String value = bundle.getString(key);
+			properties.put(key, value);
+		}
+		ModelUtil.saveProperties(properties, GameConfigureConstant.SERVER_PARAM_NAME);
+	}
 
 	/**
 	 * Test properties file's reading ability.
@@ -41,6 +58,18 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	 */
 	public void testReadProperties() throws Exception {
 	    Properties properties = ModelUtil.readProperties();
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		properties.storeToXML(bytes, null);
+		System.out.println(bytes.toString("utf-8"));
+	}
+	
+	/**
+	 * Test properties file's reading ability.
+	 * 
+	 * @throws Exception
+	 */
+	public void testReadServerParamProperties() throws Exception {
+	    Properties properties = ModelUtil.readProperties(GameConfigureConstant.SERVER_PARAM_NAME);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		properties.storeToXML(bytes, null);
 		System.out.println(bytes.toString("utf-8"));

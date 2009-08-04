@@ -165,8 +165,25 @@ public class ModelUtil {
     public static Properties readProperties() {
     	Properties properties = new Properties();
     	try {
-    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig order by createTime desc");
-    		GlobalConfig config = (GlobalConfig)query.list().get(0);
+    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + GameConfigureConstant.GLOBAL_CONFIG_NAME + "' order by createTime desc");
+    		GlobalConfig config = (GlobalConfig)query.uniqueResult();
+    		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
+			return properties;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    /**
+     * 从数据库中读取配置文件内容
+     * 
+     * @return Properties类型对象
+     */
+    public static Properties readProperties(String param) {
+    	Properties properties = new Properties();
+    	try {
+    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + param + "' order by createTime desc");
+    		GlobalConfig config = (GlobalConfig)query.uniqueResult();
     		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
 			return properties;
 		} catch (Exception e) {
@@ -226,6 +243,34 @@ public class ModelUtil {
 		}
     }
 
+    /**
+     * 把配置文件内容保存到数据库中[参数]
+     * 
+     * @param properties
+     * @return 新的GlobalConfig对象id
+     */
+    public static String saveProperties(Properties properties, String key) {
+    	try {
+    		HibernateSessionFactory.getSession().beginTransaction();
+    		
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			properties.storeToXML(outStream, null);
+			
+			GlobalConfig config = new GlobalConfig();
+			config.setGlobalConfigId(UUID.randomUUID().toString());
+			config.setName(key);
+			config.setValue(outStream.toString("utf-8"));
+			
+			HibernateSessionFactory.getSession().save(config);
+			
+			HibernateSessionFactory.getSession().getTransaction().commit();
+			return config.getGlobalConfigId();
+		} catch (Exception e) {
+			HibernateSessionFactory.getSession().getTransaction().rollback();
+			throw new RuntimeException(e);
+		}
+    }
+    
     /**
      * @param <T>
      * @param modelClass
