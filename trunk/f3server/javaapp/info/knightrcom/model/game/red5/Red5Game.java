@@ -140,7 +140,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 独牌
-        int gameMark = this.getGameMark();
+        int gameMark = this.getGameMark() * this.getLowLevelMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到3X+3X+3X，反之叫牌者输9X
         while (itr.hasNext()) {
@@ -202,7 +202,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistDeadlyRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天独
-        int gameMark = this.getGameMark();
+        int gameMark = this.getGameMark() * this.getMidLevelMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到5X+5X+5X，反之叫牌者输15X
         while (itr.hasNext()) {
@@ -263,7 +263,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistExtinctRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天外天
-        int gameMark = this.getGameMark();
+        int gameMark = this.getGameMark() * this.getHighLevelMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到10X+10X+10X，反之叫牌者输50X
         while (itr.hasNext()) {
