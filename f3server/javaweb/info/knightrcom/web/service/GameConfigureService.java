@@ -473,6 +473,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String gameName = request.getParameter("GAME_NAME");
         String displayIndex = request.getParameter("DISPLAY_INDEX");
         String roundMark = request.getParameter("ROUND_MARK");
+        String lowLevelMark = request.getParameter("LOW_LEVEL_MARK");
+        String midLevelMark = request.getParameter("MID_LEVEL_MARK");
+        String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // 根据LOBBY—ID读取数据源
@@ -502,6 +505,20 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		room.remove(GameConfigureConstant.ROOM_ROUND_MARK);
 	        		room.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
         		}
+        		// 如果是扑克类添加三种等级设置参数
+		        if (room.containsKey(GameConfigureConstant.ROOM_LOW_LEVEL_MARK) && GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(lobbyId)) {
+		        	room.remove(GameConfigureConstant.ROOM_LOW_LEVEL_MARK);
+	        		room.put(GameConfigureConstant.ROOM_LOW_LEVEL_MARK, lowLevelMark);
+		        }
+		        if (room.containsKey(GameConfigureConstant.ROOM_MID_LEVEL_MARK) && GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(lobbyId)) {
+		        	room.remove(GameConfigureConstant.ROOM_MID_LEVEL_MARK);
+	        		room.put(GameConfigureConstant.ROOM_MID_LEVEL_MARK, midLevelMark);
+		        }
+		        if (room.containsKey(GameConfigureConstant.ROOM_HIGH_LEVEL_MARK) && GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(lobbyId)) {
+		        	room.remove(GameConfigureConstant.ROOM_HIGH_LEVEL_MARK);
+	        		room.put(GameConfigureConstant.ROOM_HIGH_LEVEL_MARK, highLevelMark);
+		        }
+		        
         		// 如果是麻将类添加番分参数
 		        if (room.containsKey(GameConfigureConstant.ROOM_POINT_MARK) && GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(lobbyId)) {
 		        	room.remove(GameConfigureConstant.ROOM_POINT_MARK);
@@ -548,6 +565,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String gameName = request.getParameter("GAME_NAME");
         String pointMark = request.getParameter("POINT_MARK");
         String roundMark = request.getParameter("ROUND_MARK");
+        String lowLevelMark = request.getParameter("LOW_LEVEL_MARK");
+        String midLevelMark = request.getParameter("MID_LEVEL_MARK");
+        String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // add flag
         boolean bool = true;
@@ -576,6 +596,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        newRoom.put(GameConfigureConstant.ROOM_NAME, gameName);
 		        newRoom.put(GameConfigureConstant.ROOM_DISPLAY_INDEX, String.valueOf(getMaxDisplayIndex(lobbyId)));
 		        newRoom.put(GameConfigureConstant.ROOM_ROUND_MARK, roundMark);
+		        // 如果是扑克类添加三种等级设置参数
+		        if (GameConfigureConstant.GAME_TYPE_NAME_POKER.equals(lobbyId)) {
+		        	newRoom.put(GameConfigureConstant.ROOM_LOW_LEVEL_MARK, lowLevelMark);
+		        	newRoom.put(GameConfigureConstant.ROOM_MID_LEVEL_MARK, midLevelMark);
+		        	newRoom.put(GameConfigureConstant.ROOM_HIGH_LEVEL_MARK, highLevelMark);
+		        }
+		        
 		        // 如果是麻将类添加番分参数
 		        if (GameConfigureConstant.GAME_TYPE_NAME_MAHJONG.equals(lobbyId)) {
 		        	newRoom.put(GameConfigureConstant.ROOM_POINT_MARK, pointMark);

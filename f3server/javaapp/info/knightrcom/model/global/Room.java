@@ -12,6 +12,15 @@ public class Room extends AbstractModel<Lobby, Player> {
 
     private Map<GameStatus, Integer> gameStatusNumber = Collections.synchronizedMap(new HashMap<GameStatus, Integer>());
 
+    /** 扑克类专用 【红五 独牌】或【斗地主 青龙】记分 */
+    private String lowLevelMark;
+    
+    /** 扑克类专用 【红五 天独】或【斗地主 白虎】记分 */
+    private String midLevelMark;
+    
+    /** 扑克类专用 【红五 天外天】或【斗地主 朱雀】记分 */
+    private String highLevelMark;
+    
     /** 每番记分 */
     private String pointMark;
 
@@ -120,5 +129,61 @@ public class Room extends AbstractModel<Lobby, Player> {
     public int getMinGameMarks() {
         return new Integer(minMarks).intValue();
     }
+
+	/**
+	 * @return the lowLevelMark
+	 */
+	public String getLowLevelMark() {
+		return lowLevelMark;
+	}
+
+	/**
+	 * @param lowLevelMark the lowLevelMark to set
+	 */
+	public void setLowLevelMark(String lowLevelMark) {
+		this.lowLevelMark = lowLevelMark;
+	}
+
+	/**
+	 * @return the midLevelMark
+	 */
+	public String getMidLevelMark() {
+		return midLevelMark;
+	}
+
+	/**
+	 * @param midLevelMark the midLevelMark to set
+	 */
+	public void setMidLevelMark(String midLevelMark) {
+		this.midLevelMark = midLevelMark;
+	}
+
+	/**
+	 * @return the highLevelMark
+	 */
+	public String getHighLevelMark() {
+		return highLevelMark;
+	}
+
+	/**
+	 * @param highLevelMark the highLevelMark to set
+	 */
+	public void setHighLevelMark(String highLevelMark) {
+		this.highLevelMark = highLevelMark;
+	}
+
+	/**
+	 * @return the roundMark
+	 */
+	public String getRoundMark() {
+		return roundMark;
+	}
+
+	/**
+	 * @return the minMarks
+	 */
+	public String getMinMarks() {
+		return minMarks;
+	}
 
 }

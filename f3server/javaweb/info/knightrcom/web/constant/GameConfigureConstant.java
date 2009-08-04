@@ -28,6 +28,12 @@ public class GameConfigureConstant {
 	public static final String ROOM_DISPLAY_INDEX = "displayIndex";
 
 	public static final String ROOM_ROUND_MARK = "roundMark";
+	
+	public static final String ROOM_LOW_LEVEL_MARK = "lowLevelMark";
+	
+	public static final String ROOM_MID_LEVEL_MARK = "midLevelMark";
+	
+	public static final String ROOM_HIGH_LEVEL_MARK = "highLevelMark";
 
 	public static final String ROOM_POINT_MARK = "pointMark";
 	
