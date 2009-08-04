@@ -69,7 +69,14 @@ public class GamePool {
             game.getPlayerNumberMap().put(String.valueOf(i), player);
         }
         int gameMark = players.get(0).getParent().getGameMark();
+        int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
+        int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
+        int highLevelMark = players.get(0).getParent().getGameHighLevelMark();
+        
         game.setGameMark(gameMark);
+        game.setLowLevelMark(lowLevelMark);
+        game.setMidLevelMark(midLevelMark);
+        game.setHighLevelMark(highLevelMark);
         int minGameMarks = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameMarks);
         postInitProcess(game);
