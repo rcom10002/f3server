@@ -30,6 +30,7 @@
 		WHERE 
 			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
 		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
 		ORDER BY player_profile.USER_ID
 	 ]]>
 	</sql-query>
@@ -41,6 +42,7 @@
 		WHERE 
 			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
 		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
 	 ]]>
 	</sql-query>
 	<sql-query name="INSERT_PERIODLY_SUM">
@@ -138,6 +140,7 @@
 			 GROUP BY PROFILE_ID
 			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
 			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+			AND (? is null or player_profile.rls_path like ?)
     ]]>
 	</sql-query>
 	<sql-query name="REPORT_SCORE_INFO">
