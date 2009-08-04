@@ -88,8 +88,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
         info.setResult(F3SWebServiceResult.SUCCESS);
         info.setEntity(lobbyList);
-        info.getPagination().setTotalRecord(lobbyList.size()*lobbyList.size());
         info.getPagination().setPageSize(lobbyList.size());
+        info.getPagination().setTotalRecord(lobbyList.size()*lobbyList.size());
         info.getPagination().setCurrentPage(currentPage);
         return toXML(info, getAliasTypes());
     }
