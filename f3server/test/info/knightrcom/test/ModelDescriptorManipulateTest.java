@@ -1,6 +1,8 @@
 package info.knightrcom.test;
 
+import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
@@ -17,6 +19,9 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testSaveProperties() throws Exception {
+	    HibernateSessionFactory.getSession().createSQLQuery("delete from global_config where name='#'".replace("#", GameConfigureConstant.GLOBAL_CONFIG_NAME)).executeUpdate();
+	    HibernateSessionFactory.getSession().flush();
+	    HibernateSessionFactory.getSession().close();
 		ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getName().replaceFirst("\\.\\w+$", "") + ".test_model_defination");
 		Properties properties = new Properties();
 		Enumeration<String> keyEnum = bundle.getKeys();
