@@ -34,6 +34,15 @@ public abstract class Game<T> {
 
     /** 当前房间每局游戏所需要的分数 */
     private int gameMark;
+    
+    /** 扑克类专用 【红五 独牌】或【斗地主 青龙】记分 */
+    private int lowLevelMark;
+    
+    /** 扑克类专用 【红五 天独】或【斗地主 白虎】记分 */
+    private int midLevelMark;
+    
+    /** 扑克类专用 【红五 天外天】或【斗地主 朱雀】记分 */
+    private int highLevelMark;
 
     /** 游戏进行所需要的最少底分 */
     private int minGameStartMark;
@@ -128,6 +137,48 @@ public abstract class Game<T> {
     }
 
     /**
+	 * @return the lowLevelMark
+	 */
+	public int getLowLevelMark() {
+		return lowLevelMark;
+	}
+
+	/**
+	 * @param lowLevelMark the lowLevelMark to set
+	 */
+	public void setLowLevelMark(int lowLevelMark) {
+		this.lowLevelMark = lowLevelMark;
+	}
+
+	/**
+	 * @return the midLevelMark
+	 */
+	public int getMidLevelMark() {
+		return midLevelMark;
+	}
+
+	/**
+	 * @param midLevelMark the midLevelMark to set
+	 */
+	public void setMidLevelMark(int midLevelMark) {
+		this.midLevelMark = midLevelMark;
+	}
+
+	/**
+	 * @return the highLevelMark
+	 */
+	public int getHighLevelMark() {
+		return highLevelMark;
+	}
+
+	/**
+	 * @param highLevelMark the highLevelMark to set
+	 */
+	public void setHighLevelMark(int highLevelMark) {
+		this.highLevelMark = highLevelMark;
+	}
+
+	/**
      * @return the minGameStartMark
      */
     public int getMinGameStartMark() {

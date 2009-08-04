@@ -91,8 +91,8 @@ public class Room extends AbstractModel<Lobby, Player> {
     /**
 	 * @return the pointMark
 	 */
-	public String getPointMark() {
-		return pointMark;
+	public int getGamePointMark() {
+		return new Integer(pointMark).intValue();
 	}
 
 	/**
@@ -133,8 +133,8 @@ public class Room extends AbstractModel<Lobby, Player> {
 	/**
 	 * @return the lowLevelMark
 	 */
-	public String getLowLevelMark() {
-		return lowLevelMark;
+	public int getGameLowLevelMark() {
+		return new Integer(lowLevelMark).intValue();
 	}
 
 	/**
@@ -147,8 +147,8 @@ public class Room extends AbstractModel<Lobby, Player> {
 	/**
 	 * @return the midLevelMark
 	 */
-	public String getMidLevelMark() {
-		return midLevelMark;
+	public int getGameMidLevelMark() {
+		return new Integer(midLevelMark).intValue();
 	}
 
 	/**
@@ -161,8 +161,8 @@ public class Room extends AbstractModel<Lobby, Player> {
 	/**
 	 * @return the highLevelMark
 	 */
-	public String getHighLevelMark() {
-		return highLevelMark;
+	public int getGameHighLevelMark() {
+		return new Integer(highLevelMark).intValue();
 	}
 
 	/**
@@ -170,20 +170,6 @@ public class Room extends AbstractModel<Lobby, Player> {
 	 */
 	public void setHighLevelMark(String highLevelMark) {
 		this.highLevelMark = highLevelMark;
-	}
-
-	/**
-	 * @return the roundMark
-	 */
-	public String getRoundMark() {
-		return roundMark;
-	}
-
-	/**
-	 * @return the minMarks
-	 */
-	public String getMinMarks() {
-		return minMarks;
 	}
 
 }
