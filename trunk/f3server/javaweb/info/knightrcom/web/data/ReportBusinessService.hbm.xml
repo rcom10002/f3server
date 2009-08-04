@@ -27,7 +27,7 @@ FROM   player_profile
          ON player_score.profile_id = player_profile.profile_id
        LEFT JOIN game_record
          ON player_score.game_id = game_record.game_id
- WHERE (player_profile.user_id = ? or ? is null or ? = '')
+ WHERE (UPPER(player_profile.user_id) LIKE UPPER(?))
    AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
    AND (CASE 
          WHEN player_score.score > 0
@@ -38,6 +38,7 @@ FROM   player_profile
          THEN 0
         END = ?
         OR 999 = ?)
+   AND (? is null or player_profile.rls_path like ?)
  ORDER BY player_profile.create_time asc, game_record.game_type asc, player_score.create_time desc
     ]]>
 	</sql-query>
@@ -49,7 +50,7 @@ FROM   player_profile
          ON player_score.profile_id = player_profile.profile_id
        LEFT JOIN game_record
          ON player_score.game_id = game_record.game_id
- WHERE (player_profile.user_id = ? or ? is null or ? = '')
+ WHERE (UPPER(player_profile.user_id) LIKE UPPER(?))
    AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
    AND (CASE 
          WHEN player_score.score > 0
@@ -60,6 +61,7 @@ FROM   player_profile
          THEN 0
         END = ?
         OR 999 = ?)
+  AND (? is null or player_profile.rls_path like ?)
     ]]>
 	</sql-query>
 </hibernate-mapping>
