@@ -50,6 +50,23 @@ public class ModelDescriptorManipulateTest extends TestCase {
 		}
 		ModelUtil.saveProperties(properties, GameConfigureConstant.SERVER_PARAM_NAME);
 	}
+	
+	/**
+	 * Test properties file's writing ability. about report template manage
+	 * 
+	 * @throws Exception
+	 */
+	public void testSaveReportTemplateProperties() throws Exception {
+		ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getName().replaceFirst("\\.\\w+$", "") + ".test_report_template_model_defination");
+		Properties properties = new Properties();
+		Enumeration<String> keyEnum = bundle.getKeys();
+		while (keyEnum.hasMoreElements()) {
+			String key = keyEnum.nextElement();
+			String value = bundle.getString(key);
+			properties.put(key, value);
+		}
+		ModelUtil.saveProperties(properties, GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
+	}
 
 	/**
 	 * Test properties file's reading ability.
@@ -64,12 +81,24 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	}
 	
 	/**
-	 * Test properties file's reading ability.
+	 * Test properties file's reading ability. about server parameter
 	 * 
 	 * @throws Exception
 	 */
 	public void testReadServerParamProperties() throws Exception {
 	    Properties properties = ModelUtil.readProperties(GameConfigureConstant.SERVER_PARAM_NAME);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		properties.storeToXML(bytes, null);
+		System.out.println(bytes.toString("utf-8"));
+	}
+	
+	/**
+	 * Test properties file's reading ability. about report template
+	 * 
+	 * @throws Exception
+	 */
+	public void testReadReportTemplateProperties() throws Exception {
+	    Properties properties = ModelUtil.readProperties(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		properties.storeToXML(bytes, null);
 		System.out.println(bytes.toString("utf-8"));
