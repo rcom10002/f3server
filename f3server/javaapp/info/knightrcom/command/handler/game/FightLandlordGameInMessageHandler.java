@@ -263,6 +263,7 @@ public class FightLandlordGameInMessageHandler extends
 		List<Player> players = game.getPlayers();
 		synchronized (players) {
 			Iterator<Player> itr = players.iterator();
+			boolean isHandlerPokers = true;
 			while (itr.hasNext()) {
 				Player player = itr.next();
 				echoMessage = F3ServerMessage.createInstance(
@@ -272,9 +273,12 @@ public class FightLandlordGameInMessageHandler extends
 						"~")
 						+ playerNumber);
 				sessionWrite(player.getIosession(), echoMessage);
+				// 记录底牌
+				if (isHandlerPokers) {
+					game.appendGameRecord(echoMessage.getContent());
+					isHandlerPokers = false;
+				}
 			}
-			// 记录当前牌序
-			game.appendGameRecord(message.getContent());
 		}
 	}
 
