@@ -78,15 +78,14 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          */
         // 在相应几分房间的分数 * 当前局叫的牌的底分
         if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * this.getLowLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * multiple);
         } else if (FightLandlordGameSetting.ONE_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * this.getLowLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * multiple);
         } else if (FightLandlordGameSetting.TWO_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * this.getMidLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getMidLevelMark() * multiple);
         } else if (FightLandlordGameSetting.THREE_RUSH.equals(setting)) {
-        	this.setGameMark(this.getGameMark() * this.getHighLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getHighLevelMark() * multiple);
         }
-    	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon);
         log.debug("计算积分 END");
     }
 
@@ -96,8 +95,9 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
      * @param itr
      * @param gameRecord
      * @param isFinalSettingPlayerWon
+     * @param pointMark
      */
-    private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
+    private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon, int pointMark) {
         // 独牌
         int gameMark = this.getGameMark();
         String playerIds = "";
@@ -114,22 +114,22 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
                 // 独牌成功
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore = 1 * 2 * gameMark;
+                    resultScore = 1 * 2 * pointMark;
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
-                    resultScore = -1 * gameMark;
+                    resultScore = -1 * gameMark * pointMark;
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
-                    resultScore = 1 * gameMark;
+                    resultScore = 1 * gameMark * pointMark;
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore = -1 * 2 * gameMark;
+                    resultScore = -1 * 2 * gameMark * pointMark;
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
