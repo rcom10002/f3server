@@ -140,7 +140,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 独牌
-        int gameMark = this.getGameMark() * this.getLowLevelMark();
+        int gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到3X+3X+3X，反之叫牌者输9X
         while (itr.hasNext()) {
@@ -155,22 +155,22 @@ public class Red5Game extends Game<Red5GameSetting> {
                 // 独牌成功
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore = 1 * 3 * 3 * gameMark;
+                    resultScore = 1 * 3 * gameMark * this.getLowLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
-                    resultScore = -1 * 3 * gameMark;
+                    resultScore = -1 * gameMark * this.getLowLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
-                    resultScore = 1 * 3 * gameMark;
+                    resultScore = 1 * gameMark * this.getLowLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore = -1 * 3 * 3 * gameMark;
+                    resultScore = -1 * 3 * gameMark * this.getLowLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
@@ -202,7 +202,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistDeadlyRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天独
-        int gameMark = this.getGameMark() * this.getMidLevelMark();
+        int gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到5X+5X+5X，反之叫牌者输15X
         while (itr.hasNext()) {
@@ -216,22 +216,22 @@ public class Red5Game extends Game<Red5GameSetting> {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore =  1 * 3 * 5 * gameMark;
+                    resultScore =  1 * 3 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
-                    resultScore =  -1 * 5 * gameMark;
+                    resultScore =  -1 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
-                    resultScore = 1 * 5 * gameMark;
+                    resultScore = 1 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore =  -1 * 3 * 5 * gameMark;
+                    resultScore =  -1 * 3 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
@@ -277,22 +277,22 @@ public class Red5Game extends Game<Red5GameSetting> {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore = 1 * 3 * 10 * gameMark;
+                    resultScore = 1 * 3 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
-                    resultScore = -1 * 10 * gameMark;
+                    resultScore = -1 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
-                    resultScore = 1 * 10 * gameMark;
+                    resultScore = 1 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore = -1 * 3 * 10 * gameMark;
+                    resultScore = -1 * 3 * gameMark * this.getMidLevelMark();
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
