@@ -29,7 +29,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
     public static final int PLAYER_COGAME_NUMBER = 3;
     
     /** 游戏积分倍数 */
-    private static int multiple = 1;
+    private int multiple = 1;
 
     /**
      * 首发扑克：红桃3
@@ -78,14 +78,15 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          */
         // 在相应几分房间的分数 * 当前局叫的牌的底分
         if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
-        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * getMultiple());
         } else if (FightLandlordGameSetting.ONE_RUSH.equals(setting)) {
-        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * getMultiple());
         } else if (FightLandlordGameSetting.TWO_RUSH.equals(setting)) {
-        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getMidLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getMidLevelMark() * getMultiple());
         } else if (FightLandlordGameSetting.THREE_RUSH.equals(setting)) {
-        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getHighLevelMark() * multiple);
+        	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getHighLevelMark() * getMultiple());
         }
+        setMultiple(1);
         log.debug("计算积分 END");
     }
 
@@ -178,13 +179,13 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 	 * @param multiple the multiple to set
 	 */
 	public void setMultiple(int multiple) {
-		FightLandlordGame.multiple = multiple;
+		multiple = this.multiple;
 	}
 	
 	/**
 	 * 翻倍积分
 	 */
 	public void addMultiple() {
-		FightLandlordGame.multiple *= 2;
+		multiple *= 2;
 	}
 }
