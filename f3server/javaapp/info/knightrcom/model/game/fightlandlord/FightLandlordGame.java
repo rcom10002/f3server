@@ -114,7 +114,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
                 // 独牌成功
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore = 1 * 2 * pointMark;
+                    resultScore = 1 * 2 * gameMark * pointMark;
                     playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
