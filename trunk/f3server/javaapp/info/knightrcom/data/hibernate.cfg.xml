@@ -5,22 +5,20 @@
 <hibernate-configuration>
 
 <session-factory>
+	<!-- 基本配置 -->
 	<property name="connection.url">
-		jdbc:mysql://localhost:3306/f3s?useUnicode=true&amp;characterEncoding=UTF-8
-	</property>
-	<property name="dialect">
-		org.hibernate.dialect.MySQLDialect
+		jdbc:mysql://localhost:3306/f3s
 	</property>
 	<property name="myeclipse.connection.profile">MySql</property>
+	<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+	<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 	<property name="connection.username">root</property>
 	<property name="connection.password">root</property>
-	<property name="connection.driver_class">
-		com.mysql.jdbc.Driver
-	</property>
+	<property name="connection.useUnicode">true</property> 
+	<property name="connection.characterEncoding">UTF-8</property>
 
-	<property name="connection.provider_class">
-		org.hibernate.connection.C3P0ConnectionProvider
-	</property>
+	<!-- 数据源配置 -->
+	<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 	<property name="c3p0.minPoolSize">5</property>
 	<property name="c3p0.maxPoolSize">30</property>
 	<property name="c3p0.initialPoolSize">10</property>
@@ -35,6 +33,8 @@
 	<property name="c3p0.testConnectionOnCheckin">true</property>
 	<property name="cache.use_second_level_cache">false</property>
 	<property name="cache.use_query_cache">false</property>
+
+	<!-- 元数据配置 -->
 	<mapping class="info.knightrcom.data.metadata.PlayerProfile" />
 	<mapping class="info.knightrcom.data.metadata.GameRecord" />
 	<mapping class="info.knightrcom.data.metadata.GameFeedback" />
@@ -42,18 +42,14 @@
 	<mapping class="info.knightrcom.data.metadata.PeriodlySum" />
 	<mapping class="info.knightrcom.data.metadata.PlayerScore" />
 	<mapping class="info.knightrcom.data.metadata.LogInfo" />
-	<mapping
-		resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
-	<mapping
-		resource="info/knightrcom/web/data/PlayerScoreService.hbm.xml" />
-	<mapping
-		resource="info/knightrcom/web/data/PlayerProfileService.hbm.xml" />
-	<mapping
-		resource="info/knightrcom/web/data/GameConfigureService.hbm.xml" />
-	<mapping
-		resource="info/knightrcom/web/data/ReportScoreService.hbm.xml" />
-	<mapping
-		resource="info/knightrcom/web/data/ReportBusinessService.hbm.xml" />
+
+	<!-- SQL脚本配置 -->
+	<mapping resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/PlayerScoreService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/PlayerProfileService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/GameConfigureService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/ReportScoreService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/ReportBusinessService.hbm.xml" />
 </session-factory>
 
 </hibernate-configuration>
