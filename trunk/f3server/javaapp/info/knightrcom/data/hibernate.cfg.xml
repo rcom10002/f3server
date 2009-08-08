@@ -17,8 +17,8 @@
 
 	<!-- 数据源配置 -->
 	<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
-	<property name="c3p0.minPoolSize">5</property>
-	<property name="c3p0.maxPoolSize">30</property>
+	<property name="c3p0.minPoolSize">50</property>
+	<property name="c3p0.maxPoolSize">600</property>
 	<property name="c3p0.initialPoolSize">10</property>
 	<!-- <property name="c3p0.automaticTestTable">Test</property> -->
 	<property name="c3p0.maxIdleTime">25000</property>
