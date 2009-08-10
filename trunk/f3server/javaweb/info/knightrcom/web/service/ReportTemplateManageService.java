@@ -2,17 +2,19 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
+import info.knightrcom.data.metadata.GlobalConfigDAO;
+import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,21 +27,21 @@ import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
 @SuppressWarnings("unchecked")
-public class ReportTemplateManageService extends F3SWebService<List<Map>> {
+public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 
     @Override
     public Class<?>[] getAliasTypes() {
-    	return new Class<?>[] {List.class};
+    	return new Class<?>[] {GlobalConfig.class};
     }
 
     @Override
     public String getNamedQuery() {
-    	 return "GLOBAL_CONFIG";
+    	 return "REPORT_TEMPLATE_MANAGE";
     }
 
     @Override
     public String getNamedQueryForCount() {
-    	return "GLOBAL_CONFIG_COUNT";
+    	return "REPORT_TEMPLATE_MANAGE";
     }
 
     @Override
@@ -49,147 +51,76 @@ public class ReportTemplateManageService extends F3SWebService<List<Map>> {
 
     @Override
     public void processQuerySetting(Query query, HttpServletRequest request) {
-        
+        query.setSerializable(0, GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
     }
     
     /**
-	 * 服务器参数读取
+	 * 报表模板读取
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	public String READ_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
-    	// 设置页码
-        int currentPage = 1;
-        if (request.getParameter("CURRENT_PAGE").matches("[1-9]\\d*")) {
-            currentPage = new Integer(request.getParameter("CURRENT_PAGE")).intValue();
-        }
-    	Properties configParams = ModelUtil.readProperties(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
-    	
-    	List<Map> configMaps = new ArrayList<Map>();
-    	for (Entry<Object, Object> param : configParams.entrySet()) {
-    		Map map = new HashMap();
-    		map.put(param.getKey(), param.getValue());
-    		configMaps.add(map);
-	    }
-
-        EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
+		final GlobalConfig globalconfig = new GlobalConfigDAO().findById(request.getParameter("GLOBALCONFIG_ID"));
+        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
+        info.setEntity(globalconfig);
         info.setResult(F3SWebServiceResult.SUCCESS);
-        info.setEntity(configMaps);
-        info.getPagination().setPageSize(configMaps.size());
-        info.getPagination().setTotalRecord(configMaps.size()*configMaps.size());
-        info.getPagination().setCurrentPage(currentPage);
-        return toXML(info, getAliasTypes());
+        return toXML(info, new Class[] {GlobalConfig.class});
     }
 	
 	/**
-	 * 服务器参数新增
+	 * 报表模板新增
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	public String CREATE_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
-		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
-    	try {
-    		String title = request.getParameter("TITLE");
-	        String sqlContext = request.getParameter("CONTENT");
-	        Properties propertiesOrig = ModelUtil.readProperties(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
-	        propertiesOrig.setProperty(title.toUpperCase(), sqlContext);
-	        // 数据更新至DB
-	    	// 获取原始记录
-	    	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-	    	criteria.add(Expression.eq("name", GameConfigureConstant.REPORT_TEMPLATE_MANAGE));
-	    	GlobalConfig globalConfig = (GlobalConfig) criteria.uniqueResult();
-			// 更新记录
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			propertiesOrig.storeToXML(outStream, null);
-			globalConfig.setValue(outStream.toString("utf-8"));
-			globalConfig.setUpdateTime(new Date());
-			HibernateSessionFactory.getSession().save(globalConfig);
-			info.setResult(F3SWebServiceResult.SUCCESS);
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	info.setResult(F3SWebServiceResult.FAIL);
-        }
-        return toXML(info, getAliasTypes());
+		String title = request.getParameter("TITLE");
+        String sqlContent = request.getParameter("CONTENT");
+		GlobalConfig globalconfig = new GlobalConfig();
+		globalconfig.setGlobalConfigId(UUID.randomUUID().toString());
+		globalconfig.setName(title);
+		globalconfig.setValue(sqlContent);
+		globalconfig.setType(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
+		globalconfig.setCreateTime(new Date());
+		globalconfig.setUpdateTime(new Date());
+        HibernateSessionFactory.getSession().save(globalconfig);
+        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
+        info.setEntity(globalconfig);
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        return toXML(info, new Class[] {GlobalConfig.class});
     }
     
 	/**
-	 * 服务器参数保存
+	 * 报表模板保存
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	public String UPDATE_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
-		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
-    	try {
-	        String title = request.getParameter("TITLE");
-	        String sqlContent = request.getParameter("CONTENT");
-	        Properties properties = ModelUtil.readProperties(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
-	    	
-	    	for (Entry<Object, Object> param : properties.entrySet()) {
-	    		// 更新变量值
-	    		if (param.getKey().equals(title)) {
-	    			 properties.setProperty(title, sqlContent);
-	    		}
-		    }
-	        
-	        // 数据更新至DB
-	    	// 获取原始记录
-	    	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-	    	criteria.add(Expression.eq("name", GameConfigureConstant.REPORT_TEMPLATE_MANAGE));
-	    	GlobalConfig globalConfig = (GlobalConfig) criteria.uniqueResult();
-			// 更新记录
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.storeToXML(outStream, null);
-			globalConfig.setValue(outStream.toString("utf-8"));
-			globalConfig.setUpdateTime(new Date());
-			HibernateSessionFactory.getSession().save(globalConfig);
-			info.setResult(F3SWebServiceResult.SUCCESS);
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	info.setResult(F3SWebServiceResult.FAIL);
-        }
-        return toXML(info, getAliasTypes());
+		String title = request.getParameter("TITLE");
+        String sqlContent = request.getParameter("CONTENT");
+		GlobalConfig globalconfig = new GlobalConfigDAO().findById(request.getParameter("GLOBALCONFIG_ID"));
+		globalconfig.setName(title);
+		globalconfig.setValue(sqlContent);
+        globalconfig.setUpdateTime(new Date());
+        HibernateSessionFactory.getSession().update(globalconfig);
+        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        return toXML(info, new Class[] {GlobalConfig.class});
     }
 	
 	/**
-	 * 服务器参数删除
+	 * 报表模板删除
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	public String DELETE_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
-		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
-    	try {
-	        String title = request.getParameter("TITLE");
-	        Properties properties = ModelUtil.readProperties(GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
-	        // 重构参数列表[将删除的参数键值不重新加载]
-	        Properties propertiesDest = new Properties();
-	    	for (Entry<Object, Object> param : properties.entrySet()) {
-	    		// 更新变量值
-	    		if (param.getKey().equals(title)) {
-	    			continue;
-	    		}
-	    		propertiesDest.put(param.getKey(), param.getValue());
-		    }
-	        
-	        // 数据更新至DB
-	    	// 获取原始记录
-	    	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-	    	criteria.add(Expression.eq("name", GameConfigureConstant.REPORT_TEMPLATE_MANAGE));
-	    	GlobalConfig globalConfig = (GlobalConfig) criteria.uniqueResult();
-			// 更新记录
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			propertiesDest.storeToXML(outStream, null);
-			globalConfig.setValue(outStream.toString("utf-8"));
-			globalConfig.setUpdateTime(new Date());
-			HibernateSessionFactory.getSession().save(globalConfig);
-			info.setResult(F3SWebServiceResult.SUCCESS);
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	info.setResult(F3SWebServiceResult.FAIL);
-        }
-        return toXML(info, getAliasTypes());
+		GlobalConfig globalconfig = new GlobalConfigDAO().findById(request.getParameter("GLOBALCONFIG_ID"));
+        new GlobalConfigDAO().delete(globalconfig);
+        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        return toXML(info, new Class[] {GlobalConfig.class});
     }
 }
