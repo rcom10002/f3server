@@ -72,6 +72,19 @@ public abstract class F3SWebService<T> {
         return info;
     }
 
+    /**
+     * 创建要返回的实体对象
+     * @param entity
+     * @param result
+     * @return
+     */
+    protected EntityInfo<Object> createGeneralEntityInfo(Object entity, F3SWebServiceResult result) {
+        EntityInfo<Object> info = new EntityInfo<Object>();
+        info.setEntity(entity);
+        info.setResult(result);
+        return info;
+    }
+
     @SuppressWarnings("unchecked")
     public String serializeResponseStream(HttpServletRequest request, HttpServletResponse response) {
         // 准备查询条件

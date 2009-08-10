@@ -19,10 +19,16 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 Restrictions.and(Property.forName("userId").eq(username), 
                                  Property.forName("password").eq(password))).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
-        if (profile != null) {
+        if (profile != null && "AdministratorGroupUser".indexOf(profile.getRole()) > -1) {
             info.setEntity(new Object() {
                 @SuppressWarnings("unused")
-                String role = new Short("0").equals(profile.getRole()) ? "admin" : "user";
+                String profileId = profile.getRole();
+                @SuppressWarnings("unused")
+                String userId = profile.getUserId();
+                @SuppressWarnings("unused")
+                String rslPath = profile.getRlsPath();
+                @SuppressWarnings("unused")
+                String role = profile.getRole();
             });
         	info.setResult(F3SWebServiceResult.SUCCESS);
         } else {
