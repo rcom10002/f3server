@@ -29,8 +29,9 @@ import com.thoughtworks.xstream.XStream;
 public class ModelUtil {
 
     private static Set<IoSession> sessions;
-    private static Platform platform;
+    private static Properties systemParameters;
     private static String modelDesc;
+    private static Platform platform;
     private static Map<String, Lobby> lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     private static Map<String, Room> rooms = Collections.synchronizedMap(new HashMap<String, Room>());
 
@@ -96,6 +97,13 @@ public class ModelUtil {
         stream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
         modelDesc = "<e4x-data>#</e4x-data>".replace("#", stream.toXML(ModelUtil.getPlatform()));
         return platform;
+    }
+
+    public static String getSystemParameter(String key) {
+        if (systemParameters == null) {
+            systemParameters = readProperties(GameConfigureConstant.SERVER_PARAM_NAME);
+        }
+        return systemParameters.getProperty(key);
     }
 
     public static final String getModelDesc() {
