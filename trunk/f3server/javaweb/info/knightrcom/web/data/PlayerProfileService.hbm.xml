@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<sql-query name="PLAYER_PROFILE">
-	<![CDATA[
+    <sql-query name="PLAYER_PROFILE">
 select
     `PROFILE_ID`,
     `NUMBER`,
@@ -22,10 +21,22 @@ select
 from
     `player_profile`
 order by `CREATE_TIME` desc
-    ]]>
     </sql-query>
-	<sql-query name="PLAYER_PROFILE_COUNT">
+    <sql-query name="PLAYER_PROFILE_COUNT">
 SELECT COUNT(*) AS RECORD_COUNT
   FROM player_profile
+    </sql-query>
+    <sql-query name="PLAYER_PROFILE_ALL_RLS_PATH">
+SELECT player_profile.rls_path
+  FROM player_profile
+ WHERE player_profile.role = 'GroupUser'
+    </sql-query>
+    <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">
+SELECT player_profile.rls_path
+  FROM player_profile LEFT JOIN (
+  	   SELECT rls_path FROM player_profile WHERE user_id = ?
+       ) target 
+    ON player_profile.rls_path LIKE target.rls_path || '%'
+ WHERE player_profile.role = 'GroupUser'
     </sql-query>
 </hibernate-mapping>
