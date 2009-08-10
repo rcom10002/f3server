@@ -48,6 +48,7 @@
 	<mapping resource="info/knightrcom/web/data/GameConfigureService.hbm.xml" />
 	<mapping resource="info/knightrcom/web/data/ReportScoreService.hbm.xml" />
 	<mapping resource="info/knightrcom/web/data/ReportBusinessService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/ReportTemplateManageService.hbm.xml" />
 </session-factory>
 
 </hibernate-configuration>

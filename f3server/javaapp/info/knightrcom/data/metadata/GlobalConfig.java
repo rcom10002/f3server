@@ -34,6 +34,8 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
     private Date updateTime;
 
     private String updateBy;
+    
+    private String type;
 
     // Constructors
 
@@ -47,7 +49,7 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
     }
 
     /** full constructor */
-    public GlobalConfig(String globalConfigId, String number, String name, String value, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GlobalConfig(String globalConfigId, String number, String name, String value, Short status, Date createTime, String createBy, Date updateTime, String updateBy, String type) {
         this.globalConfigId = globalConfigId;
         this.number = number;
         this.name = name;
@@ -57,6 +59,7 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
         this.createBy = createBy;
         this.updateTime = updateTime;
         this.updateBy = updateBy;
+        this.type = type;
     }
 
     // Property accessors
@@ -143,5 +146,14 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
     }
+
+    @Column(name = "TYPE", length = 100)
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }

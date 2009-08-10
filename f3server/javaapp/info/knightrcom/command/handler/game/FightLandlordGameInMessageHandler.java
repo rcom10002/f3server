@@ -261,9 +261,9 @@ public class FightLandlordGameInMessageHandler extends
 			builder.append(FightLandlordPoker.handlePokers[i].getValue() + ",");
 		}
 		List<Player> players = game.getPlayers();
+		boolean isHandlerPokers = true;
 		synchronized (players) {
 			Iterator<Player> itr = players.iterator();
-			boolean isHandlerPokers = true;
 			while (itr.hasNext()) {
 				Player player = itr.next();
 				echoMessage = F3ServerMessage.createInstance(

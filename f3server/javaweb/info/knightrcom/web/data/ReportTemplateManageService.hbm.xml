@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	<hibernate-mapping>
+	<sql-query name="REPORT_TEMPLATE_MANAGE">
+	<![CDATA[
+		SELECT 
+			GLOBAL_CONFIG.GLOBAL_CONFIG_ID globalconfigId,
+			GLOBAL_CONFIG.NAME name,
+			GLOBAL_CONFIG.VALUE value
+		FROM
+			GLOBAL_CONFIG
+		WHERE 
+			GLOBAL_CONFIG.TYPE = ?
+		ORDER BY GLOBAL_CONFIG.NAME ASC
+	 ]]>
+	</sql-query>
+	<sql-query name="REPORT_TEMPLATE_MANAGE_COUNT">
+	<![CDATA[
+		SELECT COUNT(*) RECORD_COUNT
+		FROM
+			GLOBAL_CONFIG
+		WHERE 
+			GLOBAL_CONFIG.TYPE = ?
+		ORDER BY GLOBAL_CONFIG.NAME ASC
+	 ]]>
+	</sql-query>
+</hibernate-mapping>
