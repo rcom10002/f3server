@@ -26,6 +26,8 @@ public class EntityInfo<T> {
 
 	private F3SWebServiceResult result;
 
+	private Object tag;
+
 	/**
 	 * @return the pagination
 	 */
@@ -85,4 +87,18 @@ public class EntityInfo<T> {
 	public void setEntity(T entity) {
 		this.entity = entity;
 	}
+
+    /**
+     * @return the tag
+     */
+    public Object getTag() {
+        return tag;
+    }
+
+    /**
+     * @param tag the tag to set
+     */
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
 }
