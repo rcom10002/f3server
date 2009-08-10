@@ -1,5 +1,7 @@
 package info.knightrcom.util;
 
+import java.util.regex.Pattern;
+
 /**
  * 
  * 键与值中均不可以出现“#”和“~”
@@ -36,20 +38,31 @@ public class SystemParameter {
 	}
 
 	/**
+	 * @return
+	 */
+	public String[] keys() {
+	    container = container.replaceFirst("^#", "");
+	    container = container.replaceAll("~[^#]*", "");
+	    return container.split("#");
+	}
+
+	/**
+     * @return
+     */
+    public int count() {
+        return container.length() - container.replace("#", "").length();
+    }
+
+	/**
+	 * key 与 value 只允许使用数字和字母，并且不能为null或空串
+	 * 
 	 * @param values
 	 */
 	private void validate(String ... values) {
 		for (String value : values) {
-			if (value == null || value.indexOf('#') > -1 || value.indexOf('~') > -1) {
-				throw new RuntimeException("# is not allowed here");
+			if (value == null || value.length() == 0 || value.indexOf('_') > -1 || !value.matches("^\\w*$")) {
+				throw new RuntimeException("Illegal mark is not allowed here");
 			}
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public int count() {
-		return container.length() - container.replace("#", "").length();
-	}
+	}//Pattern
 }
