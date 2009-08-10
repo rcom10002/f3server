@@ -52,9 +52,11 @@ public class GameConfigureConstant {
 	public static final String GAME_TYPE_NAME_MAHJONG = "Mahjong";
 	
 	public static final String GAME_TYPE_VALUE_MAHJONG_QIONG = "QiongWin";
-	
-	public static final String GAME_TYPE_VALUE_MAHJONG_PUSHDOWN = "PushDownWin";
-	
+
+    public static final String GAME_TYPE_VALUE_MAHJONG_PUSHDOWN = "PushdownWin";
+
+    public static final String PLAYER_ROLE = "PLAYER_ROLE";
+    
 }
 
 
