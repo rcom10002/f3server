@@ -28,4 +28,19 @@ public class SystemParameterTest extends TestCase {
 		assertEquals(params.get("2"), "B");
 		assertEquals(params.get("3"), "C");
 	}
+
+	public void testKeys() {
+        SystemParameter params = new SystemParameter();
+        params.set("1", "A");
+        params.set("2", "B");
+        params.set("3", "C");
+        String result = "";
+	    for (String key : params.keys()) {
+	        result += key;
+	    }
+	    assertEquals(result, "123");
+	}
+
+	
+	
 }
