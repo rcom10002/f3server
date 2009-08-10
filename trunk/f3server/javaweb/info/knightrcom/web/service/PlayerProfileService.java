@@ -3,6 +3,9 @@ package info.knightrcom.web.service;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
+import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.StringHelper;
+import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.util.Date;
@@ -41,6 +44,45 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         return new Class<?>[] {PlayerProfile.class};
     }
 
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
+    public String RETRIEVE_PLAYER_RLS_PATH(HttpServletRequest request, HttpServletResponse response) {
+        Query query = null;
+        // 设置玩家关系路径
+        if (StringHelper.isEmpty(request.getParameter("CURRENT_RLS_PATH"))) {
+            // 管理员
+            query = HibernateSessionFactory.getSession().getNamedQuery("PLAYER_PROFILE_ALL_RLS_PATH");
+        } else {
+            // 组用户
+            query = HibernateSessionFactory.getSession().getNamedQuery("PLAYER_PROFILE_CURRENT_RLS_PATH");
+            query.setString(0, request.getParameter("CURRENT_RLS_PATH"));
+        }
+        query.setResultTransformer(this.getResultTransformer());
+        EntityInfo<PlayerProfile> info = createEntityInfo(new PlayerProfile(), F3SWebServiceResult.SUCCESS);
+        info.setTag(query.list().toArray());
+        return toXML(info, getAliasTypes());
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
+    public String RETRIEVE_PLAYER_ROLE(HttpServletRequest request, HttpServletResponse response) {
+        String roles = ModelUtil.getSystemParameter(GameConfigureConstant.PLAYER_ROLE);
+        EntityInfo<PlayerProfile> info = createEntityInfo(new PlayerProfile(), F3SWebServiceResult.SUCCESS);
+        info.setTag(roles.split(","));
+        return toXML(info, getAliasTypes());
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
     public String CREATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfile();
         playerProfile.setProfileId(UUID.randomUUID().toString());
@@ -56,6 +98,11 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         return toXML(info, new Class[] {PlayerProfile.class});
     }
 
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
     public String READ_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         final PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
         EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
@@ -64,6 +111,11 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         return toXML(info, new Class[] {PlayerProfile.class});
     }
 
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
     public String UPDATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
         playerProfile.setUserId(request.getParameter("USER_ID"));
@@ -76,6 +128,11 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         return toXML(info, new Class[] {PlayerProfile.class});
     }
 
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
     public String DELETE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
         new PlayerProfileDAO().delete(playerProfile);
