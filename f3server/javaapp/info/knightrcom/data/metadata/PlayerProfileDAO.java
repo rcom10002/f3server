@@ -40,13 +40,13 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
 
     public static final String RLS_PATH = "rlsPath";
 
-    public static final String ROLE = "role";
-
     public static final String STATUS = "status";
 
     public static final String CREATE_BY = "createBy";
 
     public static final String UPDATE_BY = "updateBy";
+
+    public static final String ROLE = "role";
 
     public void save(PlayerProfile transientInstance) {
         log.debug("saving PlayerProfile instance");
@@ -138,10 +138,6 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
         return findByProperty(RLS_PATH, rlsPath);
     }
 
-    public List<PlayerProfile> findByRole(Object role) {
-        return findByProperty(ROLE, role);
-    }
-
     public List<PlayerProfile> findByStatus(Object status) {
         return findByProperty(STATUS, status);
     }
@@ -152,6 +148,10 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
 
     public List<PlayerProfile> findByUpdateBy(Object updateBy) {
         return findByProperty(UPDATE_BY, updateBy);
+    }
+
+    public List<PlayerProfile> findByRole(Object role) {
+        return findByProperty(ROLE, role);
     }
 
     public List findAll() {

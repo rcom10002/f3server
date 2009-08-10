@@ -35,8 +35,6 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
 
     private String rlsPath;
 
-    private Short role;
-
     private Short status;
 
     private Date createTime;
@@ -46,6 +44,8 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     private Date updateTime;
 
     private String updateBy;
+
+    private String role;
 
     // Constructors
 
@@ -59,7 +59,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     }
 
     /** full constructor */
-    public PlayerProfile(String profileId, String number, String name, String userId, String password, Integer currentScore, Integer initLimit, Integer level, String rlsPath, Short role, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerProfile(String profileId, String number, String name, String userId, String password, Integer currentScore, Integer initLimit, Integer level, String rlsPath, Short status, Date createTime, String createBy, Date updateTime, String updateBy, String role) {
         this.profileId = profileId;
         this.number = number;
         this.name = name;
@@ -69,12 +69,12 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
         this.initLimit = initLimit;
         this.level = level;
         this.rlsPath = rlsPath;
-        this.role = role;
         this.status = status;
         this.createTime = createTime;
         this.createBy = createBy;
         this.updateTime = updateTime;
         this.updateBy = updateBy;
+        this.role = role;
     }
 
     // Property accessors
@@ -160,15 +160,6 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
         this.rlsPath = rlsPath;
     }
 
-    @Column(name = "ROLE")
-    public Short getRole() {
-        return this.role;
-    }
-
-    public void setRole(Short role) {
-        this.role = role;
-    }
-
     @Column(name = "STATUS")
     public Short getStatus() {
         return this.status;
@@ -214,6 +205,15 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
 
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
+    }
+
+    @Column(name = "role", length = 100)
+    public String getRole() {
+        return this.role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }
