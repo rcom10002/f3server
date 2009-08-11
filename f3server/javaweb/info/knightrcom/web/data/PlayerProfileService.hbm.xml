@@ -36,7 +36,7 @@ SELECT player_profile.rls_path
   FROM player_profile INNER JOIN (
   	   SELECT rls_path FROM player_profile WHERE user_id = ?
        ) target 
-    ON player_profile.rls_path LIKE target.rls_path || '%'
+    ON player_profile.rls_path LIKE CONCAT(target.rls_path, '%')
  WHERE player_profile.role = 'GroupUser'
     </sql-query>
 </hibernate-mapping>
