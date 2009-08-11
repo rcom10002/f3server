@@ -21,9 +21,10 @@ drop table if exists PLAYER_SCORE;
 create table GAME_FEEDBACK
 (
    FEEDBACK_ID          VARCHAR(100) not null,
-   GAME_ID              VARCHAR(100),
+   GAME_ID              VARCHAR(100) not null,
    NUMBER               VARCHAR(100),
-   CHEAT_DESC           VARCHAR(2000),
+   TITLE                VARCHAR(100) not null,
+   DESCRIPTION          TEXT not null,
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
@@ -35,28 +36,30 @@ create table GAME_FEEDBACK
 create table GAME_RECORD
 (
    GAME_ID              VARCHAR(100) not null,
-   GAME_TYPE            VARCHAR(100),
+   GAME_TYPE            VARCHAR(100) not null,
    GAME_SETTING         TINYINT,
    WINNER_NUMBERS       VARCHAR(100),
    PLAYERS              VARCHAR(100),
    SCORE                INT,
    SYSTEM_SCORE         INT,
    INIT_POKERS          TEXT,
-   RECORD               TEXT,
+   RECORD               TEXT not null,
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (GAME_ID)
-);
+)
+type = InnoDB;
 
 create table GLOBAL_CONFIG
 (
    GLOBAL_CONFIG_ID     VARCHAR(100) not null,
    NUMBER               VARCHAR(100),
-   NAME                 VARCHAR(100),
-   VALUE                TEXT,
+   NAME                 VARCHAR(100) not null,
+   VALUE                TEXT not null,
+   TYPE                 VARCHAR(100),
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
@@ -69,7 +72,7 @@ create table LOG_INFO
 (
    LOG_ID               VARCHAR(100) not null,
    NUMBER               VARCHAR(100),
-   CAPTION              VARCHAR(100),
+   CAPTION              VARCHAR(100) not null,
    KEY_CAUSE1           VARCHAR(100),
    KEY_CAUSE2           VARCHAR(100),
    KEY_CAUSE3           VARCHAR(100),
@@ -114,38 +117,40 @@ create table PLAYER_PROFILE
    PROFILE_ID           VARCHAR(100) not null,
    NUMBER               VARCHAR(100),
    NAME                 VARCHAR(100),
-   USER_ID              VARCHAR(16),
-   PASSWORD             VARCHAR(16),
-   CURRENT_SCORE        INT,
+   USER_ID              VARCHAR(16) not null,
+   PASSWORD             VARCHAR(16) not null,
+   CURRENT_SCORE        INT not null,
    INIT_LIMIT           INT,
-   LEVEL                INT,
-   RLS_PATH             VARCHAR(1000),
-   ROLE                 TINYINT,
+   LEVEL                INT not null,
+   RLS_PATH             VARCHAR(1000) not null,
+   ROLE                 VARCHAR(100) not null,
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (PROFILE_ID)
-);
+)
+type = InnoDB;
 
 create table PLAYER_SCORE
 (
    SCORE_ID             VARCHAR(100) not null,
-   PROFILE_ID           VARCHAR(100),
-   GAME_ID              VARCHAR(100),
-   USER_ID              VARCHAR(100),
-   CURRENT_NUMBER       VARCHAR(1),
-   ORG_SCORE            INT,
-   SCORE                INT,
-   SYSTEM_SCORE         INT,
+   PROFILE_ID           VARCHAR(100) not null,
+   GAME_ID              VARCHAR(100) not null,
+   USER_ID              VARCHAR(100) not null,
+   CURRENT_NUMBER       VARCHAR(1) not null,
+   ORG_SCORE            INT not null,
+   SCORE                INT not null,
+   SYSTEM_SCORE         INT not null,
    STATUS               TINYINT,
    CREATE_TIME          DATETIME,
    CREATE_BY            VARCHAR(100),
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (SCORE_ID)
-);
+)
+type = InnoDB;
 
 alter table GAME_FEEDBACK add constraint FK_GAME_FEEDBACK_TO_GAME_RECORD foreign key (GAME_ID)
       references GAME_RECORD (GAME_ID) on delete restrict on update restrict;
@@ -153,8 +158,8 @@ alter table GAME_FEEDBACK add constraint FK_GAME_FEEDBACK_TO_GAME_RECORD foreign
 alter table PERIODLY_SUM add constraint FK_PERIODLY_SUM_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
       references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
 
-alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
-      references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
-
 alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_GAME_RECORD foreign key (GAME_ID)
       references GAME_RECORD (GAME_ID) on delete restrict on update restrict;
+
+alter table PLAYER_SCORE add constraint FK_PLAYER_SCORE_TO_PLAYER_PROFILE foreign key (PROFILE_ID)
+      references PLAYER_PROFILE (PROFILE_ID) on delete restrict on update restrict;
