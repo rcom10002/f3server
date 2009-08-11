@@ -421,7 +421,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * @param lobbyId
      * @param request
      */
-	public void deleteGameRoomConfigure(String lobbyId, HttpServletRequest request) {
+    private void deleteGameRoomConfigure(String lobbyId, HttpServletRequest request) {
 		String gameId = request.getParameter("GAME_ID");
 		// 根据LOBBY—ID读取数据源
         Properties config = ModelUtil.readProperties();
@@ -468,7 +468,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * @param lobbyId
      * @param request
      */
-	public void updateGameRoomConfigure(String lobbyId, HttpServletRequest request) {
+	private void updateGameRoomConfigure(String lobbyId, HttpServletRequest request) {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
         String displayIndex = request.getParameter("DISPLAY_INDEX");
@@ -560,7 +560,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      * @param request
 	 * @throws IOException 
      */
-	public void createGameRoomConfigure(String lobbyId, String prefixGameId, HttpServletRequest request) throws IOException {
+	private void createGameRoomConfigure(String lobbyId, String prefixGameId, HttpServletRequest request) throws IOException {
         String gameId = request.getParameter("GAME_ID");
         String gameName = request.getParameter("GAME_NAME");
         String pointMark = request.getParameter("POINT_MARK");
@@ -731,7 +731,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	 * @param lobbyId
 	 * @return
 	 */
-	public int getMaxDisplayIndex(String lobbyId) {
+	private int getMaxDisplayIndex(String lobbyId) {
     	Properties config = ModelUtil.readProperties();
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         int maxDisplayIndex = 0;
