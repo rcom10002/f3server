@@ -52,7 +52,7 @@ public abstract class F3SWebService<T> {
         String className = this.getClass().getSimpleName();
         Method[] methods = this.getClass().getDeclaredMethods();
         for (Method thisMethod : methods) {
-            if (thisMethod.getName().matches("^[A-Z_]+$")) {
+            if (thisMethod.getName().matches("^[A-Z0-9_]+$")) {
                 log.info("Method[#] is successfully loaded!".replace("#", thisMethod.getName()));
                 F3SWebServiceProxy.registerWebServiceProcesser(className, thisMethod.getName(), thisMethod);
             }
