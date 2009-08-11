@@ -3,26 +3,16 @@ package info.knightrcom.web.service;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
-import info.knightrcom.data.metadata.PlayerProfile;
-import info.knightrcom.data.metadata.PlayerProfileDAO;
-import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
@@ -41,7 +31,7 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 
     @Override
     public String getNamedQueryForCount() {
-    	return "REPORT_TEMPLATE_MANAGE";
+    	return "REPORT_TEMPLATE_MANAGE_COUNT";
     }
 
     @Override
@@ -51,7 +41,7 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 
     @Override
     public void processQuerySetting(Query query, HttpServletRequest request) {
-        query.setSerializable(0, GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
+        query.setString(0, GameConfigureConstant.REPORT_TEMPLATE_MANAGE);
     }
     
     /**
