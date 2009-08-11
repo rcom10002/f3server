@@ -33,7 +33,7 @@ SELECT player_profile.rls_path
     </sql-query>
     <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">
 SELECT player_profile.rls_path
-  FROM player_profile LEFT JOIN (
+  FROM player_profile INNER JOIN (
   	   SELECT rls_path FROM player_profile WHERE user_id = ?
        ) target 
     ON player_profile.rls_path LIKE target.rls_path || '%'
