@@ -136,6 +136,8 @@ class F3Server {
             acceptor.dispose();
             acceptor = null;
             log.info("F3S SERVER HAS SHUTDOWN!");
+            // 清理内存模型
+            ModelUtil.resetModels();
             RUNNING = false;
         } catch (Exception ex) {
             log.error(ex.getMessage());
