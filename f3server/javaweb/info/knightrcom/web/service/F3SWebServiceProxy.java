@@ -34,7 +34,8 @@ public class F3SWebServiceProxy {
      */
     public static void registerWebService(String serviceName, F3SWebService<?> service) {
         if (services.containsKey(serviceName)) {
-            throw new RuntimeException("发现有重复的Web服务");
+            // FIXME 把下面异常改用WARNING
+        	throw new RuntimeException("发现有重复的Web服务");
         }
         services.put(serviceName, service);
     }

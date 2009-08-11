@@ -35,6 +35,15 @@ public class ModelUtil {
     private static Map<String, Lobby> lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     private static Map<String, Room> rooms = Collections.synchronizedMap(new HashMap<String, Room>());
 
+    public static void resetModels() {
+    	sessions = null;
+    	systemParameters = null;
+    	modelDesc = null;
+    	platform = null;
+    	lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
+    	rooms = Collections.synchronizedMap(new HashMap<String, Room>());
+    }
+
     /**
      * @return
      */
