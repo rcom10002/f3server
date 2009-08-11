@@ -105,7 +105,7 @@ GenScriptQOwnr=No
 GenScriptCase=0
 GenScriptEncoding=UTF8
 GenScriptNAcct=No
-IdentifierDelimiter=&quot;
+IdentifierDelimiter=`
 
 [FolderOptions\Physical Objects\Database Generation\Database]
 Create=Yes
@@ -1515,7 +1515,7 @@ CARD 0 新宋体,8,N</a:FontList>
 <o:ReferenceSymbol Id="o12">
 <a:CreationDate>1249348374</a:CreationDate>
 <a:ModificationDate>1249704647</a:ModificationDate>
-<a:Rect>((-15008,1554), (18876,2875))</a:Rect>
+<a:Rect>((-15008,1554), (18876,3000))</a:Rect>
 <a:ListOfPoints>((-15008,1779),(18876,1779))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
@@ -1791,11 +1791,11 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:Column>
 <o:Column Id="o32">
 <a:ObjectID>66EA169C-1924-4576-8A70-EEA9991BF3DC</a:ObjectID>
-<a:Name>DESC</a:Name>
-<a:Code>DESC</a:Code>
+<a:Name>DESCRIPTION</a:Name>
+<a:Code>DESCRIPTION</a:Code>
 <a:CreationDate>1249348374</a:CreationDate>
 <a:Creator>任政委</a:Creator>
-<a:ModificationDate>1249348536</a:ModificationDate>
+<a:ModificationDate>1249960108</a:ModificationDate>
 <a:Modifier>任政委</a:Modifier>
 <a:DataType>TEXT</a:DataType>
 <a:Mandatory>1</a:Mandatory>
