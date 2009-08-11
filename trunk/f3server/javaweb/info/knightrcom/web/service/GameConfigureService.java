@@ -269,7 +269,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
     }
 
 	// 红五
-	public String CREATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+	public String CREATE_RED5_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
 		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
     	try {
         	createGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, GameConfigureConstant.GAME_TYPE_VALUE_RED5, request);
@@ -281,7 +281,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         return toXML(info, getAliasTypes());
     }
 	
-	public String UPDATE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+	public String UPDATE_RED5_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
 		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
     	try {
         	updateGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
@@ -293,7 +293,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
     	return toXML(info, getAliasTypes());
     }
 	
-	public String DELETE_REDFIVE_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
+	public String DELETE_RED5_ROOM_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
 		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
     	try {
 	        deleteGameRoomConfigure(GameConfigureConstant.GAME_TYPE_NAME_POKER, request);
