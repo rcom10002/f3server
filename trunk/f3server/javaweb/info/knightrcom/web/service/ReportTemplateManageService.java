@@ -26,12 +26,12 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 
     @Override
     public String getNamedQuery() {
-    	 return "REPORT_TEMPLATE_MANAGE";
+    	 return "GLOBAL_CONFIGURE";
     }
 
     @Override
     public String getNamedQueryForCount() {
-    	return "REPORT_TEMPLATE_MANAGE_COUNT";
+    	return "GLOBAL_CONFIGURE_COUNT";
     }
 
     @Override
