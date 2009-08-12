@@ -31,6 +31,7 @@ public class SystemMessageService extends F3SWebServiceAdaptor<Object> {
 			try {
 				EchoMessage echoMessage = F3ServerMessage.createInstance(MessageType.PLATFORM).getEchoMessage();
 				echoMessage.setContent(notification);
+				echoMessage.setResult("PLATFORM_" + request.getParameter("MESSAGE_TYPE") + "_MESSAGE_BROADCASTED");
 				F3ServerProxy.sessionWrite(session, echoMessage);
 				success++;
 			} catch (Exception e) {
@@ -38,7 +39,7 @@ public class SystemMessageService extends F3SWebServiceAdaptor<Object> {
 			}
 		}
 		F3SWebServiceResult result = failed > 0 ? F3SWebServiceResult.WARNING : F3SWebServiceResult.SUCCESS;
-		if (failed == F3ServerProxy.getAllSession().size()) {
+		if (F3ServerProxy.getAllSession().size() != 0 && failed == F3ServerProxy.getAllSession().size()) {
 			result = F3SWebServiceResult.FAIL;
 		}
 		return toXML(createEntityInfo(new Object(), result));
