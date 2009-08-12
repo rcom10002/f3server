@@ -7,12 +7,15 @@ import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 
@@ -65,8 +68,13 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 	 * @return
 	 */
 	public String CREATE_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
+		EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
 		String title = request.getParameter("TITLE");
         String sqlContent = request.getParameter("CONTENT");
+        if (getGlobalConfigListByName(title).size() > 0) {
+        	info.setResult(F3SWebServiceResult.WARNING);
+        	return toXML(info, new Class[] {GlobalConfig.class});
+        }
 		GlobalConfig globalconfig = new GlobalConfig();
 		globalconfig.setGlobalConfigId(UUID.randomUUID().toString());
 		globalconfig.setName(title);
@@ -75,7 +83,6 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 		globalconfig.setCreateTime(new Date());
 		globalconfig.setUpdateTime(new Date());
         HibernateSessionFactory.getSession().save(globalconfig);
-        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
         info.setEntity(globalconfig);
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {GlobalConfig.class});
@@ -88,6 +95,7 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 	 * @return
 	 */
 	public String UPDATE_SQL_TEMPLATE(HttpServletRequest request, HttpServletResponse response) {
+		EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
 		String title = request.getParameter("TITLE");
         String sqlContent = request.getParameter("CONTENT");
 		GlobalConfig globalconfig = new GlobalConfigDAO().findById(request.getParameter("GLOBALCONFIG_ID"));
@@ -95,7 +103,6 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
 		globalconfig.setValue(sqlContent);
         globalconfig.setUpdateTime(new Date());
         HibernateSessionFactory.getSession().update(globalconfig);
-        EntityInfo<GlobalConfig> info = new EntityInfo<GlobalConfig>();
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {GlobalConfig.class});
     }
@@ -113,4 +120,16 @@ public class ReportTemplateManageService extends F3SWebService<GlobalConfig> {
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {GlobalConfig.class});
     }
+	
+	/**
+	 * 判断报表模板名是否存在
+	 * @param name
+	 * @return
+	 */
+	private List<GlobalConfig> getGlobalConfigListByName(String name) {
+		Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+        criteria.add(Expression.eq("type", GameConfigureConstant.REPORT_TEMPLATE_MANAGE));
+        criteria.add(Expression.eq("name", name));
+        return criteria.list();
+	}
 }
