@@ -16,6 +16,8 @@ import info.knightrcom.command.message.game.FightLandlordGameMessage;
 import info.knightrcom.command.message.game.PushdownWinGameMessage;
 import info.knightrcom.command.message.game.QiongWinGameMessage;
 import info.knightrcom.command.message.game.Red5GameMessage;
+import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.model.game.Game;
 import info.knightrcom.model.game.GamePool;
 import info.knightrcom.model.global.Platform;
@@ -30,6 +32,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -173,6 +176,11 @@ public class ServiceHandler extends DemuxingIoHandler {
             // session.close(false) ???
             // 需要移除内存中相关的在线用户信息
             session.close(true);
+            // 
+    		LogInfo logInfo = new LogInfo();
+    		logInfo.setLogId(UUID.randomUUID().toString());
+    		logInfo.setInfo(cause.getMessage());
+    		HibernateSessionFactory.getSession().save(logInfo);
             // super.exceptionCaught(session, cause);
         } catch (Exception e) {
             e.printStackTrace();
