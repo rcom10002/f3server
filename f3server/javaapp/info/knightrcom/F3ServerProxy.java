@@ -15,7 +15,16 @@ import org.apache.mina.core.session.IoSession;
  */
 public class F3ServerProxy {
 
+    /**
+     * 日志类型
+     */
+    public static enum LogType {
+        CLIENT_ERROR, SYSTEM_ERROR, SYSTEM_LOG
+    }
+
 	/**
+	 * 获取所有Socket会话
+	 * 
 	 * @return
 	 */
 	public static Collection<IoSession> getAllSession() {
@@ -23,6 +32,8 @@ public class F3ServerProxy {
 	}
 
 	/**
+	 * 发布消息
+	 * 
 	 * @param session
 	 * @param echoMessage
 	 */
@@ -31,14 +42,14 @@ public class F3ServerProxy {
 	}
 
 	/**
-	 * 
+	 * 启动游戏服务器
 	 */
 	public static void startServer() {
 		F3Server.startServer(null);
 	}
 
 	/**
-	 * 
+	 * 停止游戏服务器
 	 */
 	public static void stopServer() {
 		F3Server.shutdownServer();
@@ -51,11 +62,32 @@ public class F3ServerProxy {
 		return F3Server.isRunning();
 	}
 
-    public static enum LogType {
-        CLIENT_ERROR, SYSTEM_ERROR, SYSTEM_LOG
-    }
+	/**
+	 * 获取服务器运行状态
+	 * 
+	 * @return
+	 */
+	public static Object getServerStatus() {
+		final String[] titles = new String[] {
+				"USE_SSL",
+				"PORT",
+				"SECURITY_CONFIGURATION",
+				"MAX_CONNECTION_LIMIT",
+				"RUNNING",
+				"USER_ONLINE"};
+		final Object[] params = new Object[] {
+				F3Server.USE_SSL, 
+				F3Server.PORT,
+				F3Server.SECURITY_CONFIGURATION, 
+				F3Server.MAX_CONNECTION_LIMIT,
+				F3Server.RUNNING, 
+				F3Server.acceptor.getManagedSessionCount() };
+		return new Object[] {titles, params};
+	}
 
 	/**
+	 * 创建日志信息
+	 * 
 	 * @param caption
 	 * @param message
 	 * @param info

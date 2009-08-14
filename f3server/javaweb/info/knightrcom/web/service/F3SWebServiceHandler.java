@@ -16,16 +16,16 @@ import org.apache.commons.logging.LogFactory;
 /**
  *
  */
-public class F3SWebServiceProxy {
+public class F3SWebServiceHandler {
 
-    protected static Log log = LogFactory.getLog(F3SWebServiceProxy.class);
+    protected static Log log = LogFactory.getLog(F3SWebServiceHandler.class);
 
     private static Map<String, F3SWebService<?>> services = new HashMap<String, F3SWebService<?>>();
 
     private static Map<String, Method> methods = new HashMap<String, Method>();
 
     public static String getServicePackageName() {
-        return F3SWebServiceProxy.class.getPackage().getName();
+        return F3SWebServiceHandler.class.getPackage().getName();
     }
 
     /**

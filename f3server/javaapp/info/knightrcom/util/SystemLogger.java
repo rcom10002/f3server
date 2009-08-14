@@ -26,8 +26,10 @@ public class SystemLogger {
         logInfo.setCaption(caption);
         if (StringHelper.isEmpty(message)) {
             logInfo.setInfo(info);
+        } else if (StringHelper.isEmpty(info)) {
+            logInfo.setInfo(message);
         } else {
-            logInfo.setInfo(message + "\n" + info);
+        	logInfo.setInfo(message + "\r\n" + info);
         }
         logInfo.setType(type.name());
         return logInfo;

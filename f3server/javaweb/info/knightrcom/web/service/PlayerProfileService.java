@@ -1,14 +1,17 @@
 package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.GlobalConfig;
+import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
-import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,12 +75,22 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
      * @return
      */
     public String RETRIEVE_PLAYER_ROLE(HttpServletRequest request, HttpServletResponse response) {
-        String roles = ModelUtil.getSystemParameter(GameConfigureConstant.PLAYER_ROLE);
-        if (!"Administrator".equals(request.getParameter("CURRENT_ROLE"))) {
-            roles = roles.replaceAll("^.*?(GroupUser.*)$", "$1");
-        }
+    	List<GlobalConfig> roleList = new GlobalConfigDAO().findByType(GameConfigureConstant.PLAYER_ROLE);
+    	String roles = "";
+    	Iterator<GlobalConfig> itr = roleList.iterator();
+    	while (itr.hasNext()) {
+    		GlobalConfig config = itr.next();
+    		if ("GroupUser".equals(request.getParameter("CURRENT_ROLE"))) {
+    			if (config.getName().indexOf("User") > -1) {
+    				roles += config.getName() + "~" + config.getValue() + ";";
+    			}
+				continue;
+    		}
+    		roles += config.getName() + "~" + config.getValue() + ";"; 
+    	}
+    	roles = roles.substring(0, roles.length() - 1);
         EntityInfo<PlayerProfile> info = createEntityInfo(new PlayerProfile(), F3SWebServiceResult.SUCCESS);
-        info.setTag(roles.split(","));
+        info.setTag(roles.split(";"));
         return toXML(info, getAliasTypes());
     }
 
