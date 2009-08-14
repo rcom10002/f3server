@@ -1,15 +1,19 @@
 package info.knightrcom.test;
 
 import info.knightrcom.data.HibernateSessionFactory;
-import info.knightrcom.util.ModelUtil;
+import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.web.constant.GameConfigureConstant;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import junit.framework.TestCase;
+
+import org.hibernate.Query;
 
 public class ModelDescriptorManipulateTest extends TestCase {
 
@@ -31,7 +35,49 @@ public class ModelDescriptorManipulateTest extends TestCase {
 			properties.put(key, value);
 		}
 
-		ModelUtil.saveProperties(properties);
+	    // 把配置文件内容保存到数据库中
+    	try {
+    		HibernateSessionFactory.getSession().beginTransaction();
+    		
+    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			properties.storeToXML(outStream, null);
+			
+			GlobalConfig config = new GlobalConfig();
+			config.setGlobalConfigId(UUID.randomUUID().toString());
+			config.setName(GameConfigureConstant.GLOBAL_CONFIG_NAME);
+			config.setValue(outStream.toString("utf-8"));
+			
+			HibernateSessionFactory.getSession().save(config);
+			
+			HibernateSessionFactory.getSession().getTransaction().commit();
+		} catch (Exception e) {
+			HibernateSessionFactory.getSession().getTransaction().rollback();
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * @throws Exception
+	 */
+	public void testInitRoles() throws Exception {
+    	try {
+    		HibernateSessionFactory.getSession().beginTransaction();
+    		HibernateSessionFactory.getSession().createSQLQuery("DELETE FROM global_config WHERE type = 'PLAYER_ROLE'").executeUpdate();
+			String roles = "Administrator~系统管理员;SuperGameMaster~超级游戏管理员;GameMaster~游戏管理员;GroupUser~组用户;User~普通用户";
+			String[] roleArray = roles.split(";");
+			for (String role : roleArray) {
+				GlobalConfig config = new GlobalConfig();
+				config.setGlobalConfigId(UUID.randomUUID().toString());
+				config.setName(role.split("~")[0]);
+				config.setValue(role.split("~")[1]);
+				config.setType("PLAYER_ROLE");
+				HibernateSessionFactory.getSession().save(config);
+			}
+			HibernateSessionFactory.getSession().getTransaction().commit();
+		} catch (Exception e) {
+			HibernateSessionFactory.getSession().getTransaction().rollback();
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
@@ -40,9 +86,16 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testReadProperties() throws Exception {
-	    Properties properties = ModelUtil.readProperties();
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		properties.storeToXML(bytes, null);
-		System.out.println(bytes.toString("utf-8"));
+    	Properties properties = new Properties();
+    	try {
+    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + GameConfigureConstant.GLOBAL_CONFIG_NAME + "' order by createTime desc");
+    		GlobalConfig config = (GlobalConfig)query.uniqueResult();
+    		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			properties.storeToXML(bytes, null);
+			System.out.println(bytes.toString("utf-8"));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

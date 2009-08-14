@@ -2,10 +2,10 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
-import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         if (request.getParameter("CURRENT_PAGE").matches("[1-9]\\d*")) {
             currentPage = new Integer(request.getParameter("CURRENT_PAGE")).intValue();
         }
-    	Properties config = ModelUtil.readProperties();
+    	Properties config = getModelProperties();
         String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
         List<Map> lobbyList = new ArrayList<Map>();
         for (String lobbyConfig : lobbyConfigArray) {
@@ -107,7 +107,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        String lobbyName = request.getParameter("LOBBY_NAME");
 	        String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
 	        // 根据LOBBY—ID读取数据源
-	        Properties config = ModelUtil.readProperties();
+	        Properties config = getModelProperties();
 	        
 	        // 重构Property
 	        Properties properties = new Properties();
@@ -163,7 +163,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	public String DELETE_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
         String lobbyId = request.getParameter("LOBBY_ID");
         // 根据LOBBY—ID读取数据源
-        Properties config = ModelUtil.readProperties();
+        Properties config = getModelProperties();
         
         // 重构Property
         Properties properties = new Properties();
@@ -217,7 +217,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         if (request.getParameter("CURRENT_PAGE").matches("[1-9]\\d*")) {
             currentPage = new Integer(request.getParameter("CURRENT_PAGE")).intValue();
         }
-    	Properties config = ModelUtil.readProperties();
+    	Properties config = getModelProperties();
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         List<Map> roomList = new ArrayList<Map>();
         for (String roomConfig : roomConfigArray) {
@@ -424,7 +424,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
     private void deleteGameRoomConfigure(String lobbyId, HttpServletRequest request) {
 		String gameId = request.getParameter("GAME_ID");
 		// 根据LOBBY—ID读取数据源
-        Properties config = ModelUtil.readProperties();
+        Properties config = getModelProperties();
         // 重构Property
         Properties properties = new Properties();
         properties.setProperty("PLATFORM", config.getProperty("PLATFORM"));
@@ -479,7 +479,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         // 根据LOBBY—ID读取数据源
-        Properties config = ModelUtil.readProperties();
+        Properties config = getModelProperties();
         
         // 重构Property
         Properties properties = new Properties();
@@ -572,7 +572,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         // add flag
         boolean bool = true;
         // 根据LOBBY—ID读取数据源
-        Properties config = ModelUtil.readProperties();
+        Properties config = getModelProperties();
         
         // 重构Property
         Properties properties = new Properties();
@@ -732,7 +732,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	 * @return
 	 */
 	private int getMaxDisplayIndex(String lobbyId) {
-    	Properties config = ModelUtil.readProperties();
+    	Properties config = getModelProperties();
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         int maxDisplayIndex = 0;
         for (String roomConfig : roomConfigArray) {
@@ -749,4 +749,16 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         }
         return maxDisplayIndex;
     }
+
+	private Properties getModelProperties() {
+    	Properties properties = new Properties();
+    	try {
+    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + GameConfigureConstant.GLOBAL_CONFIG_NAME + "' order by createTime desc");
+    		GlobalConfig config = (GlobalConfig)query.uniqueResult();
+    		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
+			return properties;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

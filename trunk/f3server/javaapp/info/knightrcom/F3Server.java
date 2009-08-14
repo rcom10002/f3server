@@ -46,9 +46,9 @@ class F3Server {
         }
     }
 
-    private static boolean USE_SSL = false;
+    public static boolean USE_SSL = false;
 
-    private static int PORT = 2009;
+    public static int PORT = 2009;
 
     public static String SECURITY_CONFIGURATION;
 
@@ -56,7 +56,7 @@ class F3Server {
 
     public static boolean RUNNING = false;
 
-    static SocketAcceptor acceptor;
+    public static SocketAcceptor acceptor;
 
     /**
      * 启动应用服务器

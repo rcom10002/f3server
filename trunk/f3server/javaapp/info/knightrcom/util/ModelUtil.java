@@ -10,7 +10,6 @@ import info.knightrcom.model.global.Room;
 import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
@@ -18,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.mina.core.session.IoSession;
@@ -29,7 +27,6 @@ import com.thoughtworks.xstream.XStream;
 public class ModelUtil {
 
     private static Set<IoSession> sessions;
-    private static Properties systemParameters;
     private static String modelDesc;
     private static Platform platform;
     private static Map<String, Lobby> lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
@@ -37,7 +34,6 @@ public class ModelUtil {
 
     public static void resetModels() {
     	sessions = null;
-    	systemParameters = null;
     	modelDesc = null;
     	platform = null;
     	lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
@@ -108,13 +104,6 @@ public class ModelUtil {
         return platform;
     }
 
-    public static String getSystemParameter(String key) {
-        if (systemParameters == null) {
-            systemParameters = readProperties(GameConfigureConstant.SERVER_PARAM_NAME);
-        }
-        return systemParameters.getProperty(key);
-    }
-
     public static final String getModelDesc() {
         return modelDesc;
     }
@@ -162,24 +151,9 @@ public class ModelUtil {
     /**
      * 从数据库中读取配置文件内容
      * 
-     * @return XML格式
-     */
-    public static String readPropertiesToXML() {
-        try {
-            Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig order by createTime desc");
-            GlobalConfig config = (GlobalConfig)query.list().get(0);
-            return config.getValue();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 从数据库中读取配置文件内容
-     * 
      * @return Properties类型对象
      */
-    public static Properties readProperties() {
+    private static Properties readProperties() {
     	Properties properties = new Properties();
     	try {
     		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + GameConfigureConstant.GLOBAL_CONFIG_NAME + "' order by createTime desc");
@@ -190,104 +164,7 @@ public class ModelUtil {
 			throw new RuntimeException(e);
 		}
     }
-    
-    /**
-     * 从数据库中读取配置文件内容
-     * 
-     * @return Properties类型对象
-     */
-    public static Properties readProperties(String param) {
-    	Properties properties = new Properties();
-    	try {
-    		Query query = HibernateSessionFactory.getSession().createQuery("from GlobalConfig where name = '" + param + "' order by createTime desc");
-    		GlobalConfig config = (GlobalConfig)query.uniqueResult();
-    		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
-			return properties;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-    }
 
-    /**
-     * 将XML格式配置信息保存到数据库中
-     * 
-     * @param xml
-     * @return 新的GlobalConfig对象id
-     */
-    public static String savePropertiesFromXML(String xml) {
-        try {
-            HibernateSessionFactory.getSession().beginTransaction();
-
-            GlobalConfig config = new GlobalConfig();
-            config.setGlobalConfigId(UUID.randomUUID().toString());
-            config.setValue(xml);
-
-            HibernateSessionFactory.getSession().save(config);
-
-            HibernateSessionFactory.getSession().getTransaction().commit();
-            return config.getGlobalConfigId();
-        } catch (Exception e) {
-            HibernateSessionFactory.getSession().getTransaction().rollback();
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 把配置文件内容保存到数据库中
-     * 
-     * @param properties
-     * @return 新的GlobalConfig对象id
-     */
-    public static String saveProperties(Properties properties) {
-    	try {
-    		HibernateSessionFactory.getSession().beginTransaction();
-    		
-    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.storeToXML(outStream, null);
-			
-			GlobalConfig config = new GlobalConfig();
-			config.setGlobalConfigId(UUID.randomUUID().toString());
-			config.setName(GameConfigureConstant.GLOBAL_CONFIG_NAME);
-			config.setValue(outStream.toString("utf-8"));
-			
-			HibernateSessionFactory.getSession().save(config);
-			
-			HibernateSessionFactory.getSession().getTransaction().commit();
-			return config.getGlobalConfigId();
-		} catch (Exception e) {
-			HibernateSessionFactory.getSession().getTransaction().rollback();
-			throw new RuntimeException(e);
-		}
-    }
-
-    /**
-     * 把配置文件内容保存到数据库中[参数]
-     * 
-     * @param properties
-     * @return 新的GlobalConfig对象id
-     */
-    public static String saveProperties(Properties properties, String key) {
-    	try {
-    		HibernateSessionFactory.getSession().beginTransaction();
-    		
-    		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.storeToXML(outStream, null);
-			
-			GlobalConfig config = new GlobalConfig();
-			config.setGlobalConfigId(UUID.randomUUID().toString());
-			config.setName(key);
-			config.setValue(outStream.toString("utf-8"));
-			
-			HibernateSessionFactory.getSession().save(config);
-			
-			HibernateSessionFactory.getSession().getTransaction().commit();
-			return config.getGlobalConfigId();
-		} catch (Exception e) {
-			HibernateSessionFactory.getSession().getTransaction().rollback();
-			throw new RuntimeException(e);
-		}
-    }
-    
     /**
      * @param <T>
      * @param modelClass

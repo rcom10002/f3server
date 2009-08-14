@@ -27,6 +27,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setUserId("admin");
         profile.setPassword("000000");
         profile.setRole("Administrator");
+        profile.setRlsPath("Administrator");
+        profile.setCurrentScore(-1);
+        profile.setLevel(100);
         HibernateSessionFactory.getSession().merge(profile);
         for (int i = 1; i <= 6; i++) {
             profile = new PlayerProfile();
@@ -37,6 +40,7 @@ public class PlayerProfileTestCase extends TestCase {
             profile.setRole("GroupUser");
             profile.setRlsPath("user" + i);
             profile.setCurrentScore(500);
+            profile.setLevel(0);
             HibernateSessionFactory.getSession().merge(profile);
         }
         // 添加组用户
@@ -48,6 +52,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("GroupUser");
         profile.setRlsPath("user3!user33");
         profile.setCurrentScore(300);
+        profile.setLevel(0);
         HibernateSessionFactory.getSession().merge(profile);
         profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
@@ -57,6 +62,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("User");
         profile.setRlsPath("user4!user44");
         profile.setCurrentScore(300);
+        profile.setLevel(0);
         HibernateSessionFactory.getSession().merge(profile);
         HibernateSessionFactory.getSession().getTransaction().commit();
         HibernateSessionFactory.closeSession();

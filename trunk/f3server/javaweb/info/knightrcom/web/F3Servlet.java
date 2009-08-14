@@ -2,7 +2,7 @@ package info.knightrcom.web;
 
 import info.knightrcom.F3ServerProxy;
 import info.knightrcom.web.service.F3SWebService;
-import info.knightrcom.web.service.F3SWebServiceProxy;
+import info.knightrcom.web.service.F3SWebServiceHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -112,7 +112,7 @@ public class F3Servlet extends HttpServlet {
             	// f3s服务
                 response.setContentType("text/xml; charset=utf-8");
                 out = response.getWriter();
-                F3SWebServiceProxy.doService(request, response);
+                F3SWebServiceHandler.doService(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,17 +151,19 @@ public class F3Servlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     public void init() throws ServletException {
         try {
-            Class[] classes = getClasses(F3SWebServiceProxy.getServicePackageName());
+            Class[] classes = getClasses(F3SWebServiceHandler.getServicePackageName());
             for (Class thisClass : classes) {
                 log.debug(thisClass.getName());
                 if (Modifier.isAbstract(thisClass.getModifiers())) {
                     continue;
                 }
                 if (thisClass.getSimpleName().matches("^.*Service$")) {
-                    F3SWebServiceProxy.registerWebService(thisClass.getSimpleName(), (F3SWebService)thisClass.newInstance());
+                    F3SWebServiceHandler.registerWebService(thisClass.getSimpleName(), (F3SWebService)thisClass.newInstance());
                 }
             }
-            F3ServerProxy.startServer();
+            if (!F3ServerProxy.isServerRunning()) {
+            	F3ServerProxy.startServer();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
