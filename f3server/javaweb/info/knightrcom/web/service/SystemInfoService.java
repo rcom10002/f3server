@@ -52,7 +52,7 @@ public class SystemInfoService extends F3SWebService<GameRecord> {
         GameFeedback gameFeedback = new GameFeedback();
         gameFeedback.setFeedbackId(UUID.randomUUID().toString());
         gameFeedback.setGameId(gameId);
-        gameFeedback.setCheatDesc(cheatDesc);
+        gameFeedback.setDescription(cheatDesc);
         HibernateSessionFactory.getSession().save(gameFeedback);
         EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
         return toXML(info, GameRecord.class);

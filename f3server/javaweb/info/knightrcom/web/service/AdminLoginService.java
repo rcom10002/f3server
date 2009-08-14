@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
+/**
+ * 管理界面的后台登录服务
+ */
 public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
 
 	public String LOGIN_ADMIN_SERVER(HttpServletRequest request, HttpServletResponse response) {

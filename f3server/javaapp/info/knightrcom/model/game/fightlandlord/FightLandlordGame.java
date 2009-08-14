@@ -64,6 +64,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSystemScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
         // 根据当前游戏规则进行分数计算

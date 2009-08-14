@@ -1,5 +1,6 @@
 package info.knightrcom;
 
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.command.handler.F3ServerInMessageHandler;
 import info.knightrcom.command.handler.PlatformInMessageHandler;
 import info.knightrcom.command.handler.PlayerInMessageHandler;
@@ -26,13 +27,13 @@ import info.knightrcom.model.global.Room;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.SystemLogger;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -126,6 +127,7 @@ public class ServiceHandler extends DemuxingIoHandler {
             GamePool.distroyGame(game.getId(), game.getClass());
             
         }
+        HibernateSessionFactory.getSession().save(SystemLogger.createLog("SESSION CLOSED", null, player.getId(), LogType.SYSTEM_LOG));
         // broadcast("The user " + player + " has left the chat session.");
         super.sessionClosed(session);
     }
@@ -176,12 +178,11 @@ public class ServiceHandler extends DemuxingIoHandler {
             // session.close(false) ???
             // 需要移除内存中相关的在线用户信息
             session.close(true);
-            // 
-    		LogInfo logInfo = new LogInfo();
-    		logInfo.setLogId(UUID.randomUUID().toString());
-    		logInfo.setInfo(cause.getMessage());
-    		HibernateSessionFactory.getSession().save(logInfo);
-            // super.exceptionCaught(session, cause);
+            LogInfo logInfo = SystemLogger.createLog(LogType.SYSTEM_ERROR.toString(), cause.getMessage(), cause.getStackTrace().toString(), LogType.SYSTEM_ERROR);
+            HibernateSessionFactory.getSession().save(logInfo);
+            HibernateSessionFactory.getSession().flush();
+            HibernateSessionFactory.getSession().close();
+    		// super.exceptionCaught(session, cause);
         } catch (Exception e) {
             e.printStackTrace();
             sessionClosed(session);

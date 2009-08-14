@@ -30,6 +30,8 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
 
     public static final String VALUE = "value";
 
+    public static final String TYPE = "type";
+
     public static final String STATUS = "status";
 
     public static final String CREATE_BY = "createBy";
@@ -104,6 +106,10 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
 
     public List<GlobalConfig> findByValue(Object value) {
         return findByProperty(VALUE, value);
+    }
+
+    public List<GlobalConfig> findByType(Object type) {
+        return findByProperty(TYPE, type);
     }
 
     public List<GlobalConfig> findByStatus(Object status) {

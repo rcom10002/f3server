@@ -50,8 +50,11 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
     }
 
     /** minimal constructor */
-    public LogInfo(String logId) {
+    public LogInfo(String logId, String caption, String info, String type) {
         this.logId = logId;
+        this.caption = caption;
+        this.info = info;
+        this.type = type;
     }
 
     /** full constructor */
@@ -91,7 +94,7 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
         this.number = number;
     }
 
-    @Column(name = "CAPTION", length = 100)
+    @Column(name = "CAPTION", nullable = false, length = 100)
     public String getCaption() {
         return this.caption;
     }
@@ -127,7 +130,7 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
         this.keyCause3 = keyCause3;
     }
 
-    @Column(name = "INFO", length = 65535)
+    @Column(name = "INFO", nullable = false, length = 65535)
     public String getInfo() {
         return this.info;
     }
@@ -136,7 +139,7 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
         this.info = info;
     }
 
-    @Column(name = "TYPE", length = 100)
+    @Column(name = "TYPE", nullable = false, length = 100)
     public String getType() {
         return this.type;
     }

@@ -6,7 +6,7 @@
 		<description>F3SWebServlet</description>
 		<display-name>F3SWebServlet</display-name>
 		<servlet-name>F3Servlet</servlet-name>
-		<servlet-class>info.knightrcom.F3Servlet</servlet-class>
+		<servlet-class>info.knightrcom.web.F3Servlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

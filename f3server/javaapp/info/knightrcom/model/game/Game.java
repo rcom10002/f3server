@@ -4,6 +4,7 @@ import info.knightrcom.model.global.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +53,8 @@ public abstract class Game<T> {
 
     /** 自定义结构，用于表现游戏积分明细 */
     private String gameDetailScore;
+
+    private Date createTime = new Date();
 
     /**
      * @return
@@ -222,5 +225,12 @@ public abstract class Game<T> {
             gameDetailScore = gameDetailScore.replaceFirst(";$", "");
         }
         return gameDetailScore;
+    }
+
+    /**
+     * @return the createTime
+     */
+    public Date getCreateTime() {
+        return createTime;
     }
 }

@@ -1,5 +1,6 @@
 package info.knightrcom.command.handler;
 
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.command.message.EchoMessage;
 import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.PlayerMessage;
@@ -10,6 +11,8 @@ import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.StringHelper;
+import info.knightrcom.util.SystemLogger;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -62,6 +65,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         echoMessage.setContent(profile.getProfileId());
         echoMessage.setResult(LOGIN_SUCCESS);
         sessionWrite(session, echoMessage);
+        HibernateSessionFactory.getSession().save(SystemLogger.createLog("LOGIN", null, player.getId(), LogType.SYSTEM_LOG));
     }
 
     public static final String LOBBY_SHOW_SCORE = "LOBBY_SHOW_SCORE";

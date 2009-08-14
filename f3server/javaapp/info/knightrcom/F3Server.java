@@ -82,7 +82,7 @@ class F3Server {
      * 
      * @param args 启动参数
      */
-    public static void startServer(String[] args) {
+    static void startServer(String[] args) {
 
     	if (RUNNING) {
     		return;
@@ -127,7 +127,7 @@ class F3Server {
     /**
      * 关闭服务器
      */
-    public static void shutdownServer() {
+    static void shutdownServer() {
         try {
         	if (!RUNNING) {
         		return;

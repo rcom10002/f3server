@@ -1,10 +1,12 @@
 package info.knightrcom;
 
-import java.util.Collection;
-
 import info.knightrcom.command.message.EchoMessage;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
+import info.knightrcom.util.SystemLogger;
+
+import java.util.Collection;
 
 import org.apache.mina.core.session.IoSession;
 
@@ -47,5 +49,20 @@ public class F3ServerProxy {
 	 */
 	public static boolean isServerRunning() {
 		return F3Server.isRunning();
+	}
+
+    public static enum LogType {
+        CLIENT_ERROR, SYSTEM_ERROR, SYSTEM_LOG
+    }
+
+	/**
+	 * @param caption
+	 * @param message
+	 * @param info
+	 * @param type
+	 * @return
+	 */
+	public static LogInfo createLogInfo(String caption, String message, String info, LogType type) {
+	    return SystemLogger.createLog(caption, message, info, type);
 	}
 }
