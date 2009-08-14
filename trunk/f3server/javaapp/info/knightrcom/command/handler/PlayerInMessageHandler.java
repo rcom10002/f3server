@@ -40,6 +40,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         if (profile == null) {
             // 用户名或密码错误
             echoMessage.setResult(LOGIN_ERROR_USERNAME_OR_PASSWORD);
+            sessionWrite(session, echoMessage);
             return;
         }
 
