@@ -14,12 +14,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 
 
+@SuppressWarnings("unchecked")
 public class DynaReportService extends F3SWebServiceAdaptor {
 
+	@Override
 	public Class<?>[] getAliasTypes() {
     	return new Class<?>[] {List.class};
+    }
+	
+	@Override
+    public ResultTransformer getResultTransformer() {
+        return Transformers.ALIAS_TO_ENTITY_MAP;
     }
 	
 	/**
@@ -49,18 +58,16 @@ public class DynaReportService extends F3SWebServiceAdaptor {
 	        if (request.getParameter("CURRENT_PAGE").matches("[1-9]\\d*")) {
 	            currentPage = new Integer(request.getParameter("CURRENT_PAGE")).intValue();
 	        }
-	        
-			Query query = HibernateSessionFactory.getSession().createQuery(sql);
-			List<Map> result = query.list();
 			
-//			SQLQuery query = HibernateSessionFactory.getSession().createSQLQuery(sql);
-//			List<Map> result = query.list();
+			Query query = HibernateSessionFactory.getSession().createSQLQuery(sql);
+			List<Map> result = query.list();
 			
 	        info.getPagination().setTotalRecord(result.size());
 	        info.getPagination().setCurrentPage(currentPage);
 	        // 设置结果集
 	        query.setMaxResults(info.getPagination().getPageSize());
 	        query.setFirstResult(info.getPagination().getPageSize() * (info.getPagination().getCurrentPage() - 1));
+	        query.setResultTransformer(this.getResultTransformer());
 	        info.setEntityList(query.list());
 	        info.setResult(F3SWebServiceResult.SUCCESS);
 		} catch (Exception e) {
