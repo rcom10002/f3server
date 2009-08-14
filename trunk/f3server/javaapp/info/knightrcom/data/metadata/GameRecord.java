@@ -31,8 +31,6 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
 
     private Integer systemScore;
 
-    private String initPokers;
-
     private String record;
 
     private Short status;
@@ -52,12 +50,14 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
     }
 
     /** minimal constructor */
-    public GameRecord(String gameId) {
+    public GameRecord(String gameId, String gameType, String record) {
         this.gameId = gameId;
+        this.gameType = gameType;
+        this.record = record;
     }
 
     /** full constructor */
-    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Integer score, Integer systemScore, String initPokers, String record, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Integer score, Integer systemScore, String record, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.gameId = gameId;
         this.gameType = gameType;
         this.gameSetting = gameSetting;
@@ -65,7 +65,6 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
         this.players = players;
         this.score = score;
         this.systemScore = systemScore;
-        this.initPokers = initPokers;
         this.record = record;
         this.status = status;
         this.createTime = createTime;
@@ -85,7 +84,7 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
         this.gameId = gameId;
     }
 
-    @Column(name = "GAME_TYPE", length = 100)
+    @Column(name = "GAME_TYPE", nullable = false, length = 100)
     public String getGameType() {
         return this.gameType;
     }
@@ -139,16 +138,7 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
         this.systemScore = systemScore;
     }
 
-    @Column(name = "INIT_POKERS", length = 65535)
-    public String getInitPokers() {
-        return this.initPokers;
-    }
-
-    public void setInitPokers(String initPokers) {
-        this.initPokers = initPokers;
-    }
-
-    @Column(name = "RECORD", length = 65535)
+    @Column(name = "RECORD", nullable = false, length = 65535)
     public String getRecord() {
         return this.record;
     }

@@ -53,6 +53,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSystemScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setCreateTime(this.getCreateTime());
         // 根据当前游戏规则进行分数计算
         if (PushdownWinGameSetting.NARROW_VICTORY.equals(this.getSetting())) {
             // 点泡

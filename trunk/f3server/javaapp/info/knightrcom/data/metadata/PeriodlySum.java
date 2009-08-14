@@ -13,251 +13,281 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "periodly_sum", catalog = "f3s")
-public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements
-		java.io.Serializable {
+public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
-	// Fields
+    // Fields
 
-	private String periodlyId;
-	private String profileId;
-	private String number;
-	private String title;
-	private Date startDate;
-	private Date endDate;
-	private Integer winTimes;
-	private Integer winScores;
-	private Integer loseTimes;
-	private Integer loseScores;
-	private Integer drawTimes;
-	private Integer drawScores;
-	private Integer totalTimes;
-	private Integer totalScores;
-	private Integer totalSystemScore;
-	private Short status;
-	private Date createTime;
-	private String createBy;
-	private Date updateTime;
-	private String updateBy;
+    private String periodlyId;
 
-	// Constructors
+    private String profileId;
 
-	/** default constructor */
-	public PeriodlySum() {
-	}
+    private String number;
 
-	/** full constructor */
-	public PeriodlySum(String periodlyId, String profileId, String number,
-			String title, Date startDate, Date endDate, Integer winTimes,
-			Integer winScores, Integer loseTimes, Integer loseScores,
-			Integer drawTimes, Integer drawScores, Integer totalTimes,
-			Integer totalScores, Integer totalSystemScore, Short status,
-			Date createTime, String createBy, Date updateTime, String updateBy) {
-		this.periodlyId = periodlyId;
-		this.profileId = profileId;
-		this.number = number;
-		this.title = title;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.winTimes = winTimes;
-		this.winScores = winScores;
-		this.loseTimes = loseTimes;
-		this.loseScores = loseScores;
-		this.drawTimes = drawTimes;
-		this.drawScores = drawScores;
-		this.totalTimes = totalTimes;
-		this.totalScores = totalScores;
-		this.totalSystemScore = totalSystemScore;
-		this.status = status;
-		this.createTime = createTime;
-		this.createBy = createBy;
-		this.updateTime = updateTime;
-		this.updateBy = updateBy;
-	}
+    private String title;
 
-	// Property accessors
-	@Id
-	@Column(name = "PERIODLY_ID", unique = true, nullable = false, length = 100)
-	public String getPeriodlyId() {
-		return this.periodlyId;
-	}
+    private Date startDate;
 
-	public void setPeriodlyId(String periodlyId) {
-		this.periodlyId = periodlyId;
-	}
+    private Date endDate;
 
-	@Column(name = "PROFILE_ID", length = 100)
-	public String getProfileId() {
-		return profileId;
-	}
+    private Integer winTimes;
 
-	public void setProfileId(String profileId) {
-		this.profileId = profileId;
-	}
+    private Integer winScores;
 
-	@Column(name = "NUMBER", length = 100)
-	public String getNumber() {
-		return this.number;
-	}
+    private Integer loseTimes;
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    private Integer loseScores;
 
-	@Column(name = "TITLE", length = 100)
-	public String getTitle() {
-		return this.title;
-	}
+    private Integer drawTimes;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    private Integer drawScores;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE", length = 19)
-	public Date getStartDate() {
-		return this.startDate;
-	}
+    private Integer totalTimes;
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    private Integer totalScores;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE", length = 19)
-	public Date getEndDate() {
-		return this.endDate;
-	}
+    private Integer totalSystemScore;
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    private Short status;
 
-	@Column(name = "WIN_TIMES")
-	public Integer getWinTimes() {
-		return this.winTimes;
-	}
+    private Date createTime;
 
-	public void setWinTimes(Integer winTimes) {
-		this.winTimes = winTimes;
-	}
+    private String createBy;
 
-	@Column(name = "WIN_SCORES")
-	public Integer getWinScores() {
-		return this.winScores;
-	}
+    private Date updateTime;
 
-	public void setWinScores(Integer winScores) {
-		this.winScores = winScores;
-	}
+    private String updateBy;
 
-	@Column(name = "LOSE_TIMES")
-	public Integer getLoseTimes() {
-		return this.loseTimes;
-	}
+    // Constructors
 
-	public void setLoseTimes(Integer loseTimes) {
-		this.loseTimes = loseTimes;
-	}
+    /** default constructor */
+    public PeriodlySum() {
+    }
 
-	@Column(name = "LOSE_SCORES")
-	public Integer getLoseScores() {
-		return this.loseScores;
-	}
+    /** minimal constructor */
+    public PeriodlySum(String periodlyId, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore) {
+        this.periodlyId = periodlyId;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.winTimes = winTimes;
+        this.winScores = winScores;
+        this.loseTimes = loseTimes;
+        this.loseScores = loseScores;
+        this.drawTimes = drawTimes;
+        this.drawScores = drawScores;
+        this.totalTimes = totalTimes;
+        this.totalScores = totalScores;
+        this.totalSystemScore = totalSystemScore;
+    }
 
-	public void setLoseScores(Integer loseScores) {
-		this.loseScores = loseScores;
-	}
+    /** full constructor */
+    public PeriodlySum(String periodlyId, String profileId, String number, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+        this.periodlyId = periodlyId;
+        this.profileId = profileId;
+        this.number = number;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.winTimes = winTimes;
+        this.winScores = winScores;
+        this.loseTimes = loseTimes;
+        this.loseScores = loseScores;
+        this.drawTimes = drawTimes;
+        this.drawScores = drawScores;
+        this.totalTimes = totalTimes;
+        this.totalScores = totalScores;
+        this.totalSystemScore = totalSystemScore;
+        this.status = status;
+        this.createTime = createTime;
+        this.createBy = createBy;
+        this.updateTime = updateTime;
+        this.updateBy = updateBy;
+    }
 
-	@Column(name = "DRAW_TIMES")
-	public Integer getDrawTimes() {
-		return this.drawTimes;
-	}
+    // Property accessors
+    @Id
+    @Column(name = "PERIODLY_ID", unique = true, nullable = false, length = 100)
+    public String getPeriodlyId() {
+        return this.periodlyId;
+    }
 
-	public void setDrawTimes(Integer drawTimes) {
-		this.drawTimes = drawTimes;
-	}
+    public void setPeriodlyId(String periodlyId) {
+        this.periodlyId = periodlyId;
+    }
 
-	@Column(name = "DRAW_SCORES")
-	public Integer getDrawScores() {
-		return this.drawScores;
-	}
+    @Column(name = "PROFILE_ID", length = 100)
+    public String getProfileId() {
+        return this.profileId;
+    }
 
-	public void setDrawScores(Integer drawScores) {
-		this.drawScores = drawScores;
-	}
+    public void setProfileId(String profileId) {
+        this.profileId = profileId;
+    }
 
-	@Column(name = "TOTAL_TIMES")
-	public Integer getTotalTimes() {
-		return this.totalTimes;
-	}
+    @Column(name = "NUMBER", length = 100)
+    public String getNumber() {
+        return this.number;
+    }
 
-	public void setTotalTimes(Integer totalTimes) {
-		this.totalTimes = totalTimes;
-	}
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	@Column(name = "TOTAL_SCORES")
-	public Integer getTotalScores() {
-		return this.totalScores;
-	}
+    @Column(name = "TITLE", nullable = false, length = 100)
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setTotalScores(Integer totalScores) {
-		this.totalScores = totalScores;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	@Column(name = "TOTAL_SYSTEM_SCORE")
-	public Integer getTotalSystemScore() {
-		return this.totalSystemScore;
-	}
+    @Temporal(TemporalType.DATE)
+    @Column(name = "START_DATE", nullable = false, length = 10)
+    public Date getStartDate() {
+        return this.startDate;
+    }
 
-	public void setTotalSystemScore(Integer totalSystemScore) {
-		this.totalSystemScore = totalSystemScore;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	@Column(name = "STATUS")
-	public Short getStatus() {
-		return this.status;
-	}
+    @Temporal(TemporalType.DATE)
+    @Column(name = "END_DATE", nullable = false, length = 10)
+    public Date getEndDate() {
+        return this.endDate;
+    }
 
-	public void setStatus(Short status) {
-		this.status = status;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_TIME", length = 19)
-	public Date getCreateTime() {
-		return this.createTime;
-	}
+    @Column(name = "WIN_TIMES", nullable = false)
+    public Integer getWinTimes() {
+        return this.winTimes;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setWinTimes(Integer winTimes) {
+        this.winTimes = winTimes;
+    }
 
-	@Column(name = "CREATE_BY", length = 100)
-	public String getCreateBy() {
-		return this.createBy;
-	}
+    @Column(name = "WIN_SCORES", nullable = false)
+    public Integer getWinScores() {
+        return this.winScores;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setWinScores(Integer winScores) {
+        this.winScores = winScores;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATE_TIME", length = 19)
-	public Date getUpdateTime() {
-		return this.updateTime;
-	}
+    @Column(name = "LOSE_TIMES", nullable = false)
+    public Integer getLoseTimes() {
+        return this.loseTimes;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setLoseTimes(Integer loseTimes) {
+        this.loseTimes = loseTimes;
+    }
 
-	@Column(name = "UPDATE_BY", length = 100)
-	public String getUpdateBy() {
-		return this.updateBy;
-	}
+    @Column(name = "LOSE_SCORES", nullable = false)
+    public Integer getLoseScores() {
+        return this.loseScores;
+    }
 
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
+    public void setLoseScores(Integer loseScores) {
+        this.loseScores = loseScores;
+    }
+
+    @Column(name = "DRAW_TIMES", nullable = false)
+    public Integer getDrawTimes() {
+        return this.drawTimes;
+    }
+
+    public void setDrawTimes(Integer drawTimes) {
+        this.drawTimes = drawTimes;
+    }
+
+    @Column(name = "DRAW_SCORES", nullable = false)
+    public Integer getDrawScores() {
+        return this.drawScores;
+    }
+
+    public void setDrawScores(Integer drawScores) {
+        this.drawScores = drawScores;
+    }
+
+    @Column(name = "TOTAL_TIMES", nullable = false)
+    public Integer getTotalTimes() {
+        return this.totalTimes;
+    }
+
+    public void setTotalTimes(Integer totalTimes) {
+        this.totalTimes = totalTimes;
+    }
+
+    @Column(name = "TOTAL_SCORES", nullable = false)
+    public Integer getTotalScores() {
+        return this.totalScores;
+    }
+
+    public void setTotalScores(Integer totalScores) {
+        this.totalScores = totalScores;
+    }
+
+    @Column(name = "TOTAL_SYSTEM_SCORE", nullable = false)
+    public Integer getTotalSystemScore() {
+        return this.totalSystemScore;
+    }
+
+    public void setTotalSystemScore(Integer totalSystemScore) {
+        this.totalSystemScore = totalSystemScore;
+    }
+
+    @Column(name = "STATUS")
+    public Short getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATE_TIME", length = 19)
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Column(name = "CREATE_BY", length = 100)
+    public String getCreateBy() {
+        return this.createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "UPDATE_TIME", length = 19)
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Column(name = "UPDATE_BY", length = 100)
+    public String getUpdateBy() {
+        return this.updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
 
 }

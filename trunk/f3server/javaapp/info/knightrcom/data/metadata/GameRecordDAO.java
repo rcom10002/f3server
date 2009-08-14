@@ -36,8 +36,6 @@ public class GameRecordDAO extends BaseHibernateDAO {
 
     public static final String SYSTEM_SCORE = "systemScore";
 
-    public static final String INIT_POKERS = "initPokers";
-
     public static final String RECORD = "record";
 
     public static final String STATUS = "status";
@@ -126,10 +124,6 @@ public class GameRecordDAO extends BaseHibernateDAO {
 
     public List<GameRecord> findBySystemScore(Object systemScore) {
         return findByProperty(SYSTEM_SCORE, systemScore);
-    }
-
-    public List<GameRecord> findByInitPokers(Object initPokers) {
-        return findByProperty(INIT_POKERS, initPokers);
     }
 
     public List<GameRecord> findByRecord(Object record) {

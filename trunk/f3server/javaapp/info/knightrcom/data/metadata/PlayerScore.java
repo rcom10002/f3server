@@ -50,8 +50,15 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** minimal constructor */
-    public PlayerScore(String scoreId) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer orgScore, Integer score, Integer systemScore) {
         this.scoreId = scoreId;
+        this.profileId = profileId;
+        this.gameId = gameId;
+        this.userId = userId;
+        this.currentNumber = currentNumber;
+        this.orgScore = orgScore;
+        this.score = score;
+        this.systemScore = systemScore;
     }
 
     /** full constructor */
@@ -82,7 +89,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.scoreId = scoreId;
     }
 
-    @Column(name = "PROFILE_ID", length = 100)
+    @Column(name = "PROFILE_ID", nullable = false, length = 100)
     public String getProfileId() {
         return this.profileId;
     }
@@ -91,7 +98,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.profileId = profileId;
     }
 
-    @Column(name = "GAME_ID", length = 100)
+    @Column(name = "GAME_ID", nullable = false, length = 100)
     public String getGameId() {
         return this.gameId;
     }
@@ -100,7 +107,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.gameId = gameId;
     }
 
-    @Column(name = "USER_ID", length = 100)
+    @Column(name = "USER_ID", nullable = false, length = 100)
     public String getUserId() {
         return this.userId;
     }
@@ -109,7 +116,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.userId = userId;
     }
 
-    @Column(name = "CURRENT_NUMBER", length = 1)
+    @Column(name = "CURRENT_NUMBER", nullable = false, length = 1)
     public String getCurrentNumber() {
         return this.currentNumber;
     }
@@ -118,7 +125,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.currentNumber = currentNumber;
     }
 
-    @Column(name = "ORG_SCORE")
+    @Column(name = "ORG_SCORE", nullable = false)
     public Integer getOrgScore() {
         return this.orgScore;
     }
@@ -127,7 +134,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.orgScore = orgScore;
     }
 
-    @Column(name = "SCORE")
+    @Column(name = "SCORE", nullable = false)
     public Integer getScore() {
         return this.score;
     }
@@ -136,7 +143,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.score = score;
     }
 
-    @Column(name = "SYSTEM_SCORE")
+    @Column(name = "SYSTEM_SCORE", nullable = false)
     public Integer getSystemScore() {
         return this.systemScore;
     }

@@ -23,7 +23,9 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
 
     private String number;
 
-    private String cheatDesc;
+    private String title;
+
+    private String description;
 
     private Short status;
 
@@ -42,16 +44,20 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
     }
 
     /** minimal constructor */
-    public GameFeedback(String feedbackId) {
+    public GameFeedback(String feedbackId, String gameId, String title, String description) {
         this.feedbackId = feedbackId;
+        this.gameId = gameId;
+        this.title = title;
+        this.description = description;
     }
 
     /** full constructor */
-    public GameFeedback(String feedbackId, String gameId, String number, String cheatDesc, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GameFeedback(String feedbackId, String gameId, String number, String title, String description, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.feedbackId = feedbackId;
         this.gameId = gameId;
         this.number = number;
-        this.cheatDesc = cheatDesc;
+        this.title = title;
+        this.description = description;
         this.status = status;
         this.createTime = createTime;
         this.createBy = createBy;
@@ -70,7 +76,7 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
         this.feedbackId = feedbackId;
     }
 
-    @Column(name = "GAME_ID", length = 100)
+    @Column(name = "GAME_ID", nullable = false, length = 100)
     public String getGameId() {
         return this.gameId;
     }
@@ -88,13 +94,22 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
         this.number = number;
     }
 
-    @Column(name = "CHEAT_DESC", length = 2000)
-    public String getCheatDesc() {
-        return this.cheatDesc;
+    @Column(name = "TITLE", nullable = false, length = 100)
+    public String getTitle() {
+        return this.title;
     }
 
-    public void setCheatDesc(String cheatDesc) {
-        this.cheatDesc = cheatDesc;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Column(name = "DESCRIPTION", nullable = false, length = 65535)
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Column(name = "STATUS")

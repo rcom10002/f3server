@@ -28,7 +28,9 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
 
     public static final String NUMBER = "number";
 
-    public static final String CHEAT_DESC = "cheatDesc";
+    public static final String TITLE = "title";
+
+    public static final String DESCRIPTION = "description";
 
     public static final String STATUS = "status";
 
@@ -102,8 +104,12 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
         return findByProperty(NUMBER, number);
     }
 
-    public List<GameFeedback> findByCheatDesc(Object cheatDesc) {
-        return findByProperty(CHEAT_DESC, cheatDesc);
+    public List<GameFeedback> findByTitle(Object title) {
+        return findByProperty(TITLE, title);
+    }
+
+    public List<GameFeedback> findByDescription(Object description) {
+        return findByProperty(DESCRIPTION, description);
     }
 
     public List<GameFeedback> findByStatus(Object status) {
