@@ -54,6 +54,8 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         // gameRecord.setSystemScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
         gameRecord.setCreateTime(this.getCreateTime());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
         // 根据当前游戏规则进行分数计算
         if (PushdownWinGameSetting.NARROW_VICTORY.equals(this.getSetting())) {
             // 点泡
@@ -64,8 +66,6 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             // 自摸
             persistClearWinScore(itr, gameRecord, getWinnerNumbers());
         }
-        // 保存游戏历史记录
-        HibernateSessionFactory.getSession().merge(gameRecord);
         log.debug("计算积分 END");
 	}
 
