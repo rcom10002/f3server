@@ -4,6 +4,7 @@ import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.command.message.EchoMessage;
 import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.PlayerMessage;
+import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.HibernateTransactionSupport;
 import info.knightrcom.data.metadata.PlayerProfile;
@@ -11,7 +12,6 @@ import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
 import info.knightrcom.util.ModelUtil;
-import info.knightrcom.util.StringHelper;
 import info.knightrcom.util.SystemLogger;
 
 import java.util.Date;
@@ -31,8 +31,27 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
     public static final String LOGIN_ERROR_USERNAME_OR_PASSWORD = "LOGIN_ERROR_USERNAME_OR_PASSWORD";
     public static final String LOGIN_USER_ALREADY_ONLINE = "LOGIN_USER_ALREADY_ONLINE";
     public static final String LOGIN_MAX_CONNECTION_LIMIT = "LOGIN_MAX_CONNECTION_LIMIT";
+    public static final String LOGIN_IP_CONFLICT = "LOGIN_IP_CONFLICT";
     @HibernateTransactionSupport
     public void LOGIN_SIGN_IN(IoSession session, PlayerMessage message, EchoMessage echoMessage) {
+    	Set<IoSession> sessions = ModelUtil.getSessions();
+    	synchronized (sessions) {
+    		int count = 0;
+			Iterator<IoSession> itr = sessions.iterator();
+			while (itr.hasNext()) {
+				String currentIP = session.getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
+				String remoteIP = itr.next().getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
+				if (currentIP.equals(remoteIP)) {
+					count++;
+					if (count > 1) {
+				    	echoMessage = PlayerMessage.createInstance(MessageType.PLAYER).getEchoMessage();
+						echoMessage.setResult(LOGIN_IP_CONFLICT);
+						sessionWrite(session, echoMessage);
+						return;
+					}
+				}
+			}
+		}
         String results[] = message.getContent().split("~");
         PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.and(
                 Property.forName("userId").eq(results[0]), 
@@ -44,7 +63,6 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
             return;
         }
 
-        Set<IoSession> sessions = ModelUtil.getSessions();
         synchronized (sessions) {
             Iterator<IoSession> itr = sessions.iterator();
             while (itr.hasNext()) {
@@ -67,11 +85,6 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         echoMessage.setResult(LOGIN_SUCCESS);
         sessionWrite(session, echoMessage);
         HibernateSessionFactory.getSession().save(SystemLogger.createLog("LOGIN", null, player.getId(), LogType.SYSTEM_LOG));
-    }
-
-    public static final String LOBBY_SHOW_SCORE = "LOBBY_SHOW_SCORE";
-    public void LOBBY_SHOW_SCORE(IoSession session, PlayerMessage message, EchoMessage echoMessage) {
-        // TODO 在游戏大厅中，玩家查看自己的积分
     }
 
     public static final String LOBBY_ENTER_ROOM = "LOBBY_ENTER_ROOM";

@@ -39,6 +39,7 @@ public class PlatformInMessageHandler extends F3ServerInMessageHandler {
     }
 
     public static final String GAME_INTERRUPTED = "GAME_INTERRUPTED";
+    public static final String PLATFORM_IP_CONFLICT = "PLATFORM_IP_CONFLICT";
 // private boolean isChatUser(String name) {
 //        return players.contains(name);
 //    }
