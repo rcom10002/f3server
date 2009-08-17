@@ -68,21 +68,25 @@ public class F3ServerProxy {
 	 * @return
 	 */
 	public static Object getServerStatus() {
-		final String[] titles = new String[] {
+		String[] titles = new String[] {
 				"USE_SSL",
 				"PORT",
 				"SECURITY_CONFIGURATION",
 				"MAX_CONNECTION_LIMIT",
 				"RUNNING",
 				"USER_ONLINE"};
-		final Object[] params = new Object[] {
-				F3Server.USE_SSL, 
-				F3Server.PORT,
-				F3Server.SECURITY_CONFIGURATION, 
-				F3Server.MAX_CONNECTION_LIMIT,
-				F3Server.RUNNING, 
-				F3Server.acceptor.getManagedSessionCount() };
-		return new Object[] {titles, params};
+		String[] contents = new String[] {
+				String.valueOf(F3Server.USE_SSL), 
+				String.valueOf(F3Server.PORT),
+				String.valueOf(F3Server.SECURITY_CONFIGURATION), 
+				String.valueOf(F3Server.MAX_CONNECTION_LIMIT),
+				String.valueOf(F3Server.RUNNING), 
+				String.valueOf(F3Server.acceptor.getManagedSessionCount()) };
+		String[] result = new String[titles.length];
+		for (int i = 0; i < titles.length; i++) {
+		    result[i] = titles[i] + "~" + contents[i];
+        }
+		return result;
 	}
 
 	/**

@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Pagination {
 
-    public static final int DEFAULT_PAGE_SIZE = 4;
+    public static final int DEFAULT_PAGE_SIZE = 10;
 
     private Log log = LogFactory.getLog(Pagination.class);
 

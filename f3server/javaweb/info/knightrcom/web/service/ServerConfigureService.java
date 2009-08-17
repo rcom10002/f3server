@@ -1,5 +1,6 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
@@ -24,7 +25,7 @@ public class ServerConfigureService extends F3SWebService<GlobalConfig> {
 
     @Override
     public Class<?>[] getAliasTypes() {
-    	return new Class<?>[] {GlobalConfig.class};
+    	return new Class<?>[] {GlobalConfig.class, String[].class, Object[].class};
     }
 
     @Override
@@ -46,7 +47,20 @@ public class ServerConfigureService extends F3SWebService<GlobalConfig> {
     public void processQuerySetting(Query query, HttpServletRequest request) {
     	query.setString(0, GameConfigureConstant.SERVER_PARAM_NAME);
     }
-    
+
+    /**
+     * 读取服务器状态
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    public String RETRIEVE_SERVER_STATUS(HttpServletRequest request, HttpServletResponse response) {
+        EntityInfo<GlobalConfig> entityInfo = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+        entityInfo.setTag(F3ServerProxy.getServerStatus());
+        return toXML(entityInfo, getAliasTypes());
+    }
+
     /**
 	 * 服务器参数读取
 	 * @param request
