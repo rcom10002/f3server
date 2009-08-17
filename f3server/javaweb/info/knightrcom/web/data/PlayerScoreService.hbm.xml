@@ -5,16 +5,16 @@
 	<sql-query name="SCORE_INFO">
 	<![CDATA[
 SELECT CASE 
-         WHEN player_score.score > 0
+         WHEN player_score.cur_score > 0
          THEN "胜利"
-         WHEN player_score.score < 0
+         WHEN player_score.cur_score < 0
          THEN "失败"
-         WHEN player_score.score = 0
+         WHEN player_score.cur_score = 0
          THEN "平局"
          ELSE "未知"
        END AS winandlose,
-       player_score.score        AS score,
-       player_score.system_score AS systemscore,
+       player_score.cur_score        AS score,
+       player_score.sys_score AS systemscore,
        game_record.game_id       AS gameId,
        DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
 FROM   player_profile
@@ -25,11 +25,11 @@ FROM   player_profile
  WHERE player_profile.profile_id = ?
    AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
    AND (CASE 
-         WHEN player_score.score > 0
+         WHEN player_score.cur_score > 0
          THEN 1
-         WHEN player_score.score < 0
+         WHEN player_score.cur_score < 0
          THEN -1
-         WHEN player_score.score = 0
+         WHEN player_score.cur_score = 0
          THEN 0
         END = ?
         OR 999 = ?)
@@ -47,11 +47,11 @@ FROM   player_profile
  WHERE player_profile.profile_id = ?
    AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
    AND (CASE 
-         WHEN player_score.score > 0
+         WHEN player_score.cur_score > 0
          THEN 1
-         WHEN player_score.score < 0
+         WHEN player_score.cur_score < 0
          THEN -1
-         WHEN player_score.score = 0
+         WHEN player_score.cur_score = 0
          THEN 0
         END = ?
         OR 999 = ?)

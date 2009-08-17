@@ -51,7 +51,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         // TODO DROP THIS LINE => gameRecord.setScore(score);
         // THE FOLLOWING LINES WERE SET IN THE LAST LINE OF EACH PRIVATE METHOD 
         // gameRecord.setPlayers();
-        // gameRecord.setSystemScore(systemScore);
+        // gameRecord.setSysScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
         gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
@@ -117,19 +117,21 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             if (winnerNumber.equals(player.getCurrentNumber())) {
-            	playerScore.setScore(resultScore); // 玩家当前得分
+            	playerScore.setCurScore(resultScore); // 玩家当前得分
             } else if (loserNumber.equals(player.getCurrentNumber())) {
-            	playerScore.setScore(-1 * resultScore); // 玩家当前得分
+            	playerScore.setCurScore(-1 * resultScore); // 玩家当前得分
             } else {
-            	playerScore.setScore(0); // 玩家当前得分
+            	playerScore.setCurScore(0); // 玩家当前得分
             }
-            playerScore.setSystemScore(systemScore);
+            playerScore.setSysScore(systemScore); // 系统当前得分
+            playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
+            playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getScore());
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSystemScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
         }
         gameRecord.setPlayers(playerIds);
     }
@@ -178,17 +180,19 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             if (winnerNumber.equals(player.getCurrentNumber())) {
-            	playerScore.setScore(resultScore * 3); // 玩家当前得分
+            	playerScore.setCurScore(resultScore * 3); // 玩家当前得分
             } else {
-            	playerScore.setScore(resultScore * -1); // 玩家当前得分
+            	playerScore.setCurScore(resultScore * -1); // 玩家当前得分
             }
-            playerScore.setSystemScore(systemScore);
+            playerScore.setSysScore(systemScore); // 系统当前得分
+            playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
+            playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getScore());
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSystemScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
         }
         gameRecord.setPlayers(playerIds);
     }

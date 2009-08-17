@@ -36,8 +36,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
      */
     public static final FightLandlordPoker START_POKER = new FightLandlordPoker(PokerColor.HEART, PokerValue.V3);
 
-    private FightLandlordGameSetting setting; 
-
     public FightLandlordGame() {
     }
 
@@ -78,13 +76,13 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
          * 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。 
          */
         // 在相应几分房间的分数 * 当前局叫的牌的底分
-        if (FightLandlordGameSetting.NO_RUSH.equals(setting)) {
+        if (FightLandlordGameSetting.NO_RUSH.equals(this.getSetting())) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * getMultiple());
-        } else if (FightLandlordGameSetting.ONE_RUSH.equals(setting)) {
+        } else if (FightLandlordGameSetting.ONE_RUSH.equals(this.getSetting())) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getLowLevelMark() * getMultiple());
-        } else if (FightLandlordGameSetting.TWO_RUSH.equals(setting)) {
+        } else if (FightLandlordGameSetting.TWO_RUSH.equals(this.getSetting())) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getMidLevelMark() * getMultiple());
-        } else if (FightLandlordGameSetting.THREE_RUSH.equals(setting)) {
+        } else if (FightLandlordGameSetting.THREE_RUSH.equals(this.getSetting())) {
         	persistRushScore(itr, gameRecord, isFinalSettingPlayerWon, this.getHighLevelMark() * getMultiple());
         }
         setMultiple(1);
@@ -142,9 +140,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
-            playerScore.setScore(resultScore); // 玩家当前得分
-            playerScore.setSystemScore(systemScore);
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
+            playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(systemScore); // 系统当前得分
+            playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
+            playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
+            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家当前总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -153,22 +153,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         }
         gameRecord.setPlayers(playerIds);
     }
-    /**
-     * @return the setting
-     */
-    @Override
-    public FightLandlordGameSetting getSetting() {
-        return setting;
-    }
 
-    /**
-     * @param setting the setting to set
-     */
-    @Override
-    public void setSetting(FightLandlordGameSetting setting) {
-        this.setting = setting;
-    }
-    
     /**
 	 * @return the multiple
 	 */
