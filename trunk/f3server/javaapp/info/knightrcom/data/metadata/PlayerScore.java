@@ -27,9 +27,13 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
 
     private String currentNumber;
 
-    private Integer score;
+    private Integer curScore;
 
-    private Integer systemScore;
+    private Integer sysScore;
+
+    private Integer orgScores;
+
+    private Integer curScores;
 
     private Short status;
 
@@ -48,25 +52,29 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** minimal constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer score, Integer systemScore) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
         this.userId = userId;
         this.currentNumber = currentNumber;
-        this.score = score;
-        this.systemScore = systemScore;
+        this.curScore = curScore;
+        this.sysScore = sysScore;
+        this.orgScores = orgScores;
+        this.curScores = curScores;
     }
 
     /** full constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer score, Integer systemScore, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
         this.userId = userId;
         this.currentNumber = currentNumber;
-        this.score = score;
-        this.systemScore = systemScore;
+        this.curScore = curScore;
+        this.sysScore = sysScore;
+        this.orgScores = orgScores;
+        this.curScores = curScores;
         this.status = status;
         this.createTime = createTime;
         this.createBy = createBy;
@@ -121,22 +129,40 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.currentNumber = currentNumber;
     }
 
-    @Column(name = "SCORE", nullable = false)
-    public Integer getScore() {
-        return this.score;
+    @Column(name = "CUR_SCORE", nullable = false)
+    public Integer getCurScore() {
+        return this.curScore;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setCurScore(Integer curScore) {
+        this.curScore = curScore;
     }
 
-    @Column(name = "SYSTEM_SCORE", nullable = false)
-    public Integer getSystemScore() {
-        return this.systemScore;
+    @Column(name = "SYS_SCORE", nullable = false)
+    public Integer getSysScore() {
+        return this.sysScore;
     }
 
-    public void setSystemScore(Integer systemScore) {
-        this.systemScore = systemScore;
+    public void setSysScore(Integer sysScore) {
+        this.sysScore = sysScore;
+    }
+
+    @Column(name = "ORG_SCORES", nullable = false)
+    public Integer getOrgScores() {
+        return this.orgScores;
+    }
+
+    public void setOrgScores(Integer orgScores) {
+        this.orgScores = orgScores;
+    }
+
+    @Column(name = "CUR_SCORES", nullable = false)
+    public Integer getCurScores() {
+        return this.curScores;
+    }
+
+    public void setCurScores(Integer curScores) {
+        this.curScores = curScores;
     }
 
     @Column(name = "STATUS")
