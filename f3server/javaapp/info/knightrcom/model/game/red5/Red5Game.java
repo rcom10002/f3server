@@ -51,10 +51,10 @@ public class Red5Game extends Game<Red5GameSetting> {
         gameRecord.setGameType(Red5Game.class.getSimpleName());
         gameRecord.setGameSetting((short)this.getSetting().ordinal());
         gameRecord.setWinnerNumbers(this.getWinnerNumbers());
-        // TODO DROP THIS LINE => gameRecord.setScore(score);
+        // TODO DROP THIS LINE => gameRecord.setCurScore(score);
         // THE FOLLOWING LINES WERE SET IN THE LAST LINE OF EACH PRIVATE METHOD 
         // gameRecord.setPlayers();
-        // gameRecord.setSystemScore(systemScore);
+        // gameRecord.setSysScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
         gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
@@ -120,8 +120,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
-            playerScore.setScore(resultScore); // 玩家当前得分
-            playerScore.setSystemScore(systemScore);
+            playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(systemScore);
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总分数
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
@@ -182,8 +182,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
-            playerScore.setScore(resultScore); // 玩家当前得分
-            playerScore.setSystemScore(systemScore);
+            playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(systemScore);
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
@@ -243,8 +243,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
-            playerScore.setScore(resultScore); // 玩家当前得分
-            playerScore.setSystemScore(systemScore);
+            playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(systemScore);
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
@@ -304,8 +304,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
-            playerScore.setScore(resultScore); // 玩家当前得分
-            playerScore.setSystemScore(systemScore);
+            playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(systemScore);
             playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
