@@ -45,9 +45,9 @@ import org.apache.mina.handler.demux.MessageHandler;
 /**
  *
  */
-public class ServiceHandler extends DemuxingIoHandler {
+public class F3ServerServiceHandler extends DemuxingIoHandler {
 
-    private static final Log log = LogFactory.getLog(ServiceHandler.class);
+    private static final Log log = LogFactory.getLog(F3ServerServiceHandler.class);
 
     // TODO What's the differences between sessions and managed-sessions ?
     private final Set<IoSession> sessions = Collections.synchronizedSet(new HashSet<IoSession>());
@@ -57,7 +57,7 @@ public class ServiceHandler extends DemuxingIoHandler {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public ServiceHandler(Platform platform) throws InstantiationException, IllegalAccessException {
+    public F3ServerServiceHandler(Platform platform) throws InstantiationException, IllegalAccessException {
         ModelUtil.setSessions(sessions);
         this.addReceivedMessageHandler(PlatformMessage.class, new PlatformInMessageHandler());
         this.addReceivedMessageHandler(PlayerMessage.class, new PlayerInMessageHandler());

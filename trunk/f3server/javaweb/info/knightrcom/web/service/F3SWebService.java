@@ -1,6 +1,7 @@
 package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.web.F3SWebServiceHandler;
 import info.knightrcom.web.model.EntityInfo;
 import info.knightrcom.web.model.Pagination;
 

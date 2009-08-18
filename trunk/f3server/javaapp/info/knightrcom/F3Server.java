@@ -113,7 +113,7 @@ class F3Server {
 	
 	        // 绑定处理器和监听
 	        Platform platform = ModelUtil.createPlatform();
-	        acceptor.setHandler(new ServiceHandler(platform));
+	        acceptor.setHandler(new F3ServerServiceHandler(platform));
 	        acceptor.bind(new InetSocketAddress(PORT));
 	        log.info("LISTENING ON PORT " + PORT);
 	
