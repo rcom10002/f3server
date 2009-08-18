@@ -1,9 +1,10 @@
-package info.knightrcom.web.service;
+package info.knightrcom.web;
 
 import info.knightrcom.F3ServerProxy;
 import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
+import info.knightrcom.web.service.F3SWebService;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
@@ -77,7 +78,7 @@ public class F3SWebServiceHandler {
             } catch (Exception ex) {
                 HibernateSessionFactory.getSession().getTransaction().rollback();
                 // 记录日志
-                LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().toString(), null, ex.getMessage(), LogType.SYSTEM_ERROR);
+                LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().toString(), null, ex.getMessage(), LogType.WEB_ERROR);
                 HibernateSessionFactory.getSession().save(logInfo);
                 HibernateSessionFactory.getSession().flush();
                 HibernateSessionFactory.getSession().close();

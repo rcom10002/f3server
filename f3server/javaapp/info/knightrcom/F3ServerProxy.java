@@ -24,7 +24,7 @@ public class F3ServerProxy {
      * 日志类型
      */
     public static enum LogType {
-        CLIENT_ERROR, SYSTEM_ERROR, SYSTEM_LOG
+        CLIENT_ERROR, SYSTEM_ERROR, WEB_ERROR, SYSTEM_LOG
     }
 
 	/**
