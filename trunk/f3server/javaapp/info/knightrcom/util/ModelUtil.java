@@ -2,6 +2,7 @@ package info.knightrcom.util;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
+import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.model.global.AbstractModel;
 import info.knightrcom.model.global.Lobby;
 import info.knightrcom.model.global.Platform;
@@ -31,13 +32,18 @@ public class ModelUtil {
     private static Platform platform;
     private static Map<String, Lobby> lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     private static Map<String, Room> rooms = Collections.synchronizedMap(new HashMap<String, Room>());
+    private static Map<String, String> systemParameters = new HashMap<String, String>();
 
+    /**
+     * 
+     */
     public static void resetModels() {
     	sessions = null;
     	modelDesc = null;
     	platform = null;
     	lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     	rooms = Collections.synchronizedMap(new HashMap<String, Room>());
+    	systemParameters = new HashMap<String, String>();
     }
 
     /**
@@ -101,11 +107,23 @@ public class ModelUtil {
         stream.alias("room", Room.class);
         stream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
         modelDesc = "<e4x-data>#</e4x-data>".replace("#", stream.toXML(ModelUtil.getPlatform()));
+
+        // 初始化系统参数
+        for (GlobalConfig eachParameter : new GlobalConfigDAO().findByType(GameConfigureConstant.SERVER_PARAM_NAME)) {
+            systemParameters.put(eachParameter.getName(), eachParameter.getValue());
+        }
         return platform;
     }
 
     public static final String getModelDesc() {
         return modelDesc;
+    }
+
+    /**
+     * @return the systemParameters
+     */
+    public static String getSystemParameters(String key) {
+        return systemParameters.get(key);
     }
 
     /**

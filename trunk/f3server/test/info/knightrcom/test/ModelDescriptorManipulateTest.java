@@ -7,6 +7,8 @@ import info.knightrcom.web.constant.GameConfigureConstant;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -79,7 +81,31 @@ public class ModelDescriptorManipulateTest extends TestCase {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	/**
+	 * @throws Exception
+	 */
+	public void testSystemParameters() throws Exception {
+        try {
+            HibernateSessionFactory.getSession().beginTransaction();
+    	    HibernateSessionFactory.getSession().createSQLQuery("DELETE FROM global_config WHERE type = '" + GameConfigureConstant.SERVER_PARAM_NAME + "'").executeUpdate();
+    	    Map<String, String> allConfigParameters = new HashMap<String, String>();
+    	    allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
+    	    for (String key : allConfigParameters.keySet()) {
+    	        GlobalConfig config = new GlobalConfig();
+    	        config.setGlobalConfigId(UUID.randomUUID().toString());
+    	        config.setName(key);
+    	        config.setType(GameConfigureConstant.SERVER_PARAM_NAME);
+    	        config.setValue(allConfigParameters.get(key));
+    	        HibernateSessionFactory.getSession().save(config);
+    	    }
+            HibernateSessionFactory.getSession().getTransaction().commit();
+        } catch (Exception e) {
+            HibernateSessionFactory.getSession().getTransaction().rollback();
+            throw new RuntimeException(e);
+        }
+	}
+
 	/**
 	 * Test properties file's reading ability.
 	 * 
