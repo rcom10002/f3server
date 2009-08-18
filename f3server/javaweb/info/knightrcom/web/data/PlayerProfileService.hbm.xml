@@ -34,7 +34,7 @@ SELECT player_profile.rls_path
     <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">
 SELECT player_profile.rls_path
   FROM player_profile INNER JOIN (
-  	   SELECT rls_path FROM player_profile WHERE user_id = ?
+  	   SELECT rls_path FROM player_profile WHERE rls_path = ?
        ) target 
     ON player_profile.rls_path LIKE CONCAT(target.rls_path, '%')
  WHERE player_profile.role = 'GroupUser'

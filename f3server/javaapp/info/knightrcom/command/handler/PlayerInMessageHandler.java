@@ -35,23 +35,26 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
     @HibernateTransactionSupport
     public void LOGIN_SIGN_IN(IoSession session, PlayerMessage message, EchoMessage echoMessage) {
     	Set<IoSession> sessions = ModelUtil.getSessions();
-    	synchronized (sessions) {
-    		int count = 0;
-			Iterator<IoSession> itr = sessions.iterator();
-			while (itr.hasNext()) {
-				String currentIP = session.getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
-				String remoteIP = itr.next().getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
-				if (currentIP.equals(remoteIP)) {
-					count++;
-					if (count > 1) {
-				    	echoMessage = PlayerMessage.createInstance(MessageType.PLAYER).getEchoMessage();
-						echoMessage.setResult(LOGIN_IP_CONFLICT);
-						sessionWrite(session, echoMessage);
-						return;
-					}
-				}
-			}
-		}
+    	if (Boolean.parseBoolean(ModelUtil.getSystemParameters("IP_CONFLICT_ENABLED"))) {
+    	    // 同IP登录限制
+        	synchronized (sessions) {
+        		int count = 0;
+    			Iterator<IoSession> itr = sessions.iterator();
+    			while (itr.hasNext()) {
+    				String currentIP = session.getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
+    				String remoteIP = itr.next().getRemoteAddress().toString().replaceAll("^.*?(\\d+\\.\\d+\\.\\d+\\.\\d+).*$", "$1");
+    				if (currentIP.equals(remoteIP)) {
+    					count++;
+    					if (count > 1) {
+    				    	echoMessage = PlayerMessage.createInstance(MessageType.PLAYER).getEchoMessage();
+    						echoMessage.setResult(LOGIN_IP_CONFLICT);
+    						sessionWrite(session, echoMessage);
+    						return;
+    					}
+    				}
+    			}
+    		}
+        }
         String results[] = message.getContent().split("~");
         PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.and(
                 Property.forName("userId").eq(results[0]), 

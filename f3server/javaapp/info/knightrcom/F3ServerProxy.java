@@ -1,12 +1,17 @@
 package info.knightrcom;
 
 import info.knightrcom.command.message.EchoMessage;
+import info.knightrcom.data.metadata.GlobalConfig;
+import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
 import info.knightrcom.util.SystemLogger;
+import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.mina.core.session.IoSession;
 
@@ -68,6 +73,10 @@ public class F3ServerProxy {
 	 * @return
 	 */
 	public static Object getServerStatus() {
+	    Map<String, String> sysParams = new HashMap<String, String>();
+	    for (GlobalConfig config : new GlobalConfigDAO().findByType(GameConfigureConstant.SERVER_PARAM_NAME)) {
+	        sysParams.put(config.getName(), config.getValue());
+	    }
 		String[] titles = new String[] {
 				"USE_SSL",
 				"PORT",
@@ -82,10 +91,15 @@ public class F3ServerProxy {
 				String.valueOf(F3Server.MAX_CONNECTION_LIMIT),
 				String.valueOf(F3Server.RUNNING), 
 				String.valueOf(F3Server.acceptor.getManagedSessionCount()) };
-		String[] result = new String[titles.length];
-		for (int i = 0; i < titles.length; i++) {
+		String[] result = new String[titles.length + sysParams.size()];
+		int i = 0;
+		for (i = 0; i < titles.length; i++) {
 		    result[i] = titles[i] + "~" + contents[i];
         }
+		for (String key : sysParams.keySet()) {
+		    result[i] = key + "~" + sysParams.get(key);
+		    i++;
+		}
 		return result;
 	}
 
