@@ -91,7 +91,7 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
 				data.put(header[7], business.getEndTime());
 				writer.write(data, header);
 			}
-			info.setTag(filename);
+			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/"+ filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();
