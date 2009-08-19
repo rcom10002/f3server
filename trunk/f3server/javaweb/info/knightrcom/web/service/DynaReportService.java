@@ -133,12 +133,11 @@ public class DynaReportService extends F3SWebServiceAdaptor {
 				// fill column value
 				while (cols.hasNext()) {
 					String col = cols.next().toString();
-					System.out.println(col);
 					data.put(col, map.get(col) == null ? "" : map.get(col));
 				}
 				writer.write(data, header);
 			}
-			info.setTag(filename);
+			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/"+ filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();
