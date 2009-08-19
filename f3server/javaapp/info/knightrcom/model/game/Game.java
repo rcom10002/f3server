@@ -208,6 +208,11 @@ public abstract class Game<T> {
     public abstract void persistScore();
 
     /**
+     * 计算玩家掉线时的游戏积分并保存到数据库中
+     */
+    public abstract void persistDisconnectScore();
+
+    /**
      * 为客户端提供游戏积分明细
      * 
      * @return the gameResultScore
