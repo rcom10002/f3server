@@ -2,18 +2,28 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PeriodlySum;
+import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.util.StringHelper;
+import info.knightrcom.web.model.EntityInfo;
 import info.knightrcom.web.model.entity.ReportScoreInfo;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.io.ICsvMapWriter;
+import org.supercsv.prefs.CsvPreference;
 
 public class ReportScoreService extends F3SWebService<PeriodlySum> {
 
@@ -94,5 +104,55 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     		query.executeUpdate();
         }
     	return serializeResponseStream(request, response);
+    }
+    
+    /**
+     * 报表导出
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException 
+     */
+	@SuppressWarnings("unchecked")
+	public String CSV_EXPORT(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		EntityInfo<PeriodlySum> info = new EntityInfo<PeriodlySum>();
+		
+    	Query query = HibernateSessionFactory.getSession().getNamedQuery(getNamedQuery());
+    	processQuerySetting(query, request);
+    	query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    	List<Map> list = (List<Map>)query.list();
+    	String url = request.getSession().getServletContext().getRealPath("/");
+    	String filename = "PERIODLY_SUM_" + new java.util.Date().getTime() + ".csv";
+    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + filename),
+				CsvPreference.EXCEL_PREFERENCE);
+    	try {
+			final String[] header = new String[] { "用户ID", "总次数", "总积分", "获胜次数", "获胜积分", "失败次数", "失败积分", "平局次数" , "平局积分", "总系统分", "开始统计时间", "结束统计时间"};
+			// the actual writing
+			writer.writeHeader(header);
+			for (Map map : list) {
+				// set up some data to write
+				final HashMap<String, ? super Object> data = new HashMap<String, Object>();
+				data.put(header[0], map.get("userId"));
+				data.put(header[1], map.get("totalTimes"));
+				data.put(header[2], map.get("totalScores"));
+				data.put(header[3], map.get("winTimes"));
+				data.put(header[4], map.get("winScores"));
+				data.put(header[5], map.get("loseTimes"));
+				data.put(header[6], map.get("loseScores"));
+				data.put(header[7], map.get("drawTimes"));
+				data.put(header[8], map.get("drawScores"));
+				data.put(header[9], map.get("totalSystemScore"));
+				data.put(header[10], map.get("startDate"));
+				data.put(header[11], map.get("endDate"));
+				
+				writer.write(data, header);
+			}
+			info.setTag(filename);
+			info.setResult(F3SWebServiceResult.SUCCESS);
+		} finally {
+			writer.close();
+		}
+		
+        return toXML(info, new Class[] {PeriodlySum.class});
     }
 }
