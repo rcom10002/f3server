@@ -2,7 +2,6 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PeriodlySum;
-import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.EntityInfo;
 import info.knightrcom.web.model.entity.ReportScoreInfo;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
