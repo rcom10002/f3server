@@ -27,7 +27,9 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
 
     private String description;
 
-    private Short status;
+    private String conclusion;
+
+    private String status;
 
     private Date createTime;
 
@@ -44,20 +46,22 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
     }
 
     /** minimal constructor */
-    public GameFeedback(String feedbackId, String gameId, String title, String description) {
+    public GameFeedback(String feedbackId, String gameId, String title, String description, String status) {
         this.feedbackId = feedbackId;
         this.gameId = gameId;
         this.title = title;
         this.description = description;
+        this.status = status;
     }
 
     /** full constructor */
-    public GameFeedback(String feedbackId, String gameId, String number, String title, String description, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GameFeedback(String feedbackId, String gameId, String number, String title, String description, String conclusion, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.feedbackId = feedbackId;
         this.gameId = gameId;
         this.number = number;
         this.title = title;
         this.description = description;
+        this.conclusion = conclusion;
         this.status = status;
         this.createTime = createTime;
         this.createBy = createBy;
@@ -112,12 +116,21 @@ public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements
         this.description = description;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "CONCLUSION", length = 65535)
+    public String getConclusion() {
+        return this.conclusion;
+    }
+
+    public void setConclusion(String conclusion) {
+        this.conclusion = conclusion;
+    }
+
+    @Column(name = "STATUS", nullable = false, length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

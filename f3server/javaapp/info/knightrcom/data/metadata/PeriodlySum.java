@@ -47,7 +47,7 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
 
     private Integer totalSystemScore;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -81,7 +81,7 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** full constructor */
-    public PeriodlySum(String periodlyId, String profileId, String number, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PeriodlySum(String periodlyId, String profileId, String number, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.periodlyId = periodlyId;
         this.profileId = profileId;
         this.number = number;
@@ -243,12 +243,12 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
         this.totalSystemScore = totalSystemScore;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

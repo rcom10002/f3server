@@ -27,7 +27,7 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
 
     private String type;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -51,7 +51,7 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
     }
 
     /** full constructor */
-    public GlobalConfig(String globalConfigId, String number, String name, String value, String type, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GlobalConfig(String globalConfigId, String number, String name, String value, String type, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.globalConfigId = globalConfigId;
         this.number = number;
         this.name = name;
@@ -111,12 +111,12 @@ public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements
         this.type = type;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

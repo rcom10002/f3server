@@ -33,7 +33,7 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
 
     private String record;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -57,7 +57,7 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
     }
 
     /** full constructor */
-    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Integer score, Integer systemScore, String record, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Integer score, Integer systemScore, String record, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.gameId = gameId;
         this.gameType = gameType;
         this.gameSetting = gameSetting;
@@ -147,12 +147,12 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
         this.record = record;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

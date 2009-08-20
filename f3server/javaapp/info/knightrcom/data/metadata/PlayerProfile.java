@@ -37,7 +37,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
 
     private String role;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -65,7 +65,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     }
 
     /** full constructor */
-    public PlayerProfile(String profileId, String number, String name, String userId, String password, Integer currentScore, Integer initLimit, Integer level, String rlsPath, String role, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerProfile(String profileId, String number, String name, String userId, String password, Integer currentScore, Integer initLimit, Integer level, String rlsPath, String role, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.profileId = profileId;
         this.number = number;
         this.name = name;
@@ -175,12 +175,12 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
         this.role = role;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
