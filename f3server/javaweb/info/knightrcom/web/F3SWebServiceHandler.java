@@ -29,7 +29,7 @@ public class F3SWebServiceHandler {
     private static Map<String, Method> methods = new HashMap<String, Method>();
 
     public static String getServicePackageName() {
-        return F3SWebServiceHandler.class.getPackage().getName();
+        return F3SWebService.class.getPackage().getName();
     }
 
     /**

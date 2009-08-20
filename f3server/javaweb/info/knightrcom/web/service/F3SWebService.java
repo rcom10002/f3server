@@ -151,8 +151,10 @@ public abstract class F3SWebService<T> {
             }
             
         });
-        for (Class thisType : elementTypes) {
-            stream.alias(thisType.getSimpleName().replaceAll("\\W", ""), thisType);
+        if (elementTypes != null) {
+	        for (Class thisType : elementTypes) {
+	            stream.alias(thisType.getSimpleName().replaceAll("\\W", ""), thisType);
+	        }
         }
         stream.setMode(XStream.NO_REFERENCES);
         String responseText = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + stream.toXML(entityInfo);

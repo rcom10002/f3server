@@ -31,6 +31,12 @@ public class SystemLogger {
         } else {
         	logInfo.setInfo(message + "\r\n" + info);
         }
+        if (StringHelper.isEmpty(logInfo.getCaption())) {
+            logInfo.setCaption("N/A");
+        }
+        if (StringHelper.isEmpty(logInfo.getInfo())) {
+            logInfo.setInfo("N/A");
+        }        
         logInfo.setType(type.name());
         return logInfo;
     }
