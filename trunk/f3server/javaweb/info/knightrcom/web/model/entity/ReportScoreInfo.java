@@ -1,6 +1,5 @@
 package info.knightrcom.web.model.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 public class ReportScoreInfo {
