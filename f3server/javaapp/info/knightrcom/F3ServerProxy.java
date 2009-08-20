@@ -27,7 +27,14 @@ public class F3ServerProxy {
         CLIENT_ERROR, SYSTEM_ERROR, WEB_ERROR, SYSTEM_LOG
     }
 
-	/**
+    /**
+     * 反馈处理状态
+     */
+    public static enum FeedbackStatus {
+    	NEW_ARRIVAL, IN_PROGRESS, DONE 
+    }
+
+    /**
 	 * 获取所有Socket会话
 	 * 
 	 * @return
