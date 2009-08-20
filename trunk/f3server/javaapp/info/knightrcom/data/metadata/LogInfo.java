@@ -33,7 +33,7 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
 
     private String type;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -58,7 +58,7 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
     }
 
     /** full constructor */
-    public LogInfo(String logId, String number, String caption, String keyCause1, String keyCause2, String keyCause3, String info, String type, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public LogInfo(String logId, String number, String caption, String keyCause1, String keyCause2, String keyCause3, String info, String type, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.logId = logId;
         this.number = number;
         this.caption = caption;
@@ -148,12 +148,12 @@ public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java
         this.type = type;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

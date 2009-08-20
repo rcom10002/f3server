@@ -35,7 +35,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
 
     private Integer curScores;
 
-    private Short status;
+    private String status;
 
     private Date createTime;
 
@@ -65,7 +65,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** full constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores, Short status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
@@ -165,12 +165,12 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
         this.curScores = curScores;
     }
 
-    @Column(name = "STATUS")
-    public Short getStatus() {
+    @Column(name = "STATUS", length = 100)
+    public String getStatus() {
         return this.status;
     }
 
-    public void setStatus(Short status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

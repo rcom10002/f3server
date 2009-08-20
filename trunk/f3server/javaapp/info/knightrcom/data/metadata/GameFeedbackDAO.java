@@ -32,6 +32,8 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
 
     public static final String DESCRIPTION = "description";
 
+    public static final String CONCLUSION = "conclusion";
+
     public static final String STATUS = "status";
 
     public static final String CREATE_BY = "createBy";
@@ -110,6 +112,10 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
 
     public List<GameFeedback> findByDescription(Object description) {
         return findByProperty(DESCRIPTION, description);
+    }
+
+    public List<GameFeedback> findByConclusion(Object conclusion) {
+        return findByProperty(CONCLUSION, conclusion);
     }
 
     public List<GameFeedback> findByStatus(Object status) {
