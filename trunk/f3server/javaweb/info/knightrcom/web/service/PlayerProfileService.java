@@ -108,7 +108,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
         playerProfile.setRole(request.getParameter("ROLE"));
-        playerProfile.setStatus((short)(Boolean.parseBoolean(request.getParameter("STATUS")) ? 1 : 0)); // 0:禁用、1:启用
+        playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
         HibernateSessionFactory.getSession().save(playerProfile);
         EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
         info.setEntity(playerProfile);
@@ -142,7 +142,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         // playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         // playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
         playerProfile.setRole(request.getParameter("ROLE"));
-        playerProfile.setStatus((short)(Boolean.parseBoolean(request.getParameter("STATUS")) ? 1 : 0)); // 0:禁用、1:启用
+        playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
         playerProfile.setUpdateTime(new Date());
         HibernateSessionFactory.getSession().update(playerProfile);
         EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
