@@ -8,6 +8,8 @@ import info.knightrcom.web.model.EntityInfo;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,7 +82,12 @@ public class DynaReportService extends F3SWebServiceAdaptor {
 			info.setResult(F3SWebServiceResult.FAIL);
 			List msgList = new ArrayList();
 			Map msgMap = new HashMap();
-			msgMap.put("ERROR", e.getMessage());
+//			e.printStackTrace();
+			StringWriter stringWriter = new StringWriter();
+            PrintWriter writer = new PrintWriter(stringWriter);
+            e.printStackTrace(writer);
+            StringBuffer buffer = stringWriter.getBuffer();
+			msgMap.put("ERROR", buffer.toString());
 			msgList.add(msgMap);
 			info.setEntity(msgList);
 		}
