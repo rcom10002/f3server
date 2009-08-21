@@ -1,5 +1,6 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy.FeedbackStatus;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GameFeedback;
 import info.knightrcom.data.metadata.GameFeedbackDAO;
@@ -81,7 +82,7 @@ public class GameFeedbackService extends F3SWebService<GameFeedback>{
      */
 	public String AUDIT_GAME_FEEDBACK(HttpServletRequest request, HttpServletResponse response) {
     	GameFeedback gameFeedback = new GameFeedbackDAO().findById(request.getParameter("FEEDBACK_ID"));
-    	gameFeedback.setStatus(request.getParameter("STATUS")); // 0： 未处理  1：处理中 2：处理毕
+    	gameFeedback.setStatus(request.getParameter("STATUS"));
     	gameFeedback.setUpdateTime(new Date());
     	gameFeedback.setUpdateBy("SYSTEM");
     	HibernateSessionFactory.getSession().update(gameFeedback);
