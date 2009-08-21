@@ -5,26 +5,27 @@
 	<sql-query name="GAME_FEEDBACK">
 	<![CDATA[
 		SELECT 
-			   GF.FEEDBACK_ID feedbackId,
-			   GF.GAME_ID gameId,
-		       GR.GAME_TYPE gameType,
-		       GF.TITLE title,
+			   `GAME_FEEDBACK`.`FEEDBACK_ID` feedbackId,
+			   `GAME_FEEDBACK`.`GAME_ID` gameId,
+		       `GAME_RECORD`.`GAME_TYPE` gameType,
+		       `GAME_FEEDBACK`.`TITLE` title,
 		       CASE
-	            WHEN GF.STATUS ='NEW_ARRIVAL' THEN '未处理'
-	            WHEN GF.STATUS ='IN_PROGRESS' THEN '处理中'
-	            WHEN GF.STATUS ='DONE' THEN '处理毕'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='NEW_ARRIVAL' THEN '未处理'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='IN_PROGRESS' THEN '处理中'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='DONE' THEN '处理毕'
 	           END status,
-	           GF.STATUS statusIndex,
-		       HOUR(TIMEDIFF(NOW(), GF.CREATE_TIME)) hours,
-		       DATE_FORMAT(GF.CREATE_TIME, "%Y年%m月%d日%H时%i分%S秒") createTime,
-		       PP.NAME name
-		  FROM GAME_FEEDBACK GF, GAME_RECORD GR, PLAYER_PROFILE PP
-		 WHERE GF.GAME_ID = GR.GAME_ID
-		   AND GF.CREATE_BY = PP.PROFILE_ID
-		   AND (? = '' or GF.STATUS = ?)
-		   AND GF.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
-		   AND UPPER(GF.TITLE) LIKE UPPER(?)
-		 ORDER BY GF.CREATE_TIME DESC
+	           `GAME_FEEDBACK`.`STATUS` statusIndex,
+		       HOUR(TIMEDIFF(NOW(), `GAME_FEEDBACK`.`CREATE_TIME`)) hours,
+		       DATE_FORMAT(`GAME_FEEDBACK`.`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") createTime,
+		       `PLAYER_PROFILE`.`NAME` name,
+		       CAST(`GAME_FEEDBACK`.`DESCRIPTION` AS CHAR) description
+		  FROM `GAME_FEEDBACK`, `GAME_RECORD`, `PLAYER_PROFILE`
+		 WHERE `GAME_FEEDBACK`.`GAME_ID` = `GAME_RECORD`.`GAME_ID`
+		   AND `GAME_FEEDBACK`.`CREATE_BY` = `PLAYER_PROFILE`.`PROFILE_ID`
+		   AND (? = '' or `GAME_FEEDBACK`.`STATUS` = ?)
+		   AND `GAME_FEEDBACK`.`CREATE_TIME` BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		   AND UPPER(`GAME_FEEDBACK`.`TITLE`) LIKE UPPER(?)
+		 ORDER BY `GAME_FEEDBACK`.`CREATE_TIME` DESC
     ]]>
     </sql-query>
 	<sql-query name="GAME_FEEDBACK_COUNT">
