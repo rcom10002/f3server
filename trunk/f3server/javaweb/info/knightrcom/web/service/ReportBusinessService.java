@@ -1,10 +1,11 @@
 package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
-import info.knightrcom.data.metadata.PeriodlySum;
+import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.util.StringHelper;
+import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 import info.knightrcom.web.model.entity.ReportBusinessInfo;
 
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.supercsv.io.CsvMapWriter;
@@ -103,6 +106,27 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
 			writer.close();
 		}
 		
-        return toXML(info, new Class[] {PeriodlySum.class});
+        return toXML(info, getAliasTypes());
     }
+	
+	/**
+	 * 获取查询期间
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public String GET_SEARCH_PERIOD(HttpServletRequest request, HttpServletResponse response) {
+		EntityInfo<PlayerScore> info = new EntityInfo<PlayerScore>();
+		final GlobalConfig globalconfig = (GlobalConfig)HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class).add(
+                Restrictions.and(Property.forName("type").eq(GameConfigureConstant.SERVER_PARAM_NAME), 
+                        Property.forName("name").eq("SEARCH_PERIOD"))).uniqueResult();
+		// 默认查询期间为2星期
+		int period = 2;
+		if (globalconfig != null) {
+			period = Integer.valueOf(globalconfig.getValue());
+		}
+		info.setTag(period);
+		info.setResult(F3SWebServiceResult.SUCCESS);
+		return toXML(info, getAliasTypes());
+	}
 }
