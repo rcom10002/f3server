@@ -1,6 +1,5 @@
 package info.knightrcom.web.service;
 
-import info.knightrcom.F3ServerProxy.FeedbackStatus;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GameFeedback;
 import info.knightrcom.data.metadata.GameFeedbackDAO;

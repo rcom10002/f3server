@@ -4,7 +4,19 @@
 <hibernate-mapping>
 	<sql-query name="SCORE_INFO">
 	<![CDATA[
-SELECT CASE 
+SELECT 
+	   CASE 
+         WHEN game_record.game_type  = 'Red5Game'
+         THEN "红五"
+         WHEN game_record.game_type  = 'FightLandlordGame'
+         THEN "斗地主"
+         WHEN game_record.game_type  = 'PushdownWinGame'
+         THEN "推倒胡"
+         WHEN game_record.game_type  = 'QiongWinGame'
+         THEN "穷胡"
+         ELSE "未知"
+       END AS gametype,
+	   CASE 
          WHEN player_score.cur_score > 0
          THEN "胜利"
          WHEN player_score.cur_score < 0
@@ -13,8 +25,8 @@ SELECT CASE
          THEN "平局"
          ELSE "未知"
        END AS winandlose,
-       player_score.cur_score        AS score,
-       player_score.sys_score AS systemscore,
+       player_score.cur_score AS score,
+       player_score.sys_score  AS systemscore,
        game_record.game_id       AS gameId,
        DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
 FROM   player_profile
@@ -33,6 +45,7 @@ FROM   player_profile
          THEN 0
         END = ?
         OR 999 = ?)
+   AND (? = '' or game_record.game_type = ?)
  ORDER BY player_score.create_time desc
     ]]>
 	</sql-query>
@@ -55,6 +68,7 @@ FROM   player_profile
          THEN 0
         END = ?
         OR 999 = ?)
+   AND (? = '' or game_record.game_type = ?)
     ]]>
 	</sql-query>
 	<sql-query name="CUSTOM_INFO">
