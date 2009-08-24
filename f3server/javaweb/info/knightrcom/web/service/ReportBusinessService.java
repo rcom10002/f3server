@@ -2,6 +2,7 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PeriodlySum;
+import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.EntityInfo;
@@ -34,8 +35,13 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
         query.setTimestamp(4, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
         query.setInteger(5, new Integer(request.getParameter("SHOW_CONDITION")));
         query.setInteger(6, new Integer(request.getParameter("SHOW_CONDITION")));
-        query.setString(7, StringHelper.escapeSQL(request.getParameter("USER_ID")));
-        query.setString(8, userId + "%");
+        PlayerProfile profile = (PlayerProfile) request.getSession().getAttribute("PROFILE");
+        if ("GroupUser".equals(profile.getRole())) {
+        	query.setString(7, profile.getUserId());
+        } else {
+        	query.setString(7, null);
+        }
+        query.setString(8, profile.getUserId() + "%");
     }
 
     public String getNamedQuery() {
