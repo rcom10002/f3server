@@ -11,6 +11,9 @@ import info.knightrcom.model.game.red5.Red5GameSetting;
 import info.knightrcom.model.global.Player;
 import junit.framework.TestCase;
 
+/**
+ * 积分计算测试
+ */
 public class PersistScoreTestCase extends TestCase {
 
     protected void setUp() throws Exception {
@@ -69,8 +72,7 @@ public class PersistScoreTestCase extends TestCase {
      *
      * W1,NORTH,T9,W9,T8,NORTH,T3,B9,WHITE,T1,W7,EAST,B7~WHITE,GREEN,W3,T2,RED,B2,RED,T3,T5,B1,W2,B8,B9~B6,W2,B5,B5,W7,T7,T6,T3,T9,W9,B2,W6,B5~T8,T7,RED,T3,WEST,W3,B6,B2,SOUTH,B3,EAST,B4,B4~W8,T5,B1,T4,T8,B1,WHITE,W3,SOUTH,WEST,W5,W2,B2,T1,B8,W9,NORTH,RED,W7,W1,B8,T6,B6,B5,B9,T4,W7,T5,T6,WEST,NORTH,T6,W1,T8,T2,SOUTH,B4,W4,B3,B8,T7,W9,W4,T9,T1,B9,EAST,T7,WEST,W8,B7,SOUTH,T4,B3,GREEN,W6,B3,W8,W6,B7,W8,W6,B6,W5,B1,T2,W3,B4,W5,GREEN,T2,W2,EAST,T9,B7,W4,WHITE,W4,GREEN,T4,T1,T5,W5,W1;1~W8;1~EAST~2;2~T5;2~GREEN~3;3~B1;3~T3~4;4~T4;4~RED~1;1~T8;1~WHITE~2;2~B1;2~WHITE~3;3~WHITE;3~WHITE~4;4~W3;4~EAST~1;1~SOUTH;1~SOUTH~2;2~WEST;2~WEST~3;3~W5;3~W2~4;4~W2;4~SOUTH~1;1~B2;1~W1~2;2~T1;2~B2~3;3~B8;3~W9~4;4~W9;4~WEST~1;1~NORTH;1~B2~2;2~RED;2~B9~3;3~W7;3~B1~4;4~W1;4~W9~1;1~B8;1~T1~2;2~T6;2~B8~3;3~B6;3~B5~4;4~B5;4~W3~1;1~B9;1~B9~2;2~T4;2~T5~3;3~W7;3~B2~4;4~T5;4~T7~1;1~T6;1~T3~2;2~WEST;2~WEST~3;3~NORTH;3~NORTH~4;4~T6;4~T3~1;1~W1;1~W1~2;2~W1~1;
      */
-    public void testPushdownWin_NarrowVictory() {
-    	// 48.2     39.4 13940996048
+    public void testPushdownWinNarrowVictory() {
         PushdownWinGame game = new PushdownWinGame();
         game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
         game.setGameMark(10);
@@ -88,8 +90,7 @@ public class PersistScoreTestCase extends TestCase {
      *
      * W1,NORTH,T9,W9,T8,NORTH,T3,B9,WHITE,T1,W7,EAST,B7~WHITE,GREEN,W3,T2,RED,B2,RED,T3,T5,B1,W2,B8,B9~B6,W2,B5,B5,W7,T7,T6,T3,T9,W9,B2,W6,B5~T8,T7,RED,T3,WEST,W3,B6,B2,SOUTH,B3,EAST,B4,B4~W8,T5,B1,T4,T8,B1,WHITE,W3,SOUTH,WEST,W5,W2,B2,T1,B8,W9,NORTH,RED,W7,W1,B8,T6,B6,B5,B9,T4,W7,T5,T6,WEST,NORTH,T6,W1,T8,T2,SOUTH,B4,W4,B3,B8,T7,W9,W4,T9,T1,B9,EAST,T7,WEST,W8,B7,SOUTH,T4,B3,GREEN,W6,B3,W8,W6,B7,W8,W6,B6,W5,B1,T2,W3,B4,W5,GREEN,T2,W2,EAST,T9,B7,W4,WHITE,W4,GREEN,T4,T1,T5,W5,W1;1~W8;1~EAST~2;2~T5;2~GREEN~3;3~B1;3~T3~4;4~T4;4~RED~1;1~T8;1~WHITE~2;2~B1;2~WHITE~3;3~WHITE;3~WHITE~4;4~W3;4~EAST~1;1~SOUTH;1~SOUTH~2;2~WEST;2~WEST~3;3~W5;3~W2~4;4~W2;4~SOUTH~1;1~B2;1~W1~2;2~T1;2~B2~3;3~B8;3~W9~4;4~W9;4~WEST~1;1~NORTH;1~B2~2;2~RED;2~B9~3;3~W7;3~B1~4;4~W1;4~W9~1;1~B8;1~T1~2;2~T6;2~B8~3;3~B6;3~B5~4;4~B5;4~W3~1;1~B9;1~B9~2;2~T4;2~T5~3;3~W7;3~B2~4;4~T5;4~T7~1;1~T6;1~T3~2;2~WEST;2~WEST~3;3~NORTH;3~NORTH~4;4~T6;4~T3~1;1~W1;1~W1~2;2~W1~1;
      */
-    public void testPushdownWin_ClearVictory() {
-    	// 48.2     39.4 13940996048
+    public void testPushdownWinClearVictory() {
         PushdownWinGame game = new PushdownWinGame();
         game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
         game.setGameMark(10);
@@ -100,6 +101,9 @@ public class PersistScoreTestCase extends TestCase {
         game.persistScore();
     }
 
+    /**
+     * @param game
+     */
     private void addGamePlayer(Game<?> game) {
         game.getPlayers().add(new Player() {
             {
@@ -146,12 +150,7 @@ public class PersistScoreTestCase extends TestCase {
             }
         });
     }
-    protected void tearDown() throws Exception {
-        HibernateSessionFactory.getSession().getTransaction().commit();
-        HibernateSessionFactory.closeSession();
-        super.tearDown();
-    }
-    
+
     /**
      * 斗地主
      * 
@@ -173,6 +172,9 @@ public class PersistScoreTestCase extends TestCase {
         Thread.sleep(3000);
     }
     
+    /**
+     * @param game
+     */
     private void addGamePlayerFight(Game<?> game) {
         game.getPlayers().add(new Player() {
             {
@@ -207,5 +209,11 @@ public class PersistScoreTestCase extends TestCase {
                 this.id = "user3";
             }
         });
+    }
+
+    protected void tearDown() throws Exception {
+        HibernateSessionFactory.getSession().getTransaction().commit();
+        HibernateSessionFactory.closeSession();
+        super.tearDown();
     }
 }

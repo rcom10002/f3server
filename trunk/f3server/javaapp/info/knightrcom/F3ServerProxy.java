@@ -68,6 +68,8 @@ public class F3ServerProxy {
 	}
 
 	/**
+	 * 服务器运行状态
+	 * 
 	 * @return
 	 */
 	public static boolean isServerRunning() {
@@ -75,7 +77,7 @@ public class F3ServerProxy {
 	}
 
 	/**
-	 * 获取服务器运行状态
+	 * 获取服务器运行信息
 	 * 
 	 * @return
 	 */

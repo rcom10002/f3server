@@ -115,24 +115,21 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
                     resultScore = 1 * 2 * gameMark * pointMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
                     resultScore = -1 * gameMark * pointMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
                     resultScore = 1 * gameMark * pointMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
                     resultScore = -1 * 2 * gameMark * pointMark;
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -144,7 +141,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家当前总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -173,5 +169,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 	 */
 	public void addMultiple() {
 		multiple *= 2;
+	}
+
+	@Override
+	public void persistDisconnectScore(Player disconnectedPlayer) {
+		// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
+		// 另拿出一份基本分作为系统分
 	}
 }

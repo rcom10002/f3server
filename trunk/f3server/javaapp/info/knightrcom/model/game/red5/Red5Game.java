@@ -159,24 +159,21 @@ public class Red5Game extends Game<Red5GameSetting> {
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
                     resultScore = 1 * 3 * gameMark * this.getLowLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
                     resultScore = -1 * gameMark * this.getLowLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
                     resultScore = 1 * gameMark * this.getLowLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
                     resultScore = -1 * 3 * gameMark * this.getLowLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -188,7 +185,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore); // 玩家当前总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -222,24 +218,21 @@ public class Red5Game extends Game<Red5GameSetting> {
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
                     resultScore =  1 * 3 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为其他玩家设置积分
                     resultScore =  -1 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
                     resultScore = 1 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 } else {
                     // 为独牌玩家设置积分
                     resultScore =  -1 * 3 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
                 }
             }
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -251,7 +244,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore); // 玩家当前总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -270,7 +262,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistExtinctRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天外天
-        int gameMark = this.getGameMark() * this.getHighLevelMark();
+        int gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到10X+10X+10X，反之叫牌者输50X
         while (itr.hasNext()) {
@@ -284,25 +276,22 @@ public class Red5Game extends Game<Red5GameSetting> {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore = 1 * 3 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                    resultScore = 1 * 3 * gameMark * this.getHighLevelMark();
                 } else {
                     // 为其他玩家设置积分
-                    resultScore = -1 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                    resultScore = -1 * gameMark * this.getHighLevelMark();
                 }
             } else {
                 // 独牌失败
                 if (!this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为其他玩家设置积分
-                    resultScore = 1 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                    resultScore = 1 * gameMark * this.getHighLevelMark();
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore = -1 * 3 * gameMark * this.getMidLevelMark();
-                    playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+                    resultScore = -1 * 3 * gameMark * this.getHighLevelMark();
                 }
             }
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -314,7 +303,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore); // 玩家当前总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -323,4 +311,77 @@ public class Red5Game extends Game<Red5GameSetting> {
         }
         gameRecord.setPlayers(playerIds);
     }
+
+	/* (non-Javadoc)
+	 * @see info.knightrcom.model.game.Game#persistDisconnectScore(info.knightrcom.model.global.Player)
+	 */
+	@Override
+	public void persistDisconnectScore(Player disconnectedPlayer) {
+        // 创建游戏记录
+        GameRecord gameRecord = new GameRecord();
+        gameRecord.setGameId(UUID.randomUUID().toString());
+        gameRecord.setGameId(this.getId());
+        gameRecord.setGameType(Red5Game.class.getSimpleName());
+        gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        gameRecord.setWinnerNumbers(this.getWinnerNumbers());
+        gameRecord.setSystemScore(this.getGameMark());
+        gameRecord.setStatus("DISCONNECTED");
+        gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setCreateTime(this.getCreateTime());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
+		// 取得当前游戏设置
+		int deductStandard = 0;
+		if (this.getSetting().equals(Red5GameSetting.RUSH)) {
+			// 独牌
+			deductStandard = this.getLowLevelMark();
+		} else if (this.getSetting().equals(Red5GameSetting.DEADLY_RUSH)) {
+			// 天独
+			deductStandard = this.getMidLevelMark();
+		} else if (this.getSetting().equals(Red5GameSetting.NO_RUSH)) {
+			// 天外天
+			deductStandard = this.getHighLevelMark();
+		}
+		synchronized(this.getPlayers()) {
+			String playerIds = "";
+			String playerId = null;
+			int resultScore = 0;
+			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
+			int deductedMark = this.getGameMark() * deductStandard;
+			// 另拿出一份基本分作为系统分
+			int systemScore = this.getGameMark();
+			for (Player player : this.getPlayers()) {
+				playerId = player.getId();
+				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
+				playerIds += player.getCurrentNumber() + "~" + player.getId() + "~";
+				if (player.getId().equals(disconnectedPlayer.getId())) {
+					// 掉线玩家
+					resultScore = -1 * (deductedMark * 3 + this.getGameMark());
+				} else {
+					// 非掉线玩家
+					resultScore = deductedMark;
+				}
+				playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+	            // 保存玩家得分信息
+	            PlayerScore playerScore = new PlayerScore();
+	            playerScore.setScoreId(UUID.randomUUID().toString());
+	            playerScore.setProfileId(playerProfile.getProfileId());
+	            playerScore.setGameId(gameRecord.getGameId());
+	            playerScore.setUserId(playerProfile.getUserId());
+	            playerScore.setCurrentNumber(player.getCurrentNumber());
+	            playerScore.setCurScore(resultScore); // 玩家当前得分
+	            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
+	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
+	            if (player.getId().equals(disconnectedPlayer.getId())) {
+	            	// 掉线玩家
+		            playerScore.setSysScore(systemScore); // 系统当前得分
+	            } else {
+		            playerScore.setSysScore(0); // 系统当前得分
+	            }
+	            HibernateSessionFactory.getSession().merge(playerProfile);
+	            HibernateSessionFactory.getSession().merge(playerScore);
+			}
+			gameRecord.setPlayers(playerIds);
+		}
+	}
 }

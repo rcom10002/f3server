@@ -126,7 +126,6 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -187,7 +186,6 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(resultScore + playerProfile.getCurrentScore().intValue()); // 玩家总得分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -234,6 +232,15 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	 */
 	public void setWinnerMahjongSeq(String winnerMahjongSeq) {
 		this.winnerMahjongSeq = winnerMahjongSeq;
+	}
+
+	@Override
+	public void persistDisconnectScore(Player disconnectedPlayer) {
+		// TODO Auto-generated method stub
+
+		// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
+		// int deductedMark = this.getGameMark() * deductStandard;
+		// 另拿出一份基本分作为系统分
 	}
 
 //	　　88番
