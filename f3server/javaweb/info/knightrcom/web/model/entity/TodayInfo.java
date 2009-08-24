@@ -2,6 +2,8 @@ package info.knightrcom.web.model.entity;
 
 public class TodayInfo {
 
+    private String gametype;
+    
     private String winandlose;
 
     private int score;
@@ -11,8 +13,24 @@ public class TodayInfo {
     private String gameId;
 
     private String createTime;
+    
+    
 
     /**
+	 * @return the gametype
+	 */
+	public String getGametype() {
+		return gametype;
+	}
+
+	/**
+	 * @param gametype the gametype to set
+	 */
+	public void setGametype(String gametype) {
+		this.gametype = gametype;
+	}
+
+	/**
      * @return the winandlose
      */
     public String getWinandlose() {

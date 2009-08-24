@@ -18,6 +18,8 @@ public class PlayerInfoService extends F3SWebService<PlayerScore> {
         query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
         query.setInteger(3, new Integer(request.getParameter("SHOW_CONDITION")));
         query.setInteger(4, new Integer(request.getParameter("SHOW_CONDITION")));
+        query.setString(5, request.getParameter("GAME_TYPE"));
+        query.setString(6, request.getParameter("GAME_TYPE"));
     }
 
     public String getNamedQuery() {
