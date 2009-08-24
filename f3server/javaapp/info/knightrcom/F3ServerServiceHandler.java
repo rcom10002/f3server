@@ -110,13 +110,11 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         if (game != null) {
             List<Player> players = game.getPlayers();
             synchronized (players) {
+                // 计算掉线积分
+                game.persistDisconnectScore(player);
                 for (Player eachPlayer : players) {
                     // 通知游戏中的其他玩家游戏已经中断，如果想重新加入游戏，必须进入游戏队列中
                     if (!session.equals(eachPlayer.getIosession())) {
-                        // TODO 掉线积分处理
-                        // if (处理过) 
-                        // if (尚未处理)
-                        
                         eachPlayer.setCurrentStatus(info.knightrcom.model.global.GameStatus.IDLE);
                         EchoMessage echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                         echoMessage.setResult(PlatformInMessageHandler.GAME_INTERRUPTED);

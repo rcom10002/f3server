@@ -54,6 +54,7 @@ public abstract class Game<T> {
     /** 自定义结构，用于表现游戏积分明细 */
     private String gameDetailScore;
 
+    /** 游戏创建时间 */
     private Date createTime = new Date();
 
     /**
@@ -209,8 +210,10 @@ public abstract class Game<T> {
 
     /**
      * 计算玩家掉线时的游戏积分并保存到数据库中
+     * 
+     * @param disconnectedPlayer
      */
-    public abstract void persistDisconnectScore();
+    public abstract void persistDisconnectScore(Player disconnectedPlayer);
 
     /**
      * 为客户端提供游戏积分明细
