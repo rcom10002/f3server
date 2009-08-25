@@ -19,6 +19,7 @@ public class MainTestSuite extends TestSuite {
 	public static Test suite() {
 		Class[] testClasses = { PlayerProfileTestCase.class,
 				PersistScoreTestCase.class, 
+				PersistDisconnectScoreTestCase.class,
 				ModelDescriptorManipulateTest.class };
 		MainTestSuite suite = new MainTestSuite(testClasses);
 		return suite;
