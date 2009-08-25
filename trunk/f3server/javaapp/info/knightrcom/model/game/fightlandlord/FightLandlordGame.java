@@ -171,9 +171,80 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 		multiple *= 2;
 	}
 
+	/* (non-Javadoc)
+	 * @see info.knightrcom.model.game.Game#persistDisconnectScore(info.knightrcom.model.global.Player)
+	 */
 	@Override
 	public void persistDisconnectScore(Player disconnectedPlayer) {
-		// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
-		// 另拿出一份基本分作为系统分
+		// 创建游戏记录
+        GameRecord gameRecord = new GameRecord();
+        gameRecord.setGameId(UUID.randomUUID().toString());
+        gameRecord.setGameId(this.getId());
+        gameRecord.setGameType(FightLandlordGame.class.getSimpleName());
+        gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        gameRecord.setWinnerNumbers(this.getWinnerNumbers());
+        gameRecord.setSystemScore(this.getGameMark());
+        gameRecord.setStatus("DISCONNECTED");
+        gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setCreateTime(this.getCreateTime());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
+		// 取得当前游戏设置
+		int deductStandard = 0;
+		if (FightLandlordGameSetting.NO_RUSH.equals(this.getSetting())) {
+			// 不叫
+			deductStandard = this.getLowLevelMark();
+        } else if (FightLandlordGameSetting.ONE_RUSH.equals(this.getSetting())) {
+        	// 青龙
+			deductStandard = this.getLowLevelMark();
+        } else if (FightLandlordGameSetting.TWO_RUSH.equals(this.getSetting())) {
+        	// 白虎
+			deductStandard = this.getMidLevelMark();
+        } else if (FightLandlordGameSetting.THREE_RUSH.equals(this.getSetting())) {
+        	// 朱雀
+			deductStandard = this.getHighLevelMark();
+        }
+		
+		synchronized(this.getPlayers()) {
+			String playerIds = "";
+			String playerId = null;
+			int resultScore = 0;
+			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级 × 翻倍 
+			int deductedMark = this.getGameMark() * deductStandard * getMultiple();
+			// 另拿出一份基本分作为系统分
+			int systemScore = this.getGameMark();
+			for (Player player : this.getPlayers()) {
+				playerId = player.getId();
+				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
+				playerIds += player.getCurrentNumber() + "~" + player.getId() + "~";
+				if (player.getId().equals(disconnectedPlayer.getId())) {
+					// 掉线玩家
+					resultScore = -1 * (deductedMark * 2 + this.getGameMark());
+				} else {
+					// 非掉线玩家
+					resultScore = deductedMark;
+				}
+				playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
+	            // 保存玩家得分信息
+	            PlayerScore playerScore = new PlayerScore();
+	            playerScore.setScoreId(UUID.randomUUID().toString());
+	            playerScore.setProfileId(playerProfile.getProfileId());
+	            playerScore.setGameId(gameRecord.getGameId());
+	            playerScore.setUserId(playerProfile.getUserId());
+	            playerScore.setCurrentNumber(player.getCurrentNumber());
+	            playerScore.setCurScore(resultScore); // 玩家当前得分
+	            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
+	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
+	            if (player.getId().equals(disconnectedPlayer.getId())) {
+	            	// 掉线玩家
+		            playerScore.setSysScore(systemScore); // 系统当前得分
+	            } else {
+		            playerScore.setSysScore(0); // 系统当前得分
+	            }
+	            HibernateSessionFactory.getSession().merge(playerProfile);
+	            HibernateSessionFactory.getSession().merge(playerScore);
+			}
+			gameRecord.setPlayers(playerIds);
+		}
 	}
 }

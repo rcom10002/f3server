@@ -1,11 +1,13 @@
 package info.knightrcom.test;
 
-import junit.framework.TestCase;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.model.game.Game;
+import info.knightrcom.model.game.fightlandlord.FightLandlordGame;
+import info.knightrcom.model.game.fightlandlord.FightLandlordGameSetting;
 import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.game.red5.Red5GameSetting;
 import info.knightrcom.model.global.Player;
+import junit.framework.TestCase;
 
 /**
  * 掉线积分计算测试
@@ -87,6 +89,65 @@ public class PersistDisconnectScoreTestCase extends TestCase {
         });
     }
 
+    /**
+     * 斗地主掉线积分计算测试
+     * 
+     * 玩家2掉线，扣除基本分×当前游戏等级×翻倍 ：10 × 3 × 2 
+     * 
+     * 另扣除基本分：10，作为系统分
+     */
+    public void testFightLandlordGamePersistDisconnectScore() throws Exception {
+    	FightLandlordGame game = new FightLandlordGame();
+        game.setSetting(FightLandlordGameSetting.THREE_RUSH);
+        game.getSetting().setPlayerNumber("1");
+        game.setGameMark(10);
+        game.addMultiple();
+        game.setHighLevelMark(3);
+        addFightGamePlayer(game);
+        // 测试游戏模型的创建时间与最终更新时间差
+        Thread.sleep(1000);
+        game.persistDisconnectScore(game.getPlayerNumberMap().get("2"));
+    }
+    
+    /**
+     * @param game
+     */
+    private void addFightGamePlayer(Game<?> game) {
+        game.getPlayers().add(new Player() {
+            {
+                this.id = "user1";
+                this.setCurrentNumber(1);
+            }
+        });
+        game.getPlayers().add(new Player() {
+            {
+                this.id = "user2";
+                this.setCurrentNumber(2);
+            }
+        });
+        game.getPlayers().add(new Player() {
+            {
+                this.id = "user3";
+                this.setCurrentNumber(3);
+            }
+        });
+        game.getPlayerNumberMap().put("1", new Player() {
+            {
+                this.id = "user1";
+            }
+        });
+        game.getPlayerNumberMap().put("2", new Player() {
+            {
+                this.id = "user2";
+            }
+        });
+        game.getPlayerNumberMap().put("3", new Player() {
+            {
+                this.id = "user3";
+            }
+        });
+    }
+    
     protected void tearDown() throws Exception {
         HibernateSessionFactory.getSession().getTransaction().commit();
         HibernateSessionFactory.closeSession();
