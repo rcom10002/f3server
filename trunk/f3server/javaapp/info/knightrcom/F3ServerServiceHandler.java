@@ -126,6 +126,8 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
             
         }
         HibernateSessionFactory.getSession().save(SystemLogger.createLog("SESSION CLOSED", null, player.getId(), LogType.SYSTEM_LOG));
+        HibernateSessionFactory.getSession().flush();
+        HibernateSessionFactory.getSession().close();
         // broadcast("The user " + player + " has left the chat session.");
         super.sessionClosed(session);
     }
