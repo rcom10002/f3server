@@ -94,7 +94,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        // TODO 移除用户登录信息
+        // 移除用户登录信息
         sessions.remove(session);
         Player player = ModelUtil.getPlayer(session);
         if (player == null) {

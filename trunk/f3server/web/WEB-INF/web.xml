@@ -8,6 +8,18 @@
 		<servlet-name>F3Servlet</servlet-name>
 		<servlet-class>info.knightrcom.web.F3Servlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
+		<init-param>
+			<param-name>ccga</param-name>
+			<param-value>ccga/Administration.swf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ccgc</param-name>
+			<param-value>ccgc/CCGameClient.swf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>readme</param-name>
+			<param-value>about_game_platform.html</param-value>
+		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>F3Servlet</servlet-name>

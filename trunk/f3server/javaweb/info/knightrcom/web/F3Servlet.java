@@ -100,16 +100,16 @@ public class F3Servlet extends HttpServlet {
         try {
             response.setCharacterEncoding("utf-8");
             request.setCharacterEncoding("utf-8");
-            if (request.getRequestURI().matches("^.*html.f3s$")) {
+            response.setContentType("text/html; charset=utf-8");
+            if (request.getRequestURI().matches("^/.*/[a-z]*\\.f3s$")) {
             	// html文件请求
-                response.setContentType("text/html; charset=utf-8");
                 // out = response.getWriter();
                 String deletePattern = "^/.*/|.{4}$";
                 String forwardURI = request.getRequestURI().replaceAll(deletePattern, "");
-                request.getRequestDispatcher(forwardURI).forward(request, response);
+                String realForwardURI = getServletConfig().getInitParameter(forwardURI);
+                request.getRequestDispatcher("/WEB-INF/" + realForwardURI).forward(request, response);
             } else {
             	// f3s服务
-                response.setContentType("text/xml; charset=utf-8");
                 out = response.getWriter();
                 F3SWebServiceHandler.doService(request, response);
             }
