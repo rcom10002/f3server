@@ -1,9 +1,12 @@
 package info.knightrcom;
 
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.model.global.Platform;
 import info.knightrcom.ssl.BogusSslContextFactory;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.SystemLogger;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
@@ -28,6 +31,18 @@ class F3Server {
 
     private static final Log log = LogFactory.getLog(F3Server.class);
 
+    public static boolean USE_SSL = false;
+
+    public static int PORT = 2009;
+
+    public static String SECURITY_CONFIGURATION;
+
+    public static final int MAX_CONNECTION_LIMIT = 1000;
+
+    public static boolean RUNNING = false;
+
+    public static SocketAcceptor acceptor;
+
     /**
      * 控制台参数
      */
@@ -45,18 +60,6 @@ class F3Server {
             }
         }
     }
-
-    public static boolean USE_SSL = false;
-
-    public static int PORT = 2009;
-
-    public static String SECURITY_CONFIGURATION;
-
-    public static final int MAX_CONNECTION_LIMIT = 1000;
-
-    public static boolean RUNNING = false;
-
-    public static SocketAcceptor acceptor;
 
     /**
      * 启动应用服务器
@@ -116,10 +119,23 @@ class F3Server {
 	        acceptor.setHandler(new F3ServerServiceHandler(platform));
 	        acceptor.bind(new InetSocketAddress(PORT));
 	        log.info("LISTENING ON PORT " + PORT);
-	
+
+	        // 启动成功日志
+	        LogInfo logInfo = SystemLogger.createLog("F3Server started successfully!", null, null, LogType.SYSTEM_LOG);
+	        HibernateSessionFactory.getSession().save(logInfo);
+	        HibernateSessionFactory.getSession().flush();
+	        HibernateSessionFactory.getSession().close();
+
 	        log.info("F3S SERVER HAS STARTED!");
 	        RUNNING = true;
     	} catch (Exception e) {
+    		// 启动失败日志
+	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to start!", 
+	        		e.getMessage(), e.getCause().toString(), LogType.SYSTEM_ERROR);
+	        HibernateSessionFactory.getSession().save(logInfo);
+	        HibernateSessionFactory.getSession().flush();
+	        HibernateSessionFactory.getSession().close();
+
     		throw new RuntimeException(e);
     	}
     }
@@ -139,22 +155,49 @@ class F3Server {
             // 清理内存模型
             ModelUtil.resetModels();
             RUNNING = false;
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
+
+            // 关闭成功日志
+	        LogInfo logInfo = SystemLogger.createLog("F3Server stopped successfully!", null, null, LogType.SYSTEM_LOG);
+	        HibernateSessionFactory.getSession().save(logInfo);
+	        HibernateSessionFactory.getSession().flush();
+	        HibernateSessionFactory.getSession().close();
+
+        } catch (Exception e) {
+        	// 启动失败日志
+	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to stop!", 
+	        		e.getMessage(), e.getCause().toString(), LogType.SYSTEM_ERROR);
+	        HibernateSessionFactory.getSession().save(logInfo);
+	        HibernateSessionFactory.getSession().flush();
+	        HibernateSessionFactory.getSession().close();
+
+            log.error(e.getMessage());
         }
     }
     
+    /**
+     * @param chain
+     * @throws Exception
+     */
     private static void addSSLSupport(DefaultIoFilterChainBuilder chain) throws Exception {
         SslFilter sslFilter = new SslFilter(BogusSslContextFactory.getInstance(true));
         chain.addLast("sslFilter", sslFilter);
         log.info("SSL ON");
     }
 
+    /**
+     * @param chain
+     * @param mdcInjectionFilter
+     * @throws Exception
+     */
     private static void addMdc(DefaultIoFilterChainBuilder chain, MdcInjectionFilter mdcInjectionFilter) throws Exception {
         chain.addLast("mdc", mdcInjectionFilter);
         log.info("MDC ON");
     }
 
+    /**
+     * @param chain
+     * @throws Exception
+     */
     private static void addCodec(DefaultIoFilterChainBuilder chain) throws Exception {
         TextLineCodecFactory tlcf = new TextLineCodecFactory(Charset.forName("UTF-8"), LineDelimiter.NUL, LineDelimiter.NUL);
         tlcf.setDecoderMaxLineLength(Integer.MAX_VALUE);
@@ -163,6 +206,10 @@ class F3Server {
         log.info("CODEC ON");
     }
 
+    /**
+     * @param chain
+     * @throws Exception
+     */
     private static void addLogger(DefaultIoFilterChainBuilder chain) throws Exception {
         chain.addLast("logger", new LoggingFilter());
         log.info("LOG ON");
