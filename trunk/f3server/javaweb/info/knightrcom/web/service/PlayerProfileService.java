@@ -162,4 +162,15 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {PlayerProfile.class});
     }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
+    public String SHOW_RLS_PATH(HttpServletRequest request, HttpServletResponse response) {
+    	// http://www.liquid-technologies.com/XmlDataBinding/Xml-Schema-To-Java.aspx
+    	// http://chaithanyat.rediffiland.com/blogs/2008/07/23/Generating-XML-file-using-JAVA.html
+    	return null;
+    }
 }
