@@ -9,17 +9,28 @@ import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 
@@ -164,13 +175,57 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     }
 
     /**
-     * @param request
-     * @param response
-     * @return
-     */
-    public String SHOW_RLS_PATH(HttpServletRequest request, HttpServletResponse response) {
-    	// http://www.liquid-technologies.com/XmlDataBinding/Xml-Schema-To-Java.aspx
-    	// http://chaithanyat.rediffiland.com/blogs/2008/07/23/Generating-XML-file-using-JAVA.html
-    	return null;
-    }
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String SHOW_RLS_PATH(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		// http://www.liquid-technologies.com/XmlDataBinding/Xml-Schema-To-Java.aspx
+		// http://chaithanyat.rediffiland.com/blogs/2008/07/23/Generating-XML-file-using-JAVA.html
+		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_DIAGRAM");
+		List<Object[]> resultList = (List<Object[]>)query.list();
+		Map<String, Element> parents = new HashMap<String, Element>();
+
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		Document document = documentBuilder.newDocument();
+		Element rootElement = document.createElement("root");
+		document.appendChild(rootElement);
+
+		for (Object[] eachRow : resultList) {
+			Element path = document.createElement("rlspath");
+			Element pathKey = document.createElement("pathKey");
+			pathKey.setTextContent(eachRow[0].toString());
+			Element pathVal = document.createElement("pathVal");
+			pathVal.setTextContent(eachRow[1].toString());
+			path.appendChild(pathKey);
+			path.appendChild(pathVal);
+			// eachRow为数组，对应的列分别为PATH_KEY, PATH_VALUE, ROLE
+			if ("GroupUser".equals(eachRow[2].toString())) {
+				// 将当前元素添加到父节点集合中
+				parents.put(eachRow[0].toString(), path);
+			}
+			// 将当前节点与父节点关联起来
+			if (parents.get(eachRow[0].toString()) != null) {
+				parents.get(eachRow[0].toString()).appendChild(path);
+			} else {
+				rootElement.appendChild(path);
+			}
+		}
+
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		StreamResult result = new StreamResult(bytes);
+		transformer.transform(source, result);
+		System.out.println(bytes.toString());
+		return null;
+	}
+
+	public static void main(String[] args) throws Exception {
+		new PlayerProfileService().SHOW_RLS_PATH(null, null);
+	}
 }
