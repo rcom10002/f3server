@@ -177,6 +177,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     /**
 	 * @param request
 	 * @param response
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -195,21 +196,24 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 		document.appendChild(rootElement);
 
 		for (Object[] eachRow : resultList) {
+			// key is the user_id and value is the "root!" + rls_path
+			String pathKeyStr = eachRow[0].toString();
+			String pathValStr = eachRow[1].toString();
+			String pathRole = eachRow[2].toString();
+			String parentPathValStr = pathValStr.replaceFirst("![^!]+$", "");
 			Element path = document.createElement("rlspath");
-			Element pathKey = document.createElement("pathKey");
-			pathKey.setTextContent(eachRow[0].toString());
-			Element pathVal = document.createElement("pathVal");
-			pathVal.setTextContent(eachRow[1].toString());
-			path.appendChild(pathKey);
-			path.appendChild(pathVal);
+			path.setAttribute("key", pathKeyStr);
+			path.setAttribute("val", pathValStr);
+			path.setAttribute("role", pathRole);
+			path.setAttribute("parent", parentPathValStr);
 			// eachRow为数组，对应的列分别为PATH_KEY, PATH_VALUE, ROLE
-			if ("GroupUser".equals(eachRow[2].toString())) {
+			if ("GroupUser".equals(pathRole)) {
 				// 将当前元素添加到父节点集合中
-				parents.put(eachRow[0].toString(), path);
+				parents.put(pathValStr, path);
 			}
 			// 将当前节点与父节点关联起来
-			if (parents.get(eachRow[0].toString()) != null) {
-				parents.get(eachRow[0].toString()).appendChild(path);
+			if (parentPathValStr != null) {
+				parents.get(parentPathValStr).appendChild(path);
 			} else {
 				rootElement.appendChild(path);
 			}
