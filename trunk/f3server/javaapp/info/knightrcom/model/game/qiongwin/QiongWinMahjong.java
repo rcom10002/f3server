@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 推到胡麻将
+ * 穷胡麻将
  */
 public class QiongWinMahjong {
 

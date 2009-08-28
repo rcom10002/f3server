@@ -2,6 +2,7 @@ package info.knightrcom.model.game;
 
 import info.knightrcom.model.game.fightlandlord.FightLandlordGame;
 import info.knightrcom.model.game.pushdownwin.PushdownWinGame;
+import info.knightrcom.model.game.qiongwin.QiongWinGame;
 import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
@@ -109,6 +110,32 @@ public class GamePool {
     }
 
     /**
+     * 处理游戏中的通用设置，将特殊设置放于私有方法postInitProcess中
+     * 
+     * @param players
+     */
+    public static void prepareQiongWinGame(List<Player> players) {
+        // 创建游戏信息
+        QiongWinGame game = new QiongWinGame();
+        String gameId = game.getId();
+        games.put(gameId, game);
+        int i = 0;
+        for (Player player : players) {
+            player.setGameId(gameId);
+            player.setCurrentStatus(GameStatus.PLAYING);
+            player.setCurrentNumber(++i);
+            game.involvePlayer(player);
+            game.getPlayerNumberMap().put(String.valueOf(i), player);
+        }
+        // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
+        int gameMark = players.get(0).getParent().getGameMark();
+        game.setGameMark(gameMark);
+        int minGameStartMark = players.get(0).getParent().getMinGameMarks();
+        game.setMinGameStartMark(minGameStartMark);
+        postInitProcess(game);
+    }
+    
+    /**
      * 
      */
     private static <T extends Game<?>> void postInitProcess(T game) {
@@ -116,6 +143,10 @@ public class GamePool {
         if (game instanceof Red5Game) {
             
         } else if (game instanceof FightLandlordGame) {
+            
+        } else if (game instanceof PushdownWinGame) {
+            
+        } else if (game instanceof QiongWinGame) {
             
         } else {
             //throw new runtim
