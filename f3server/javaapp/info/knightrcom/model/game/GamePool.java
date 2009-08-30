@@ -49,15 +49,12 @@ public class GamePool {
         // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
         int gameMark = players.get(0).getParent().getGameMark();
         game.setGameMark(gameMark);
-        
         int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
         int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
         int highLevelMark = players.get(0).getParent().getGameHighLevelMark();
-        
         game.setLowLevelMark(lowLevelMark);
         game.setMidLevelMark(midLevelMark);
         game.setHighLevelMark(highLevelMark);
-        
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);
@@ -82,7 +79,6 @@ public class GamePool {
         int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
         int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
         int highLevelMark = players.get(0).getParent().getGameHighLevelMark();
-        
         game.setGameMark(gameMark);
         game.setLowLevelMark(lowLevelMark);
         game.setMidLevelMark(midLevelMark);
@@ -113,6 +109,12 @@ public class GamePool {
         // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
         int gameMark = players.get(0).getParent().getGameMark();
         game.setGameMark(gameMark);
+        int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
+        int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
+        int highLevelMark = players.get(0).getParent().getGameHighLevelMark();
+        game.setLowLevelMark(lowLevelMark);
+        game.setMidLevelMark(midLevelMark);
+        game.setHighLevelMark(highLevelMark);
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);
@@ -139,6 +141,12 @@ public class GamePool {
         // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
         int gameMark = players.get(0).getParent().getGameMark();
         game.setGameMark(gameMark);
+        int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
+        int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
+        int highLevelMark = players.get(0).getParent().getGameHighLevelMark();
+        game.setLowLevelMark(lowLevelMark);
+        game.setMidLevelMark(midLevelMark);
+        game.setHighLevelMark(highLevelMark);
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);
