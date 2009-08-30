@@ -34,8 +34,6 @@ public class FightLandlordGameInMessageHandler extends
 	
 	public static final String GAME_SETTING_UPDATE_FINISH = "GAME_SETTING_UPDATE_FINISH";
 	
-	public static final String GAME_BOMB = "GAME_BOMB";
-
 	@Override
 	public void GAME_JOIN_MATCHING_QUEUE(IoSession session,
 			FightLandlordGameMessage message, EchoMessage echoMessage)
@@ -202,40 +200,6 @@ public class FightLandlordGameInMessageHandler extends
 		// sessionWrite(session, echoMessage);
 	}
 	
-	public void GAME_BOMB(IoSession session,
-			FightLandlordGameMessage message, EchoMessage echoMessage)
-			throws Exception {
-		// 在游戏过程中出牌翻倍
-		Player currentPlayer = ModelUtil.getPlayer(session);
-		FightLandlordGame game = GamePool.getGame(currentPlayer.getGameId(),
-				FightLandlordGame.class);
-		List<Player> players = game.getPlayers();
-		String[] results = message.getContent().split("~");
-		// 判断是否有炸弹，火箭
-		// 地主把牌出完，其余两家一张牌都没出，分数×2 ；
-		// 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。
-		if (results.length == 4 && "double".equals(results[3])) {
-			game.addMultiple();
-		}
-		synchronized (players) {
-			Iterator<Player> itr = players.iterator();
-			while (itr.hasNext()) {
-				Player player = itr.next();
-				if (currentPlayer.equals(player)) {
-					continue;
-				}
-				echoMessage = F3ServerMessage.createInstance(
-						MessageType.FIGHT_LANDLORD).getEchoMessage();
-				echoMessage.setResult(GAME_BOMB);
-				echoMessage.setContent(message.getContent());
-				sessionWrite(player.getIosession(), echoMessage);
-			}
-			// 记录当前牌序
-			game.appendGameRecord(message.getContent());
-		}
-
-	}
-
 	@Override
 	public void GAME_SETTING_FINISH(IoSession session,
 			FightLandlordGameMessage message, EchoMessage echoMessage)
@@ -295,7 +259,14 @@ public class FightLandlordGameInMessageHandler extends
 		Player currentPlayer = ModelUtil.getPlayer(session);
 		FightLandlordGame game = GamePool.getGame(currentPlayer.getGameId(),
 				FightLandlordGame.class);
-		
+		// 在游戏过程中出牌翻倍
+		String[] results = message.getContent().split("~");
+		// 判断是否有炸弹，火箭
+		// 地主把牌出完，其余两家一张牌都没出，分数×2 ；
+		// 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。
+		if (results.length == 4 && "double".equals(results[3])) {
+			game.addMultiple();
+		}
 		List<Player> players = game.getPlayers();
 		synchronized (players) {
 			Iterator<Player> itr = players.iterator();
@@ -374,7 +345,13 @@ public class FightLandlordGameInMessageHandler extends
 		String[] results = message.getContent().split("~");
 		List<Player> players = game.getPlayers();
 		log.debug(game.getSetting().getDisplayName());
-		
+		// 在游戏过程中出牌翻倍
+		// 判断是否有炸弹，火箭
+		// 地主把牌出完，其余两家一张牌都没出，分数×2 ；
+		// 两家中有一家出完牌，而地主仅仅出过一手牌，分数×2 。
+		if (results.length == 4 && "double".equals(results[3])) {
+			game.addMultiple();
+		}
 		// 记录当前牌序
 		game.appendGameRecord(message.getContent());
 		synchronized (players) {
