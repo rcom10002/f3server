@@ -377,7 +377,7 @@ public class FightLandlordGameInMessageHandler extends
             // 显示游戏积分
 			Iterator<Player> itr = players.iterator();
 			// 构造积分显示信息
-            message.setContent(message.getContent() + "~" + game.getGameDetailScore());
+            message.setContent(message.getContent().replace("~double", "") + "~" + game.getGameDetailScore());
 			// 设置玩家得分
 			while (itr.hasNext()) {
 				Player player = itr.next();
