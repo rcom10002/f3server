@@ -129,7 +129,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
                     resultScore = -1 * 2 * gameMark * pointMark;
                 }
             }
-            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -141,6 +140,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -224,8 +224,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 					// 非掉线玩家
 					resultScore = deductedMark;
 				}
-				playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
-	            // 保存玩家得分信息
+				 // 保存玩家得分信息
 	            PlayerScore playerScore = new PlayerScore();
 	            playerScore.setScoreId(UUID.randomUUID().toString());
 	            playerScore.setProfileId(playerProfile.getProfileId());
@@ -235,6 +234,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 	            playerScore.setCurScore(resultScore); // 玩家当前得分
 	            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
 	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
+	            playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
 	            if (player.getId().equals(disconnectedPlayer.getId())) {
 	            	// 掉线玩家
 		            playerScore.setSysScore(systemScore); // 系统当前得分
