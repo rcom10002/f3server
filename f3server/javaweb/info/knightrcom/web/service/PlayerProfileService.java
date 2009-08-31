@@ -194,6 +194,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 		Document document = documentBuilder.newDocument();
 		Element rootElement = document.createElement("root");
 		document.appendChild(rootElement);
+		parents.put("root", rootElement);
 
 		for (Object[] eachRow : resultList) {
 			// key is the user_id and value is the "root!" + rls_path
@@ -214,8 +215,6 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 			// 将当前节点与父节点关联起来
 			if (parentPathValStr != null) {
 				parents.get(parentPathValStr).appendChild(path);
-			} else {
-				rootElement.appendChild(path);
 			}
 		}
 
@@ -225,11 +224,19 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		StreamResult result = new StreamResult(bytes);
 		transformer.transform(source, result);
-		System.out.println(bytes.toString());
-		return null;
+//		final String localTreeData = bytes.toString();
+//		EntityInfo<PlayerProfile> entityInfo = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+//		entityInfo.setTag(new Object() {
+//			@SuppressWarnings("unused")
+//			private String treeData = localTreeData;
+//			@SuppressWarnings("unused")
+//			private String chartData = null;
+//		});
+//		return toXML(entityInfo, getAliasTypes());
+		return bytes.toString();
 	}
 
 	public static void main(String[] args) throws Exception {
-		new PlayerProfileService().SHOW_RLS_PATH(null, null);
+		System.out.print(new PlayerProfileService().SHOW_RLS_PATH(null, null));
 	}
 }

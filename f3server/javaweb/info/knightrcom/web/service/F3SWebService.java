@@ -79,7 +79,7 @@ public abstract class F3SWebService<T> {
      * @param result
      * @return
      */
-    protected EntityInfo<Object> createGeneralEntityInfo(Object entity, F3SWebServiceResult result) {
+    protected EntityInfo<Object> createGeneralEntityInfo(EntityInfo<Object> entity, F3SWebServiceResult result) {
         EntityInfo<Object> info = new EntityInfo<Object>();
         info.setEntity(entity);
         info.setResult(result);

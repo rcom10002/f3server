@@ -39,4 +39,11 @@ SELECT player_profile.rls_path
     ON player_profile.rls_path LIKE CONCAT(target.rls_path, '%')
  WHERE player_profile.role = 'GroupUser'
     </sql-query>
+    <sql-query name="RLS_PATH_DIAGRAM">
+select replace(rls_path, concat("!", user_id), "") as path_key, 
+       concat("root!", rls_path) as path_value,
+       role
+  from player_profile 
+ order by rls_path
+    </sql-query>
 </hibernate-mapping>
