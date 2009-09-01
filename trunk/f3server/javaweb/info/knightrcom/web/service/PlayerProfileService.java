@@ -10,6 +10,7 @@ import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +56,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 
     @Override
     public Class<?>[] getAliasTypes() {
-        return new Class<?>[] {PlayerProfile.class};
+        return new Class<?>[] {PlayerProfile.class, Object[].class, BigInteger.class};
     }
 
     /**
@@ -181,11 +182,9 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public String SHOW_RLS_PATH(HttpServletRequest request,
+	public String SHOW_RLS_PATH_TREE(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		// http://www.liquid-technologies.com/XmlDataBinding/Xml-Schema-To-Java.aspx
-		// http://chaithanyat.rediffiland.com/blogs/2008/07/23/Generating-XML-file-using-JAVA.html
-		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_DIAGRAM");
+		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_TREE");
 		List<Object[]> resultList = (List<Object[]>)query.list();
 		Map<String, Element> parents = new HashMap<String, Element>();
 
@@ -224,19 +223,27 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		StreamResult result = new StreamResult(bytes);
 		transformer.transform(source, result);
-//		final String localTreeData = bytes.toString();
-//		EntityInfo<PlayerProfile> entityInfo = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
-//		entityInfo.setTag(new Object() {
-//			@SuppressWarnings("unused")
-//			private String treeData = localTreeData;
-//			@SuppressWarnings("unused")
-//			private String chartData = null;
-//		});
-//		return toXML(entityInfo, getAliasTypes());
 		return bytes.toString();
 	}
 
+    /**
+	 * @param request
+	 * @param response
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String SHOW_RLS_PATH_CHART(HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_CHART");
+		List<Object[]> resultList = (List<Object[]>)query.list();
+        EntityInfo<PlayerProfile> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+        info.setTag(resultList.toArray());
+		return toXML(info, getAliasTypes());
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.print(new PlayerProfileService().SHOW_RLS_PATH(null, null));
+		// System.out.print(new PlayerProfileService().SHOW_RLS_PATH_TREE(null, null));
+		System.out.print(new PlayerProfileService().SHOW_RLS_PATH_CHART(null, null));
 	}
 }
