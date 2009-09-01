@@ -22,7 +22,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 Restrictions.and(Property.forName("userId").eq(username), 
                                  Property.forName("password").eq(password))).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
-        if (profile != null && "AdministratorGroupUser".indexOf(profile.getRole()) > -1) {
+        if (profile != null && !"User".equals(profile.getRole())) {
             info.setEntity(new Object() {
                 @SuppressWarnings("unused")
                 String profileId = profile.getRole();

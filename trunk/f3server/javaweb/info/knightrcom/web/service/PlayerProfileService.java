@@ -119,6 +119,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
         playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
+        playerProfile.setLevel(new Integer(0));
         playerProfile.setRole(request.getParameter("ROLE"));
         playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
         HibernateSessionFactory.getSession().save(playerProfile);

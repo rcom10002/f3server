@@ -34,7 +34,7 @@ SELECT COUNT(*) AS RECORD_COUNT
 	<![CDATA[
 SELECT player_profile.rls_path
   FROM player_profile
- WHERE player_profile.role = 'GroupUser'
+ WHERE role = 'GroupUser' or role = 'Administrator'
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">

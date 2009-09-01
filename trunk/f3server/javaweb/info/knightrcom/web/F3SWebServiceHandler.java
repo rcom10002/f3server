@@ -81,10 +81,11 @@ public class F3SWebServiceHandler {
                 LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().toString(), null, ex.getMessage(), LogType.WEB_ERROR);
                 HibernateSessionFactory.getSession().save(logInfo);
                 HibernateSessionFactory.getSession().flush();
-                HibernateSessionFactory.getSession().close();
                 throw ex;
             } finally {
-                HibernateSessionFactory.closeSession();
+            	if (HibernateSessionFactory.getSession().isOpen()) {
+            		HibernateSessionFactory.closeSession();
+            	}
             }
         } else {
             String responseText = (String)service.serializeResponseStream(request, response);
