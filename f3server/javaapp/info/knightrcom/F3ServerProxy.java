@@ -99,7 +99,7 @@ public class F3ServerProxy {
 				String.valueOf(F3Server.SECURITY_CONFIGURATION), 
 				String.valueOf(F3Server.MAX_CONNECTION_LIMIT),
 				String.valueOf(F3Server.RUNNING), 
-				String.valueOf(F3Server.acceptor.getManagedSessionCount()) };
+				String.valueOf(F3Server.RUNNING ? F3Server.acceptor.getManagedSessionCount() : 0) };
 		String[] result = new String[titles.length + sysParams.size()];
 		int i = 0;
 		for (i = 0; i < titles.length; i++) {

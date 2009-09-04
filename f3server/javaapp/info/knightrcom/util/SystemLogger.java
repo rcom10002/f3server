@@ -24,19 +24,18 @@ public class SystemLogger {
         LogInfo logInfo = new LogInfo();
         logInfo.setLogId(UUID.randomUUID().toString());
         logInfo.setCaption(caption);
-        if (StringHelper.isEmpty(message)) {
+        if (StringHelper.isEmpty(logInfo.getCaption())) {
+            logInfo.setCaption("N/A");
+        }
+        if (StringHelper.isEmpty(message) && StringHelper.isEmpty(info)) {
+        	logInfo.setInfo("N/A");
+        } else if (StringHelper.isEmpty(message)) {
             logInfo.setInfo(info);
         } else if (StringHelper.isEmpty(info)) {
             logInfo.setInfo(message);
         } else {
         	logInfo.setInfo(message + "\r\n" + info);
         }
-        if (StringHelper.isEmpty(logInfo.getCaption())) {
-            logInfo.setCaption("N/A");
-        }
-        if (StringHelper.isEmpty(logInfo.getInfo())) {
-            logInfo.setInfo("N/A");
-        }        
         logInfo.setType(type.name());
         return logInfo;
     }
