@@ -106,6 +106,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        String lobbyId = request.getParameter("LOBBY_ID");
 	        String lobbyName = request.getParameter("LOBBY_NAME");
 	        String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
+	        String lobbyStatus = request.getParameter("STATUS");
 	        // 根据LOBBY—ID读取数据源
 	        Properties config = getModelProperties();
 	        
@@ -126,6 +127,10 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		if (lobby.containsKey(GameConfigureConstant.LOBBY_DISPLAYINDEX)) {
 		        		lobby.remove(GameConfigureConstant.LOBBY_DISPLAYINDEX);
 		        		lobby.put(GameConfigureConstant.LOBBY_DISPLAYINDEX, lobbyDisplayIndex);
+	        		}
+	        		if (lobby.containsKey(GameConfigureConstant.LOBBY_STATUS)) {
+		        		lobby.remove(GameConfigureConstant.LOBBY_STATUS);
+		        		lobby.put(GameConfigureConstant.LOBBY_STATUS, lobbyStatus);
 	        		}
 	        	} 
 	        	lobbyList.add(lobby);
@@ -478,6 +483,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
+        String status = request.getParameter("STATUS");
         // 根据LOBBY—ID读取数据源
         Properties config = getModelProperties();
         
@@ -528,6 +534,12 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		room.remove(GameConfigureConstant.ROOM_MIN_MARKS);
 	        		room.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
         		}
+        		
+        		// 启用禁用状态
+        		if (room.containsKey(GameConfigureConstant.ROOM_STATUS)) {
+	        		room.remove(GameConfigureConstant.ROOM_STATUS);
+	        		room.put(GameConfigureConstant.ROOM_STATUS, status);
+        		}
         	}
         	roomList.add(room);
         }
@@ -569,6 +581,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String midLevelMark = request.getParameter("MID_LEVEL_MARK");
         String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
+        String status = request.getParameter("STATUS");
         // add flag
         boolean bool = true;
         // 根据LOBBY—ID读取数据源
@@ -608,6 +621,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        	newRoom.put(GameConfigureConstant.ROOM_POINT_MARK, pointMark);
 		        }
 		        newRoom.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
+		        
+		        newRoom.put(GameConfigureConstant.ROOM_STATUS, status);
 		        roomList.add(newRoom);
 		        bool = !bool;
 			}
