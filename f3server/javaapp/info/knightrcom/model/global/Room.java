@@ -30,9 +30,6 @@ public class Room extends AbstractModel<Lobby, Player> {
     /** 游戏进行所需要的最少底分 */
     private String minMarks;
     
-    /** 状态 */
-    private String status;
-
 	/**
      * @return
      */
@@ -174,19 +171,4 @@ public class Room extends AbstractModel<Lobby, Player> {
 	public void setHighLevelMark(String highLevelMark) {
 		this.highLevelMark = highLevelMark;
 	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 }

@@ -23,7 +23,7 @@ public class GameConfigureConstant {
 	
 	public static final String LOBBY_ROOMCOUNT = "roomCount";
 
-	public static final String LOBBY_STATUS = "status";
+	public static final String LOBBY_DISABLED = "disabled";
 	
 	public static final String ROOM_PARENT = "parent";
 	
@@ -45,7 +45,7 @@ public class GameConfigureConstant {
 	
 	public static final String ROOM_MIN_MARKS = "minMarks";
 	
-	public static final String ROOM_STATUS = "status";
+	public static final String ROOM_DISABLED = "disabled";
 	
 	public static final String GAME_TYPE_NAME_POKER = "Poker";
 	
