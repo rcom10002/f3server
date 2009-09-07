@@ -106,7 +106,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        String lobbyId = request.getParameter("LOBBY_ID");
 	        String lobbyName = request.getParameter("LOBBY_NAME");
 	        String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
-	        String lobbyStatus = request.getParameter("STATUS");
+	        String lobbyDisabled = request.getParameter("DISABLED");
 	        // 根据LOBBY—ID读取数据源
 	        Properties config = getModelProperties();
 	        
@@ -128,9 +128,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        		lobby.remove(GameConfigureConstant.LOBBY_DISPLAYINDEX);
 		        		lobby.put(GameConfigureConstant.LOBBY_DISPLAYINDEX, lobbyDisplayIndex);
 	        		}
-	        		if (lobby.containsKey(GameConfigureConstant.LOBBY_STATUS)) {
-		        		lobby.remove(GameConfigureConstant.LOBBY_STATUS);
-		        		lobby.put(GameConfigureConstant.LOBBY_STATUS, lobbyStatus);
+	        		if (lobby.containsKey(GameConfigureConstant.LOBBY_DISABLED)) {
+		        		lobby.remove(GameConfigureConstant.LOBBY_DISABLED);
+		        		lobby.put(GameConfigureConstant.LOBBY_DISABLED, lobbyDisabled);
 	        		}
 	        	} 
 	        	lobbyList.add(lobby);
@@ -483,7 +483,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
-        String status = request.getParameter("STATUS");
+        String disabled = request.getParameter("DISABLED");
         // 根据LOBBY—ID读取数据源
         Properties config = getModelProperties();
         
@@ -536,9 +536,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         		}
         		
         		// 启用禁用状态
-        		if (room.containsKey(GameConfigureConstant.ROOM_STATUS)) {
-	        		room.remove(GameConfigureConstant.ROOM_STATUS);
-	        		room.put(GameConfigureConstant.ROOM_STATUS, status);
+        		if (room.containsKey(GameConfigureConstant.ROOM_DISABLED)) {
+	        		room.remove(GameConfigureConstant.ROOM_DISABLED);
+	        		room.put(GameConfigureConstant.ROOM_DISABLED, disabled);
         		}
         	}
         	roomList.add(room);
@@ -581,7 +581,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String midLevelMark = request.getParameter("MID_LEVEL_MARK");
         String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
-        String status = request.getParameter("STATUS");
+        String disabled = request.getParameter("DISABLED");
         // add flag
         boolean bool = true;
         // 根据LOBBY—ID读取数据源
@@ -622,7 +622,7 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        }
 		        newRoom.put(GameConfigureConstant.ROOM_MIN_MARKS, minMarks);
 		        
-		        newRoom.put(GameConfigureConstant.ROOM_STATUS, status);
+		        newRoom.put(GameConfigureConstant.ROOM_DISABLED, disabled);
 		        roomList.add(newRoom);
 		        bool = !bool;
 			}

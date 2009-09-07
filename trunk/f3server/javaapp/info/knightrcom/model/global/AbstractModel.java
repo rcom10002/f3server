@@ -34,7 +34,7 @@ public  class AbstractModel<PT, CT> {
 
     protected String displayIndex;
     
-    protected String status;
+    protected String disabled;
 
     protected int childLimit = -1;
 
@@ -187,18 +187,17 @@ public  class AbstractModel<PT, CT> {
     }
 
 	/**
-	 * @return the status
+	 * @return the disabled
 	 */
-	public String getStatus() {
-		return status;
+	public String getDisabled() {
+		return disabled;
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param disabled the disabled to set
 	 */
-	public void setStatus(String status) {
-		this.status = status;
+	public void setDisabled(String disabled) {
+		this.disabled = disabled;
 	}
 
-    
 }
