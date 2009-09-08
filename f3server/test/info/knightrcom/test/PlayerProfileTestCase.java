@@ -2,6 +2,7 @@ package info.knightrcom.test;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.util.EncryptionUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("Administrator");
         profile.setUserId("admin");
-        profile.setPassword("000000");
+        profile.setPassword(EncryptionUtil.encryptSHA("000000"));
         profile.setRole("Administrator");
         profile.setRlsPath("Administrator");
         profile.setCurrentScore(-1);
@@ -36,7 +37,7 @@ public class PlayerProfileTestCase extends TestCase {
             profile.setProfileId(UUID.randomUUID().toString());
             profile.setName("user" + i);
             profile.setUserId("user" + i);
-            profile.setPassword("user" + i);
+            profile.setPassword(EncryptionUtil.encryptSHA("user" + i));
             profile.setRole("GroupUser");
             profile.setRlsPath("user" + i);
             profile.setCurrentScore(500);
@@ -48,7 +49,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("user33");
         profile.setUserId("user33");
-        profile.setPassword("user33");
+        profile.setPassword(EncryptionUtil.encryptSHA("user33"));
         profile.setRole("GroupUser");
         profile.setRlsPath("user3!user33");
         profile.setCurrentScore(300);
@@ -58,7 +59,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("user44");
         profile.setUserId("user44");
-        profile.setPassword("user44");
+        profile.setPassword(EncryptionUtil.encryptSHA("user44"));
         profile.setRole("User");
         profile.setRlsPath("user4!user44");
         profile.setCurrentScore(300);

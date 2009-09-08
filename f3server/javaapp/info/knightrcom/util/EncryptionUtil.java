@@ -1,11 +1,12 @@
 package info.knightrcom.util;
 
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 
 import org.apache.mina.util.Base64;
 
 /**
- *
+ * Encryption Utility
  */
 public class EncryptionUtil {
 
@@ -14,7 +15,15 @@ public class EncryptionUtil {
      * @return
      */
     public static String Base64Encode(String str) {
-        return new String(Base64.encodeBase64(getBytes(str)));
+        return Base64Encode(getBytes(str));
+    }
+
+    /**
+     * @param bytes
+     * @return
+     */
+    public static String Base64Encode(byte[] bytes) {
+        return new String(Base64.encodeBase64(bytes));
     }
 
     /**
@@ -22,8 +31,44 @@ public class EncryptionUtil {
      * @return
      */
     public static String Base64Decode(String str) {
-        return new String(Base64.decodeBase64(getBytes(str)));
+        return Base64Decode(getBytes(str));
     }
+
+    /**
+     * @param bytes
+     * @return
+     */
+    public static String Base64Decode(byte[] bytes) {
+        return new String(Base64.decodeBase64(bytes));
+    }
+
+    /**
+     * @param source
+     * @return
+     */
+    public static String encryptSHA(String source) {
+		try {
+			MessageDigest digest = java.security.MessageDigest.getInstance("SHA");
+			digest.update(getBytes(source));
+			return new String(EncryptionUtil.Base64Encode(digest.digest()));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+    /**
+     * @param source
+     * @return
+     */
+    public static String encryptMD5(String source) {
+		try {
+			MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+			digest.update(getBytes(source));
+			return new String(EncryptionUtil.Base64Encode(digest.digest()));
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
     /**
      * @param obj

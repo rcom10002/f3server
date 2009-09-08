@@ -292,42 +292,6 @@ public class StringHelper {
     }
 
     /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        String numberChars = "1234567890";
-        String example = "xy5dew_dp6n";
-        int offset = 0;
-        int copyTimes = 0;
-        for (int i = 0; i < example.length(); i++) {
-            if (numberChars.indexOf(example.charAt(i)) > -1) {
-                // 计算数字偏移量
-                offset++;
-                System.out.print(example.charAt(i));
-                continue;
-            } else if (offset > 0) {
-                // 计算重复次数
-                copyTimes = new Integer(example.substring(i - offset, i)).intValue();
-            }
-            if (copyTimes > 0) {
-                // 按照指定次数进行字符输出
-                for (int x = 0; x < copyTimes; x++) {
-                    System.out.print(String.valueOf(example.charAt(i)));
-                }
-                // 重置计数变量
-                copyTimes = 0;
-                offset = 0;
-            } else if ('_' == example.charAt(i)) {
-                // _ 替换 @
-                System.out.print('@');
-            } else {
-                // 以常规方法输出字符
-                System.out.print(example.charAt(i));
-            }
-        }
-    }
-
-    /**
      * 模糊查询中条件为通配符的字符进行处理
      * 
      * @param str
