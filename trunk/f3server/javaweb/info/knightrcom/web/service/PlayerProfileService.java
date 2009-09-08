@@ -5,6 +5,7 @@ import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
+import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
@@ -115,7 +116,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         PlayerProfile playerProfile = new PlayerProfile();
         playerProfile.setProfileId(UUID.randomUUID().toString());
         playerProfile.setUserId(request.getParameter("USER_ID"));
-        playerProfile.setPassword(request.getParameter("PASSWORD"));
+        playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
         playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
@@ -150,7 +151,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     public String UPDATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
         playerProfile.setUserId(request.getParameter("USER_ID"));
-        playerProfile.setPassword(request.getParameter("PASSWORD"));
+        playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         // playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
         // playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         // playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));

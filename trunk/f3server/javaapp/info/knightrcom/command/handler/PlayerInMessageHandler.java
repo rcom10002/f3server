@@ -11,6 +11,7 @@ import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.model.global.GameStatus;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.global.Room;
+import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.SystemLogger;
 
@@ -58,7 +59,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         String results[] = message.getContent().split("~");
         PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.and(
                 Property.forName("userId").eq(results[0]), 
-                Property.forName("password").eq(results[1]))).uniqueResult();
+                Property.forName("password").eq(EncryptionUtil.encryptSHA(results[1])))).uniqueResult();
         if (profile == null) {
             // 用户名或密码错误
             echoMessage.setResult(LOGIN_ERROR_USERNAME_OR_PASSWORD);

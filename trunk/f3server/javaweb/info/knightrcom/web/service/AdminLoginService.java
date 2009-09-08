@@ -2,6 +2,7 @@ package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.web.model.EntityInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
 
 	public String LOGIN_ADMIN_SERVER(HttpServletRequest request, HttpServletResponse response) {
 		String username = request.getParameter("USERNAME");
-		String password = request.getParameter("PASSWORD");
+		String password = EncryptionUtil.encryptSHA(request.getParameter("PASSWORD"));
         final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(
                 Restrictions.and(Property.forName("userId").eq(username), 
                                  Property.forName("password").eq(password))).uniqueResult();
