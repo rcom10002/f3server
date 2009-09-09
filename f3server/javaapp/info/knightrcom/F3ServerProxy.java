@@ -1,19 +1,19 @@
 package info.knightrcom;
 
 import info.knightrcom.command.message.EchoMessage;
-import info.knightrcom.data.metadata.GlobalConfig;
-import info.knightrcom.data.metadata.GlobalConfigDAO;
+import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
 import info.knightrcom.util.SystemLogger;
-import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.mina.core.session.IoSession;
+import org.hibernate.Query;
 
 /**
  * 该类作为Web访问应用服务器的代理，具体的应用操作内容由代理完成
@@ -82,10 +82,6 @@ public class F3ServerProxy {
 	 * @return
 	 */
 	public static Object getServerStatus() {
-	    Map<String, String> sysParams = new HashMap<String, String>();
-	    for (GlobalConfig config : new GlobalConfigDAO().findByType(GameConfigureConstant.SERVER_PARAM_NAME)) {
-	        sysParams.put(config.getName(), config.getValue());
-	    }
 		String[] titles = new String[] {
 				"USE_SSL",
 				"PORT",
@@ -100,15 +96,26 @@ public class F3ServerProxy {
 				String.valueOf(F3Server.MAX_CONNECTION_LIMIT),
 				String.valueOf(F3Server.RUNNING), 
 				String.valueOf(F3Server.RUNNING ? F3Server.acceptor.getManagedSessionCount() : 0) };
-		String[] result = new String[titles.length + sysParams.size()];
+	    Query dbVars = HibernateSessionFactory.getSession().createSQLQuery("show variables");
+	    // dbVars.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+	    List<?> dbVarList = dbVars.list();
+		String[] result = new String[titles.length + System.getProperties().entrySet().size() + dbVarList.size()];
 		int i = 0;
 		for (i = 0; i < titles.length; i++) {
 		    result[i] = titles[i] + "~" + contents[i];
         }
-		for (String key : sysParams.keySet()) {
-		    result[i] = key + "~" + sysParams.get(key);
-		    i++;
-		}
+		Iterator<Entry<Object, Object>> propItr = System.getProperties().entrySet().iterator();
+	    while (propItr.hasNext()) {
+	        Entry<Object, Object> entry = propItr.next();
+	        result[i] = entry.getKey().toString().toUpperCase() + "~" + entry.getValue();
+	        i++;
+	    }
+	    Iterator<?> varItr = dbVarList.iterator();
+        while (varItr.hasNext()) {
+            Object[] row = (Object[])varItr.next();
+            result[i] = row[0].toString().toLowerCase() + "~" + row[1];
+            i++;
+        }
 		return result;
 	}
 
