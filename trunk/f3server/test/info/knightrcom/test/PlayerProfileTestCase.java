@@ -4,7 +4,6 @@ import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.util.EncryptionUtil;
 
-import java.util.List;
 import java.util.UUID;
 
 import junit.framework.TestCase;
@@ -12,26 +11,50 @@ import junit.framework.TestCase;
 public class PlayerProfileTestCase extends TestCase {
 
     protected void setUp() throws Exception {
+        HibernateSessionFactory.getSession().beginTransaction();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_score").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from game_record").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from periodly_sum").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile").executeUpdate();
+        HibernateSessionFactory.getSession().flush();
         super.setUp();
     }
 
-    @SuppressWarnings("unchecked")
     public void testCreatePlayerProfile() {
-        HibernateSessionFactory.getSession().beginTransaction();
-        List<PlayerProfile> players = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).list();
-        for (int i = 0; i < players.size(); i++) {
-            HibernateSessionFactory.getSession().delete(players.get(i));
-        }
         PlayerProfile profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
-        profile.setName("Administrator");
+        profile.setName("admin");
         profile.setUserId("admin");
-        profile.setPassword(EncryptionUtil.encryptSHA("000000"));
+        profile.setPassword(EncryptionUtil.encryptSHA("bountyofking:)123"));
         profile.setRole("Administrator");
         profile.setRlsPath("Administrator");
         profile.setCurrentScore(-1);
         profile.setLevel(100);
-        HibernateSessionFactory.getSession().merge(profile);
+        HibernateSessionFactory.getSession().save(profile);
+        HibernateSessionFactory.getSession().flush();
+
+        profile = new PlayerProfile();
+        profile.setProfileId(UUID.randomUUID().toString());
+        profile.setName("SuperGameMaster");
+        profile.setUserId("SuperGameMaster");
+        profile.setPassword(EncryptionUtil.encryptSHA("SuperGameMaster"));
+        profile.setRole("SuperGameMaster");
+        profile.setRlsPath("Administrator");
+        profile.setCurrentScore(-1);
+        profile.setLevel(100);
+        HibernateSessionFactory.getSession().save(profile);
+        profile = new PlayerProfile();
+        profile.setProfileId(UUID.randomUUID().toString());
+        profile.setName("GameMaster");
+        profile.setUserId("GameMaster");
+        profile.setPassword(EncryptionUtil.encryptSHA("GameMaster"));
+        profile.setRole("GameMaster");
+        profile.setRlsPath("Administrator");
+        profile.setCurrentScore(-1);
+        profile.setLevel(100);
+        HibernateSessionFactory.getSession().save(profile);
+        HibernateSessionFactory.getSession().flush();
+ 
         for (int i = 1; i <= 6; i++) {
             profile = new PlayerProfile();
             profile.setProfileId(UUID.randomUUID().toString());
@@ -65,11 +88,12 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setCurrentScore(300);
         profile.setLevel(0);
         HibernateSessionFactory.getSession().merge(profile);
-        HibernateSessionFactory.getSession().getTransaction().commit();
-        HibernateSessionFactory.closeSession();
+        HibernateSessionFactory.getSession().flush();
     }
 
     protected void tearDown() throws Exception {
+        HibernateSessionFactory.getSession().getTransaction().commit();
+        HibernateSessionFactory.closeSession();
         super.tearDown();
     }
 
