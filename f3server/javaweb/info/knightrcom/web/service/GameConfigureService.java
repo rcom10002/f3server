@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,6 +87,20 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	map.put(GameConfigureConstant.LOBBY_ROOMCOUNT, roomList.size());
         	lobbyList.add(map);
         }
+        // 按大厅位置排序
+        Collections.sort(lobbyList, new Comparator<Map>() {
+			public int compare(Map o1, Map o2) {
+				int val1 = Integer.valueOf((String) o1.get(GameConfigureConstant.LOBBY_DISPLAYINDEX));
+				int val2 = Integer.valueOf((String) o2.get(GameConfigureConstant.LOBBY_DISPLAYINDEX));
+				if (val1 > val2) {
+					return 1;
+				} else if (val1 < val2) {
+					return -1;
+				}
+				return 0;
+			}
+        });
+        
         EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
         info.setResult(F3SWebServiceResult.SUCCESS);
         info.setEntity(lobbyList);
@@ -264,6 +280,19 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 				break;
 			}
         }
+        // 按房间位置排序
+        Collections.sort(roomList, new Comparator<Map>() {
+			public int compare(Map o1, Map o2) {
+				int val1 = Integer.valueOf((String) o1.get(GameConfigureConstant.ROOM_DISPLAY_INDEX));
+				int val2 = Integer.valueOf((String) o2.get(GameConfigureConstant.ROOM_DISPLAY_INDEX));
+				if (val1 > val2) {
+					return 1;
+				} else if (val1 < val2) {
+					return -1;
+				}
+				return 0;
+			}
+        });
         EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
         info.setResult(F3SWebServiceResult.SUCCESS);
         info.setEntity(roomList);
