@@ -4,6 +4,7 @@ import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.data.metadata.PeriodlySum;
+import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.io.FileWriter;
@@ -106,7 +107,7 @@ public class DynaReportService extends F3SWebServiceAdaptor {
 		
     	String url = request.getSession().getServletContext().getRealPath("/");
     	String filename = "DYNA_REPORT_" + new java.util.Date().getTime() + ".csv";
-    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + filename),
+    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	
     	String mth = request.getParameter("MTH");
@@ -144,7 +145,7 @@ public class DynaReportService extends F3SWebServiceAdaptor {
 				}
 				writer.write(data, header);
 			}
-			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/"+ filename);
+			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH  + "/"+ filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();

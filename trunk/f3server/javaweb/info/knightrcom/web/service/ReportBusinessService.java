@@ -81,7 +81,7 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
     	List<ReportBusinessInfo> list = (List<ReportBusinessInfo>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
     	String filename = "BUSINESS_SUM_" + new java.util.Date().getTime() + ".csv";
-    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + filename),
+    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
 			final String[] header = new String[] { "玩家ID", "游戏ID", "游戏类别", "游戏时间", "状态", "得分", "时间开始", "结束开始"};
@@ -100,7 +100,7 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
 				data.put(header[7], business.getEndTime());
 				writer.write(data, header);
 			}
-			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/"+ filename);
+			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH + filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();
