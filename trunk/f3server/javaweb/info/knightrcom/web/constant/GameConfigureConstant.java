@@ -61,6 +61,8 @@ public class GameConfigureConstant {
 
     public static final String PLAYER_ROLE = "PLAYER_ROLE";
     
+    public static final String DOWNLOAD_PATH = "report\\csv\\";
+    
 }
 
 
