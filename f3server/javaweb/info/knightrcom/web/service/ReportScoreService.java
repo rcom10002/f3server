@@ -136,7 +136,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     	List<Map> list = (List<Map>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
     	String filename = "PERIODLY_SUM_" + new java.util.Date().getTime() + ".csv";
-    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + filename),
+    	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
 			final String[] header = new String[] { "用户ID", "总次数", "总积分", "获胜次数", "获胜积分", "失败次数", "失败积分", "平局次数" , "平局积分", "总系统分", "开始统计时间", "结束统计时间"};
@@ -160,7 +160,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 				
 				writer.write(data, header);
 			}
-			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/"+ filename);
+			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH + filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();
