@@ -1494,9 +1494,9 @@ CARD 0 新宋体,8,N</a:FontList>
 </o:ReferenceSymbol>
 <o:ReferenceSymbol Id="o9">
 <a:CreationDate>1249348374</a:CreationDate>
-<a:ModificationDate>1250127452</a:ModificationDate>
-<a:Rect>((11529,-2239), (24279,16120))</a:Rect>
-<a:ListOfPoints>((17904,16120),(17904,-2239))</a:ListOfPoints>
+<a:ModificationDate>1252715434</a:ModificationDate>
+<a:Rect>((11303,-64), (24053,16120))</a:Rect>
+<a:ListOfPoints>((17678,16120),(17678,-64))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
 <a:ShadowStyle>1</a:ShadowStyle>
@@ -1516,9 +1516,9 @@ CARD 0 新宋体,8,N</a:FontList>
 </o:ReferenceSymbol>
 <o:ReferenceSymbol Id="o12">
 <a:CreationDate>1249348374</a:CreationDate>
-<a:ModificationDate>1252715177</a:ModificationDate>
-<a:Rect>((-14932,2378), (18950,3699))</a:Rect>
-<a:ListOfPoints>((-14932,2603),(18950,2603))</a:ListOfPoints>
+<a:ModificationDate>1252715437</a:ModificationDate>
+<a:Rect>((-14857,4215), (18500,5661))</a:Rect>
+<a:ListOfPoints>((-14857,4440),(18500,4440))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
 <a:ShadowStyle>1</a:ShadowStyle>
@@ -1538,10 +1538,10 @@ CARD 0 新宋体,8,N</a:FontList>
 </o:ReferenceSymbol>
 <o:ReferenceSymbol Id="o15">
 <a:CreationDate>1249348374</a:CreationDate>
-<a:ModificationDate>1252715181</a:ModificationDate>
+<a:ModificationDate>1252715427</a:ModificationDate>
 <a:CenterTextOffset>(0, -375)</a:CenterTextOffset>
-<a:Rect>((-4078,10741), (7922,27772))</a:Rect>
-<a:ListOfPoints>((1922,10741),(1922,27772))</a:ListOfPoints>
+<a:Rect>((-4003,12091), (7997,27772))</a:Rect>
+<a:ListOfPoints>((1997,12091),(1997,27772))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>1</a:ArrowStyle>
 <a:ShadowStyle>1</a:ShadowStyle>
@@ -1585,8 +1585,8 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:TableSymbol>
 <o:TableSymbol Id="o10">
 <a:CreationDate>1249348374</a:CreationDate>
-<a:ModificationDate>1250127452</a:ModificationDate>
-<a:Rect>((11409,-9313), (24643,4835))</a:Rect>
+<a:ModificationDate>1252715434</a:ModificationDate>
+<a:Rect>((10959,-7138), (24193,7010))</a:Rect>
 <a:ShadowStyle>1</a:ShadowStyle>
 <a:LineColor>12615680</a:LineColor>
 <a:FillColor>16570034</a:FillColor>
@@ -1705,8 +1705,8 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:TableSymbol>
 <o:TableSymbol Id="o16">
 <a:CreationDate>1249348374</a:CreationDate>
-<a:ModificationDate>1252715174</a:ModificationDate>
-<a:Rect>((-4467,5317), (7609,16165))</a:Rect>
+<a:ModificationDate>1252715427</a:ModificationDate>
+<a:Rect>((-4317,6667), (7759,17515))</a:Rect>
 <a:ShadowStyle>1</a:ShadowStyle>
 <a:LineColor>12615680</a:LineColor>
 <a:FillColor>16570034</a:FillColor>
@@ -1729,8 +1729,8 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:TableSymbol>
 <o:TableSymbol Id="o27">
 <a:CreationDate>1252714951</a:CreationDate>
-<a:ModificationDate>1252715139</a:ModificationDate>
-<a:Rect>((-4860,-10899), (8760,1599))</a:Rect>
+<a:ModificationDate>1252715439</a:ModificationDate>
+<a:Rect>((-4785,-10111), (8835,3211))</a:Rect>
 <a:ShadowStyle>1</a:ShadowStyle>
 <a:LineColor>12615680</a:LineColor>
 <a:FillColor>16570034</a:FillColor>
@@ -3035,7 +3035,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:Code>RECHARGE_RECORD</a:Code>
 <a:CreationDate>1252714951</a:CreationDate>
 <a:Creator>任政委</a:Creator>
-<a:ModificationDate>1252715108</a:ModificationDate>
+<a:ModificationDate>1252715421</a:ModificationDate>
 <a:Modifier>任政委</a:Modifier>
 <a:PhysicalOptions>type = InnoDB</a:PhysicalOptions>
 <c:Columns>
@@ -3052,18 +3052,28 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
 <o:Column Id="o134">
+<a:ObjectID>BEB762E2-0903-44FB-89E7-3FEF4D810720</a:ObjectID>
+<a:Name>THIS_SCORE</a:Name>
+<a:Code>THIS_SCORE</a:Code>
+<a:CreationDate>1252715421</a:CreationDate>
+<a:Creator>任政委</a:Creator>
+<a:ModificationDate>1252715421</a:ModificationDate>
+<a:Modifier>任政委</a:Modifier>
+<a:DataType>INT</a:DataType>
+</o:Column>
+<o:Column Id="o135">
 <a:ObjectID>BCB9AF62-DC9B-46C1-A31B-46E7532EB55E</a:ObjectID>
-<a:Name>FROM</a:Name>
-<a:Code>FROM</a:Code>
+<a:Name>FROM_PLAYER</a:Name>
+<a:Code>FROM_PLAYER</a:Code>
 <a:CreationDate>1252714951</a:CreationDate>
 <a:Creator>任政委</a:Creator>
-<a:ModificationDate>1252715108</a:ModificationDate>
+<a:ModificationDate>1252715950</a:ModificationDate>
 <a:Modifier>任政委</a:Modifier>
 <a:DataType>VARCHAR(100)</a:DataType>
 <a:Length>100</a:Length>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o135">
+<o:Column Id="o136">
 <a:ObjectID>01510A76-BD72-4329-8A36-0E927124C55B</a:ObjectID>
 <a:Name>FROM_ORG_SCORE</a:Name>
 <a:Code>FROM_ORG_SCORE</a:Code>
@@ -3074,7 +3084,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>INT</a:DataType>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o136">
+<o:Column Id="o137">
 <a:ObjectID>DE605409-3EF7-4455-BEEE-FE75EA26C404</a:ObjectID>
 <a:Name>FROM_CUR_SCORE</a:Name>
 <a:Code>FROM_CUR_SCORE</a:Code>
@@ -3085,19 +3095,19 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>INT</a:DataType>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o137">
+<o:Column Id="o138">
 <a:ObjectID>285D45D1-F628-4FC9-995C-09F177FDC343</a:ObjectID>
-<a:Name>TO</a:Name>
-<a:Code>TO</a:Code>
+<a:Name>TO_PLAYER</a:Name>
+<a:Code>TO_PLAYER</a:Code>
 <a:CreationDate>1252714951</a:CreationDate>
 <a:Creator>任政委</a:Creator>
-<a:ModificationDate>1252715130</a:ModificationDate>
+<a:ModificationDate>1252715950</a:ModificationDate>
 <a:Modifier>任政委</a:Modifier>
 <a:DataType>VARCHAR(100)</a:DataType>
 <a:Length>100</a:Length>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o138">
+<o:Column Id="o139">
 <a:ObjectID>11165780-7999-4B2E-94F7-4A6D1FCF6438</a:ObjectID>
 <a:Name>TO_ORG_SCORE</a:Name>
 <a:Code>TO_ORG_SCORE</a:Code>
@@ -3108,7 +3118,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>INT</a:DataType>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o139">
+<o:Column Id="o140">
 <a:ObjectID>8CCABAF8-D4F7-48F4-A66E-6E8250774B1C</a:ObjectID>
 <a:Name>TO_CUR_SCORE</a:Name>
 <a:Code>TO_CUR_SCORE</a:Code>
@@ -3119,7 +3129,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>INT</a:DataType>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
-<o:Column Id="o140">
+<o:Column Id="o141">
 <a:ObjectID>F45460F5-B419-4226-ADF1-925A37CD4472</a:ObjectID>
 <a:Name>MEMO</a:Name>
 <a:Code>MEMO</a:Code>
@@ -3130,7 +3140,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>VARCHAR(1000)</a:DataType>
 <a:Length>1000</a:Length>
 </o:Column>
-<o:Column Id="o141">
+<o:Column Id="o142">
 <a:ObjectID>30E31D64-8D7A-40BB-BFE4-FA492538201E</a:ObjectID>
 <a:Name>STATUS</a:Name>
 <a:Code>STATUS</a:Code>
@@ -3141,7 +3151,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>VARCHAR(100)</a:DataType>
 <a:Length>100</a:Length>
 </o:Column>
-<o:Column Id="o142">
+<o:Column Id="o143">
 <a:ObjectID>EC5BD3E9-ACA9-496A-9593-A02E035E2F35</a:ObjectID>
 <a:Name>CREATE_TIME</a:Name>
 <a:Code>CREATE_TIME</a:Code>
@@ -3151,7 +3161,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:Modifier>任政委</a:Modifier>
 <a:DataType>DATETIME</a:DataType>
 </o:Column>
-<o:Column Id="o143">
+<o:Column Id="o144">
 <a:ObjectID>104B694D-CB8F-4E23-804F-8458C09ADC6D</a:ObjectID>
 <a:Name>CREATE_BY</a:Name>
 <a:Code>CREATE_BY</a:Code>
@@ -3162,7 +3172,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:DataType>VARCHAR(100)</a:DataType>
 <a:Length>100</a:Length>
 </o:Column>
-<o:Column Id="o144">
+<o:Column Id="o145">
 <a:ObjectID>8FF59AF5-6DED-4DB1-9A12-E6D005A54CD5</a:ObjectID>
 <a:Name>UPDATE_TIME</a:Name>
 <a:Code>UPDATE_TIME</a:Code>
@@ -3172,7 +3182,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <a:Modifier>任政委</a:Modifier>
 <a:DataType>DATETIME</a:DataType>
 </o:Column>
-<o:Column Id="o145">
+<o:Column Id="o146">
 <a:ObjectID>BDDDDE7C-B076-4158-B6EC-3246C3D423CA</a:ObjectID>
 <a:Name>UPDATE_BY</a:Name>
 <a:Code>UPDATE_BY</a:Code>
@@ -3185,7 +3195,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:Column>
 </c:Columns>
 <c:Keys>
-<o:Key Id="o146">
+<o:Key Id="o147">
 <a:ObjectID>B7032E1C-012C-41EA-B2E0-D19644E6A08B</a:ObjectID>
 <a:Name>Key_1</a:Name>
 <a:Code>Key_1</a:Code>
@@ -3199,7 +3209,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:Key>
 </c:Keys>
 <c:PrimaryKey>
-<o:Key Ref="o146"/>
+<o:Key Ref="o147"/>
 </c:PrimaryKey>
 </o:Table>
 </c:Tables>
@@ -3226,7 +3236,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <o:Key Ref="o55"/>
 </c:ParentKey>
 <c:Joins>
-<o:ReferenceJoin Id="o147">
+<o:ReferenceJoin Id="o148">
 <a:ObjectID>7F682E6F-9419-4452-97F8-D08F286D4BA8</a:ObjectID>
 <a:CreationDate>1249348374</a:CreationDate>
 <a:Creator>任政委</a:Creator>
@@ -3263,7 +3273,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <o:Key Ref="o117"/>
 </c:ParentKey>
 <c:Joins>
-<o:ReferenceJoin Id="o148">
+<o:ReferenceJoin Id="o149">
 <a:ObjectID>75A8E6FD-AD94-411B-8F32-9820A2E6F839</a:ObjectID>
 <a:CreationDate>1249348374</a:CreationDate>
 <a:Creator>任政委</a:Creator>
@@ -3300,7 +3310,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <o:Key Ref="o117"/>
 </c:ParentKey>
 <c:Joins>
-<o:ReferenceJoin Id="o149">
+<o:ReferenceJoin Id="o150">
 <a:ObjectID>E14ECB4E-D213-481E-8533-0E5CA7AA2968</a:ObjectID>
 <a:CreationDate>1249348374</a:CreationDate>
 <a:Creator>任政委</a:Creator>
@@ -3337,7 +3347,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 <o:Key Ref="o55"/>
 </c:ParentKey>
 <c:Joins>
-<o:ReferenceJoin Id="o150">
+<o:ReferenceJoin Id="o151">
 <a:ObjectID>97081E39-58C0-415D-84E3-51BBECF4AD42</a:ObjectID>
 <a:CreationDate>1249348374</a:CreationDate>
 <a:Creator>任政委</a:Creator>
@@ -3354,7 +3364,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:Reference>
 </c:References>
 <c:DefaultGroups>
-<o:Group Id="o151">
+<o:Group Id="o152">
 <a:ObjectID>B7D2BD53-C189-443A-87B6-563FE6A8A04A</a:ObjectID>
 <a:Name>PUBLIC</a:Name>
 <a:Code>PUBLIC</a:Code>
@@ -3365,7 +3375,7 @@ TableComment 0 新宋体,8,N</a:FontList>
 </o:Group>
 </c:DefaultGroups>
 <c:TargetModels>
-<o:TargetModel Id="o152">
+<o:TargetModel Id="o153">
 <a:ObjectID>EE87FC49-79DD-4AD1-9D81-DE8A4A9A165E</a:ObjectID>
 <a:Name>MySQL 5.0</a:Name>
 <a:Code>MYSQL50</a:Code>

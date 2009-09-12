@@ -142,10 +142,10 @@ type = InnoDB;
 create table RECHARGE_RECORD
 (
    RECHARGE_ID          VARCHAR(100) not null,
-   `FROM`               VARCHAR(100) not null,
+   FROM_PLAYER          VARCHAR(100) not null,
    FROM_ORG_SCORE       INT not null,
    FROM_CUR_SCORE       INT not null,
-   TO                   VARCHAR(100) not null,
+   TO_PLAYER            VARCHAR(100) not null,
    TO_ORG_SCORE         INT not null,
    TO_CUR_SCORE         INT not null,
    MEMO                 VARCHAR(1000),
