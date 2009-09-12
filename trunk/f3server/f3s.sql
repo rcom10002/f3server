@@ -4,20 +4,6 @@ create database f3s CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 use f3s;
 
-drop table if exists GAME_FEEDBACK;
-
-drop table if exists GAME_RECORD;
-
-drop table if exists GLOBAL_CONFIG;
-
-drop table if exists LOG_INFO;
-
-drop table if exists PERIODLY_SUM;
-
-drop table if exists PLAYER_PROFILE;
-
-drop table if exists PLAYER_SCORE;
-
 create table GAME_FEEDBACK
 (
    FEEDBACK_ID          VARCHAR(100) not null,
@@ -117,8 +103,8 @@ create table PLAYER_PROFILE
    PROFILE_ID           VARCHAR(100) not null,
    NUMBER               VARCHAR(100),
    NAME                 VARCHAR(100),
-   USER_ID              VARCHAR(16) not null,
-   PASSWORD             VARCHAR(16) not null,
+   USER_ID              VARCHAR(100) not null,
+   PASSWORD             VARCHAR(100) not null,
    CURRENT_SCORE        INT not null,
    INIT_LIMIT           INT,
    LEVEL                INT not null,
@@ -150,6 +136,25 @@ create table PLAYER_SCORE
    UPDATE_TIME          DATETIME,
    UPDATE_BY            VARCHAR(100),
    primary key (SCORE_ID)
+)
+type = InnoDB;
+
+create table RECHARGE_RECORD
+(
+   RECHARGE_ID          VARCHAR(100) not null,
+   `FROM`               VARCHAR(100) not null,
+   FROM_ORG_SCORE       INT not null,
+   FROM_CUR_SCORE       INT not null,
+   TO                   VARCHAR(100) not null,
+   TO_ORG_SCORE         INT not null,
+   TO_CUR_SCORE         INT not null,
+   MEMO                 VARCHAR(1000),
+   STATUS               VARCHAR(100),
+   CREATE_TIME          DATETIME,
+   CREATE_BY            VARCHAR(100),
+   UPDATE_TIME          DATETIME,
+   UPDATE_BY            VARCHAR(100),
+   primary key (RECHARGE_ID)
 )
 type = InnoDB;
 
