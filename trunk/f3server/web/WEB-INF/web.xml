@@ -2,11 +2,38 @@
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<!-- f3s service servlet -->
 	<servlet>
-		<description>F3SWebServlet</description>
-		<display-name>F3SWebServlet</display-name>
-		<servlet-name>F3Servlet</servlet-name>
-		<servlet-class>info.knightrcom.web.F3Servlet</servlet-class>
+		<description>F3S Application Servlet</description>
+		<display-name>F3SApplicationServlet</display-name>
+		<servlet-name>F3SApplicationServlet</servlet-name>
+		<servlet-class>info.knightrcom.web.F3SApplicationServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<!--
+		<init-param>
+			<param-name>ccga</param-name>
+			<param-value>ccga/Administration.html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ccgc</param-name>
+			<param-value>ccgc/CCGameClient.html</param-value>
+		</init-param>
+		<init-param>
+			<param-name>readme</param-name>
+			<param-value>about_game_platform.html</param-value>
+		</init-param>
+		-->
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>F3SApplicationServlet</servlet-name>
+		<url-pattern>*.f3s</url-pattern>
+	</servlet-mapping>
+	<!-- f3s forwarding service servlet -->
+	<servlet>
+		<description>F3S Forwarding Servlet</description>
+		<display-name>F3SForwardServlet</display-name>
+		<servlet-name>F3SForwardServlet</servlet-name>
+		<servlet-class>info.knightrcom.web.F3SForwardServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 		<init-param>
 			<param-name>ccga</param-name>
@@ -22,9 +49,10 @@
 		</init-param>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>F3Servlet</servlet-name>
-		<url-pattern>*.f3s</url-pattern>
+		<servlet-name>F3SForwardServlet</servlet-name>
+		<url-pattern>*.ccg</url-pattern>
 	</servlet-mapping>
+	<!-- character encoding filter -->
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<filter-class>info.knightrcom.web.CharacterEncodingFilter</filter-class>
