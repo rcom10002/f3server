@@ -135,7 +135,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     	query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
     	List<Map> list = (List<Map>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
-    	String filename = "PERIODLY_SUM_" + new java.util.Date().getTime() + ".csv";
+    	String filename = "PERIODLY_SUM_" + request.getParameter("FROM_DATE") + "-" + request.getParameter("TO_DATE") + ".csv";
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
