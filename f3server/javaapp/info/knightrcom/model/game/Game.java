@@ -54,6 +54,11 @@ public abstract class Game<T> {
     /** 自定义结构，用于表现游戏积分明细 */
     private String gameDetailScore;
 
+    /**
+     * 默认系统分
+     */
+    private static int defaultSystemScore = 0;
+
     /** 游戏创建时间 */
     private Date createTime = new Date();
 
@@ -241,4 +246,25 @@ public abstract class Game<T> {
     public Date getCreateTime() {
         return createTime;
     }
+
+	/**
+	 * 默认系统分
+	 * 
+	 * @return the defaultSystemScore
+	 */
+	private int getDefaultSystemScore() {
+		if (defaultSystemScore == 0) {
+			// FIXME 取得系统全局配置的参数
+		}
+		return defaultSystemScore;
+	}
+
+	/**
+	 * 自定义系统分
+	 * 
+	 * @return the customSystemScore
+	 */
+	public int getCustomSystemScore() {
+		return getDefaultSystemScore();
+	}
 }
