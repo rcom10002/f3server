@@ -80,7 +80,7 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
     	query.setResultTransformer(getResultTransformer());
     	List<ReportBusinessInfo> list = (List<ReportBusinessInfo>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
-    	String filename = "BUSINESS_SUM_" + new java.util.Date().getTime() + ".csv";
+    	String filename = "BUSINESS_SUM_" + request.getParameter("FROM_DATE") + "-" + request.getParameter("TO_DATE") + ".csv";
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
