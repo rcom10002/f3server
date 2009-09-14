@@ -2,6 +2,7 @@ package info.knightrcom.model.game;
 
 import info.knightrcom.model.global.Player;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -57,7 +58,7 @@ public abstract class Game<T> {
     /**
      * 默认系统分
      */
-    private static int defaultSystemScore = 0;
+    private static int systemScoreRate = 0;
 
     /** 游戏创建时间 */
     private Date createTime = new Date();
@@ -250,21 +251,24 @@ public abstract class Game<T> {
 	/**
 	 * 默认系统分
 	 * 
+	 * @param currentScore
 	 * @return the defaultSystemScore
 	 */
-	private int getDefaultSystemScore() {
-		if (defaultSystemScore == 0) {
+	private BigDecimal getSystemScoreRate(int currentScore) {
+		if (systemScoreRate == 0) {
 			// FIXME 取得系统全局配置的参数
+			systemScoreRate = 5;
 		}
-		return defaultSystemScore;
+		return new BigDecimal(systemScoreRate);
 	}
 
 	/**
 	 * 自定义系统分
 	 * 
+	 * @param currentScore
 	 * @return the customSystemScore
 	 */
-	public int getCustomSystemScore() {
-		return getDefaultSystemScore();
+	public BigDecimal getCustomSystemScore(int currentScore) {
+		return new BigDecimal(currentScore).multiply(getSystemScoreRate(currentScore)).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
 	}
 }
