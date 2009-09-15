@@ -8,7 +8,7 @@ select
     `PROFILE_ID`,
     `NUMBER`,
     `NAME`,
-    `USER_ID` AS `USER_ID`,
+    `USER_ID`,
     `PASSWORD`,
     `CURRENT_SCORE`,
     `LEVEL`,
@@ -21,13 +21,26 @@ select
     `UPDATE_BY` 
 from
     `player_profile`
-order by `CREATE_TIME` desc
+where
+    (`ROLE` = ? or ? IS NULL) and
+    (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
+    (`USER_ID` LIKE CONCAT(?, '%') or ? IS NULL)
+order by 
+    CASE `ROLE`
+    WHEN 'SuperGameMaster' THEN 'B'
+    WHEN 'GameMaster' THEN 'C'
+    ELSE `ROLE`
+    END, `CREATE_TIME` desc
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_COUNT">
 	<![CDATA[
 SELECT COUNT(*) AS RECORD_COUNT
   FROM player_profile
+ WHERE
+    (`ROLE` = ? or ? IS NULL) and
+    (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
+    (`USER_ID` LIKE CONCAT(?, '%') or ? IS NULL)
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_ALL_RLS_PATH">

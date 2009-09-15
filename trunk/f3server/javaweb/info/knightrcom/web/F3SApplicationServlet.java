@@ -1,6 +1,7 @@
 package info.knightrcom.web;
 
 import info.knightrcom.F3ServerProxy;
+import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.web.service.F3SWebService;
 
 import java.io.File;
@@ -61,6 +62,7 @@ public class F3SApplicationServlet extends F3SServlet {
      * @see info.knightrcom.web.F3SServlet#init()
      */
     @SuppressWarnings("unchecked")
+    @Override
 	public void init() throws ServletException {
         try {
         	super.init();
@@ -74,11 +76,26 @@ public class F3SApplicationServlet extends F3SServlet {
                     F3SWebServiceHandler.registerWebService(thisClass.getSimpleName(), (F3SWebService)thisClass.newInstance());
                 }
             }
-            if (!F3ServerProxy.isServerRunning()) {
-            	F3ServerProxy.startServer();
-            }
+	        // Hibernate初始化
+	        HibernateSessionFactory.init();
+	        // 应用服务器初始化
+        	F3ServerProxy.startServer();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see info.knightrcom.web.F3SServlet#destroy()
+     */
+    @Override
+    public void destroy() {
+    	super.destroy();
+        if (F3ServerProxy.isServerRunning()) {
+        	// 停止应用服务器
+        	F3ServerProxy.stopServer();
+        	// 停止Hibernate服务
+        	HibernateSessionFactory.getSessionFactory().close();
         }
     }
 
@@ -97,7 +114,7 @@ public class F3SApplicationServlet extends F3SServlet {
             if (cld == null) {
                 throw new ClassNotFoundException("Can't get class loader.");
             }
-            // TODO 
+            // create the package path 
             String path = '/' + packageName.replace('.', '/');
             URL resource = cld.getResource(path);
             if (resource == null) {

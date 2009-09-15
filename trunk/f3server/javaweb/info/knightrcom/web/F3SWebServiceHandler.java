@@ -39,7 +39,7 @@ public class F3SWebServiceHandler {
     public static void registerWebService(String serviceName, F3SWebService<?> service) {
         if (services.containsKey(serviceName)) {
             // FIXME 把下面异常改用WARNING
-        	throw new RuntimeException("发现有重复的Web服务");
+        	log.warn("发现有重复的Web服务");
         }
         services.put(serviceName, service);
     }
@@ -52,7 +52,7 @@ public class F3SWebServiceHandler {
     public static void registerWebServiceProcesser(String serviceName, String processName, Method process) {
         String key = serviceName + "#" + processName;
         if (methods.containsKey(key)) {
-            throw new RuntimeException("发现有重复的Web服务");
+        	log.warn("发现有重复的Web服务");
         }
         methods.put(key, process);
     }
@@ -72,20 +72,22 @@ public class F3SWebServiceHandler {
             try {
                 HibernateSessionFactory.getSession().beginTransaction();
                 String responseText = (String)process.invoke(service, request, response);
-                log.debug(responseText);
                 out.println(responseText);
-                HibernateSessionFactory.getSession().getTransaction().commit();
+                log.debug(responseText);
+                if (HibernateSessionFactory.getSession().getTransaction().isActive()) {
+                    HibernateSessionFactory.getSession().getTransaction().commit();
+                }
             } catch (Exception ex) {
-                HibernateSessionFactory.getSession().getTransaction().rollback();
+                if (HibernateSessionFactory.getSession().getTransaction().isActive()) {
+                    HibernateSessionFactory.getSession().getTransaction().rollback();
+                }
                 // 记录日志
                 LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().toString(), null, ex.getMessage(), LogType.WEB_ERROR);
                 HibernateSessionFactory.getSession().save(logInfo);
                 HibernateSessionFactory.getSession().flush();
                 throw ex;
             } finally {
-            	if (HibernateSessionFactory.getSession().isOpen()) {
-            		HibernateSessionFactory.closeSession();
-            	}
+        		HibernateSessionFactory.closeSession();
             }
         } else {
             String responseText = (String)service.serializeResponseStream(request, response);
