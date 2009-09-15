@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 public class PersistScoreTestCase extends TestCase {
 
     protected void setUp() throws Exception {
-        HibernateSessionFactory.init();
         HibernateSessionFactory.getSession().beginTransaction();
         super.setUp();
     }

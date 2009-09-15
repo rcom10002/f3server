@@ -52,7 +52,13 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     }
 
     @Override
-    public void processQuerySetting(Query query, HttpServletRequest request) {        
+    public void processQuerySetting(Query query, HttpServletRequest request) {
+    	query.setParameter(0, request.getParameter("ROLE"));
+    	query.setParameter(1, request.getParameter("ROLE"));
+    	query.setParameter(2, request.getParameter("USER_ID"));
+    	query.setParameter(3, request.getParameter("USER_ID"));
+    	query.setParameter(4, request.getParameter("CURRENT_USER_ID"));
+    	query.setParameter(5, request.getParameter("CURRENT_USER_ID"));
     }
 
     @Override
@@ -151,7 +157,9 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     public String UPDATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
         playerProfile.setUserId(request.getParameter("USER_ID"));
-        playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
+        if (!"******".equals(request.getParameter("PASSWORD"))) {
+        	playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
+        }
         // playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
         // playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         // playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
@@ -242,10 +250,5 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         EntityInfo<PlayerProfile> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
         info.setTag(resultList.toArray());
 		return toXML(info, getAliasTypes());
-	}
-
-	public static void main(String[] args) throws Exception {
-		// System.out.print(new PlayerProfileService().SHOW_RLS_PATH_TREE(null, null));
-		System.out.print(new PlayerProfileService().SHOW_RLS_PATH_CHART(null, null));
 	}
 }

@@ -86,24 +86,21 @@ class F3Server {
      * @param args 启动参数
      */
     static void startServer(String[] args) {
-
+    	// 服务器运行状态判断
     	if (RUNNING) {
     		return;
     	}
     	try {
-	        // Hibernate初始化
-	        HibernateSessionFactory.init();
-	
 	        // 加载Flex安全信息
 	        ResourceBundle bundle = ResourceBundle.getBundle("info.knightrcom.sc");
 	        SECURITY_CONFIGURATION = bundle.getString("SECURITY_CONFIGURATION");
-	
+
 	        acceptor = new NioSocketAcceptor();
 	        DefaultIoFilterChainBuilder chain = acceptor.getFilterChain();
-	
+
 	        MdcInjectionFilter mdcInjectionFilter = new MdcInjectionFilter();
 	        addMdc(chain, mdcInjectionFilter);
-	
+
 	        // 启用SSL功能
 	        // TODO 该功能暂时不启用，因为as3对SSL支持尚不成熟
 	        // Keep in mind most web servers with TLS support are not serving a crossdomain.xml policy file that
@@ -113,7 +110,7 @@ class F3Server {
 	        }
 	        addCodec(chain);
 	        addLogger(chain);
-	
+
 	        // 绑定处理器和监听
 	        Platform platform = ModelUtil.createPlatform();
 	        acceptor.setHandler(new F3ServerServiceHandler(platform));
@@ -123,18 +120,16 @@ class F3Server {
 	        // 启动成功日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server started successfully!", null, null, LogType.SYSTEM_LOG);
 	        HibernateSessionFactory.getSession().save(logInfo);
-	        HibernateSessionFactory.getSession().flush();
-	        HibernateSessionFactory.getSession().close();
+	        HibernateSessionFactory.closeSession();
 
 	        log.info("F3S SERVER HAS STARTED!");
 	        RUNNING = true;
     	} catch (Exception e) {
     		// 启动失败日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to start!", 
-	        		e.getMessage(), e.getCause().toString(), LogType.SYSTEM_ERROR);
+	        		e.getMessage(), String.valueOf(e.getCause()), LogType.SYSTEM_ERROR);
 	        HibernateSessionFactory.getSession().save(logInfo);
-	        HibernateSessionFactory.getSession().flush();
-	        HibernateSessionFactory.getSession().close();
+	        HibernateSessionFactory.closeSession();
 
     		throw new RuntimeException(e);
     	}
@@ -145,6 +140,7 @@ class F3Server {
      */
     static void shutdownServer() {
         try {
+        	// 服务器运行状态判断
         	if (!RUNNING) {
         		return;
         	}
@@ -159,21 +155,19 @@ class F3Server {
             // 关闭成功日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server stopped successfully!", null, null, LogType.SYSTEM_LOG);
 	        HibernateSessionFactory.getSession().save(logInfo);
-	        HibernateSessionFactory.getSession().flush();
-	        HibernateSessionFactory.getSession().close();
+	        HibernateSessionFactory.closeSession();
 
         } catch (Exception e) {
         	// 启动失败日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to stop!", 
-	        		e.getMessage(), e.getCause().toString(), LogType.SYSTEM_ERROR);
+	        		e.getMessage(), String.valueOf(e.getCause()), LogType.SYSTEM_ERROR);
 	        HibernateSessionFactory.getSession().save(logInfo);
-	        HibernateSessionFactory.getSession().flush();
-	        HibernateSessionFactory.getSession().close();
+	        HibernateSessionFactory.closeSession();
 
             log.error(e.getMessage());
         }
     }
-    
+
     /**
      * @param chain
      * @throws Exception

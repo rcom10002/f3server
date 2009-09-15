@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 public class PersistDisconnectScoreTestCase extends TestCase {
 
     protected void setUp() throws Exception {
-        HibernateSessionFactory.init();
         HibernateSessionFactory.getSession().beginTransaction();
         super.setUp();
     }

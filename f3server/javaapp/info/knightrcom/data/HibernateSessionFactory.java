@@ -34,14 +34,8 @@ public class HibernateSessionFactory {
         if (initilized) {
             return;
         }
-        try {
-            configuration.configure(configFile);
-            sessionFactory = configuration.buildSessionFactory();
-            initilized = true;
-        } catch (Exception e) {
-            System.err.println("%%%% Error Creating SessionFactory %%%%");
-            e.printStackTrace();
-        }
+        rebuildSessionFactory();
+        initilized = true;
     }
 
     static {
@@ -95,7 +89,8 @@ public class HibernateSessionFactory {
         Session session = (Session) threadLocal.get();
         threadLocal.set(null);
 
-        if (session != null) {
+        if (session != null && session.isOpen()) {
+        	session.flush();
             session.close();
         }
     }
