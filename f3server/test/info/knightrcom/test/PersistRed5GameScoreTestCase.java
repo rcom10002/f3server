@@ -29,17 +29,123 @@ public class PersistRed5GameScoreTestCase extends PersistScoreTestCase {
     }
 
     /**
-     * 红五独牌
+     * 红五独牌失败
      * 
      * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
      * 
-     * winnerNumbers = 4~2~1~3
+     * winnerNumbers = 1
      */
-    public void testRushScore() throws Exception {
+    public void testRushScoreFail() throws Exception {
         Red5Game game = new Red5Game();
         game.setSetting(Red5GameSetting.RUSH);
         game.getSetting().setPlayerNumber("2");
         game.setGameMark(5);
+        game.setLowLevelMark(10);
+        game.setMinGameStartMark(100);
+        game.addWinnerNumber("1");
+        game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");
+        addGamePlayer(game, 4);
+        game.persistScore();
+        Thread.sleep(3000);
+    }
+
+    /**
+     * 红五天独失败
+     * 
+     * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
+     * 
+     * winnerNumbers = 1
+     */
+    public void testDeadlyRushScoreFail() throws Exception {
+        Red5Game game = new Red5Game();
+        game.setSetting(Red5GameSetting.DEADLY_RUSH);
+        game.getSetting().setPlayerNumber("2");
+        game.setGameMark(5);
+        game.setMidLevelMark(20);
+        game.setMinGameStartMark(100);
+        game.addWinnerNumber("1");
+        game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");
+        addGamePlayer(game, 4);
+        game.persistScore();
+        Thread.sleep(3000);
+    }
+
+    /**
+     * 红五天外天失败
+     * 
+     * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
+     * 
+     * winnerNumbers = 1
+     */
+    public void testExtinctRushScoreFail() throws Exception {
+        Red5Game game = new Red5Game();
+        game.setSetting(Red5GameSetting.EXTINCT_RUSH);
+        game.getSetting().setPlayerNumber("2");
+        game.setGameMark(5);
+        game.setHighLevelMark(30);
+        game.setMinGameStartMark(100);
+        game.addWinnerNumber("1");
+        game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");
+        addGamePlayer(game, 4);
+        game.persistScore();
+        Thread.sleep(3000);
+    }
+
+    /**
+     * 红五独牌成功
+     * 
+     * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
+     * 
+     * winnerNumbers = 1
+     */
+    public void testRushScoreSuccess() throws Exception {
+        Red5Game game = new Red5Game();
+        game.setSetting(Red5GameSetting.RUSH);
+        game.getSetting().setPlayerNumber("1");
+        game.setGameMark(5);
+        game.setLowLevelMark(10);
+        game.setMinGameStartMark(100);
+        game.addWinnerNumber("1");
+        game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");
+        addGamePlayer(game, 4);
+        game.persistScore();
+        Thread.sleep(3000);
+    }
+
+    /**
+     * 红五天独成功
+     * 
+     * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
+     * 
+     * winnerNumbers = 1
+     */
+    public void testDeadlyRushScoreSuccess() throws Exception {
+        Red5Game game = new Red5Game();
+        game.setSetting(Red5GameSetting.DEADLY_RUSH);
+        game.getSetting().setPlayerNumber("1");
+        game.setGameMark(5);
+        game.setMidLevelMark(20);
+        game.setMinGameStartMark(100);
+        game.addWinnerNumber("1");
+        game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");
+        addGamePlayer(game, 4);
+        game.persistScore();
+        Thread.sleep(3000);
+    }
+
+    /**
+     * 红五天外天成功
+     * 
+     * gameRecord = 2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;
+     * 
+     * winnerNumbers = 1
+     */
+    public void testExtinctRushScoreSuccess() throws Exception {
+        Red5Game game = new Red5Game();
+        game.setSetting(Red5GameSetting.EXTINCT_RUSH);
+        game.getSetting().setPlayerNumber("1");
+        game.setGameMark(5);
+        game.setHighLevelMark(30);
         game.setMinGameStartMark(100);
         game.addWinnerNumber("1");
         game.appendGameRecord("2~1~3;2~1~4;2~1~1;2~1~2;2~1V10,4V10~3;3~1VQ,2VQ~4;4~2VK,3VK~1;1~1VA,3VA~2;2~2V5,3V5~3;2~2V5,3V5~4~pass;2~2V5,3V5~1~pass;2~2V5,3V5~2~pass;2~4VJ~3;3~4VA~4;4~4V5~1;4~4V5~2~pass;2~0VX~3;2~0VX~4~pass;2~0VX~1~pass;2~0VX~2~pass;2~2VQ,3VQ,4VQ~3;2~2VQ,3VQ,4VQ~4~pass;4~1VA,2VA,2VA~1;1~3V2,4V2,4V2~2;1~3V2,4V2,4V2~3~pass;1~3V2,4V2,4V2~4~pass;1~3V2,4V2,4V2~1~pass;1~3V10,1VJ,3VQ,4VK,3VA~2;1~3V10,1VJ,3VQ,4VK,3VA~3~pass;1~3V10,1VJ,3VQ,4VK,3VA~4~pass;1~3V10,1VJ,3VQ,4VK,3VA~1~pass;1~3VJ,4VQ,4VK,4VA~2;1~3VJ,4VQ,4VK,4VA~3~pass;1~3VJ,4VQ,4VK,4VA~4~pass;1~3VJ,4VQ,4VK,4VA~1~pass;1~4V5~2;");

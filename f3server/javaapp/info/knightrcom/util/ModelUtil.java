@@ -11,8 +11,6 @@ import info.knightrcom.model.global.Room;
 import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +63,7 @@ public class ModelUtil {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static Platform createPlatform() throws FileNotFoundException, IOException {
+    static {
         // 获取匹配信息
         // MOD 2009/07/02 BEGIN
 //        ResourceBundle bundle = ResourceBundle.getBundle(ModelUtil.class.getPackage().getName() + ".model_defination");
@@ -106,13 +104,12 @@ public class ModelUtil {
         stream.alias("lobby", Lobby.class);
         stream.alias("room", Room.class);
         stream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
-        modelDesc = "<e4x-data>#</e4x-data>".replace("#", stream.toXML(ModelUtil.getPlatform()));
+        modelDesc = "<e4x-data>#</e4x-data>".replace("#", stream.toXML(platform));
 
         // 初始化系统参数
         for (GlobalConfig eachParameter : new GlobalConfigDAO().findByType(GameConfigureConstant.SERVER_PARAM_NAME)) {
             systemParameters.put(eachParameter.getName(), eachParameter.getValue());
         }
-        return platform;
     }
 
     public static final String getModelDesc() {

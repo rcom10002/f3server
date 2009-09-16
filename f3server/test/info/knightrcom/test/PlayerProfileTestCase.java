@@ -10,17 +10,14 @@ import junit.framework.TestCase;
 
 public class PlayerProfileTestCase extends TestCase {
 
-    protected void setUp() throws Exception {
-        HibernateSessionFactory.getSession().beginTransaction();
+	public PlayerProfileTestCase() {
         HibernateSessionFactory.getSession().createSQLQuery("delete from player_score").executeUpdate();
         HibernateSessionFactory.getSession().createSQLQuery("delete from game_record").executeUpdate();
         HibernateSessionFactory.getSession().createSQLQuery("delete from periodly_sum").executeUpdate();
         HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile").executeUpdate();
-        HibernateSessionFactory.getSession().flush();
-        super.setUp();
-    }
+	}
 
-    public void testCreatePlayerProfile() {
+    public void testCreateAdministratorProfile() {
         PlayerProfile profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("admin");
@@ -33,9 +30,10 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setLevel(100);
         profile.setStatus("1");
         HibernateSessionFactory.getSession().save(profile);
-        HibernateSessionFactory.getSession().flush();
+    }
 
-        profile = new PlayerProfile();
+    public void testCreateGameMasterProfile() {
+    	PlayerProfile profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("SuperGameMaster");
         profile.setUserId("SuperGameMaster");
@@ -59,8 +57,10 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setLevel(100);
         profile.setStatus("1");
         HibernateSessionFactory.getSession().save(profile);
-        HibernateSessionFactory.getSession().flush();
- 
+    }
+
+    public void testCreatePlayerProfile() {
+    	PlayerProfile profile = new PlayerProfile();
         for (int i = 1; i <= 6; i++) {
             profile = new PlayerProfile();
             profile.setProfileId(UUID.randomUUID().toString());
@@ -73,7 +73,7 @@ public class PlayerProfileTestCase extends TestCase {
             profile.setInitLimit(500);
             profile.setLevel(0);
             profile.setStatus("1");
-            HibernateSessionFactory.getSession().merge(profile);
+            HibernateSessionFactory.getSession().save(profile);
         }
         // 添加组用户
         profile = new PlayerProfile();
@@ -87,7 +87,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setInitLimit(300);
         profile.setLevel(0);
         profile.setStatus("0");
-        HibernateSessionFactory.getSession().merge(profile);
+        HibernateSessionFactory.getSession().save(profile);
         profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
         profile.setName("user44");
@@ -99,14 +99,12 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setInitLimit(300);
         profile.setLevel(0);
         profile.setStatus("0");
-        HibernateSessionFactory.getSession().merge(profile);
-        HibernateSessionFactory.getSession().flush();
+        HibernateSessionFactory.getSession().save(profile);
     }
 
+    @Override
     protected void tearDown() throws Exception {
-        HibernateSessionFactory.getSession().getTransaction().commit();
-        HibernateSessionFactory.closeSession();
-        super.tearDown();
+    	HibernateSessionFactory.closeSession();
+    	super.tearDown();
     }
-
 }

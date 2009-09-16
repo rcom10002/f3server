@@ -15,9 +15,9 @@ public class LogInfoTest extends TestCase {
         LogInfo log = new LogInfo();
         log.setLogId(UUID.randomUUID().toString());
         log.setCaption("TEST " + new Date().toString());
+        log.setType("TEST_DATA");
         log.setInfo("This info was generated at " + DateFormat.getDateTimeInstance().format(new Date()));
         HibernateSessionFactory.getSession().save(log);
-        HibernateSessionFactory.getSession().flush();
-        HibernateSessionFactory.getSession().close();
+        HibernateSessionFactory.closeSession();
     }
 }
