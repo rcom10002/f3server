@@ -30,7 +30,7 @@ order by
     WHEN 'SuperGameMaster' THEN 'B'
     WHEN 'GameMaster' THEN 'C'
     ELSE `ROLE`
-    END, `CREATE_TIME` desc
+    END, `STATUS` `CREATE_TIME` desc
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_COUNT">

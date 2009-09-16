@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<!-- f3s service servlet -->
 	<servlet>
 		<description>F3S Application Servlet</description>
@@ -34,7 +34,6 @@
 		<display-name>F3SForwardServlet</display-name>
 		<servlet-name>F3SForwardServlet</servlet-name>
 		<servlet-class>info.knightrcom.web.F3SForwardServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 		<init-param>
 			<param-name>ccga</param-name>
 			<param-value>ccga/Administration.swf</param-value>
@@ -47,6 +46,7 @@
 			<param-name>readme</param-name>
 			<param-value>about_game_platform.html</param-value>
 		</init-param>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>F3SForwardServlet</servlet-name>

@@ -90,7 +90,10 @@ public class ModelDescriptorManipulateTest extends TestCase {
             HibernateSessionFactory.getSession().beginTransaction();
     	    HibernateSessionFactory.getSession().createSQLQuery("DELETE FROM global_config WHERE type = '" + GameConfigureConstant.SERVER_PARAM_NAME + "'").executeUpdate();
     	    Map<String, String> allConfigParameters = new HashMap<String, String>();
-    	    allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
+            allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
+            allConfigParameters.put("SYSTEM_SCORE_RATE", "5");
+            allConfigParameters.put("RANDOMIZE_WAITING_QUEUE", "false");
+            allConfigParameters.put("RANDOMIZE_WAITING_QUEUE", "10");
     	    for (String key : allConfigParameters.keySet()) {
     	        GlobalConfig config = new GlobalConfig();
     	        config.setGlobalConfigId(UUID.randomUUID().toString());

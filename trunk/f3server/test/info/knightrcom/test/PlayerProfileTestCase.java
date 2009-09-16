@@ -29,7 +29,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("Administrator");
         profile.setRlsPath("Administrator");
         profile.setCurrentScore(-1);
+        profile.setInitLimit(-1);
         profile.setLevel(100);
+        profile.setStatus("1");
         HibernateSessionFactory.getSession().save(profile);
         HibernateSessionFactory.getSession().flush();
 
@@ -41,7 +43,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("SuperGameMaster");
         profile.setRlsPath("Administrator");
         profile.setCurrentScore(-1);
+        profile.setInitLimit(-1);
         profile.setLevel(100);
+        profile.setStatus("0");
         HibernateSessionFactory.getSession().save(profile);
         profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
@@ -51,7 +55,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("GameMaster");
         profile.setRlsPath("Administrator");
         profile.setCurrentScore(-1);
+        profile.setInitLimit(-1);
         profile.setLevel(100);
+        profile.setStatus("1");
         HibernateSessionFactory.getSession().save(profile);
         HibernateSessionFactory.getSession().flush();
  
@@ -64,7 +70,9 @@ public class PlayerProfileTestCase extends TestCase {
             profile.setRole("GroupUser");
             profile.setRlsPath("user" + i);
             profile.setCurrentScore(500);
+            profile.setInitLimit(500);
             profile.setLevel(0);
+            profile.setStatus("1");
             HibernateSessionFactory.getSession().merge(profile);
         }
         // 添加组用户
@@ -76,7 +84,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("GroupUser");
         profile.setRlsPath("user3!user33");
         profile.setCurrentScore(300);
+        profile.setInitLimit(300);
         profile.setLevel(0);
+        profile.setStatus("0");
         HibernateSessionFactory.getSession().merge(profile);
         profile = new PlayerProfile();
         profile.setProfileId(UUID.randomUUID().toString());
@@ -86,7 +96,9 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setRole("User");
         profile.setRlsPath("user4!user44");
         profile.setCurrentScore(300);
+        profile.setInitLimit(300);
         profile.setLevel(0);
+        profile.setStatus("0");
         HibernateSessionFactory.getSession().merge(profile);
         HibernateSessionFactory.getSession().flush();
     }
