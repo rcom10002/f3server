@@ -21,7 +21,7 @@ public class PersistScoreTestCase extends TestCase {
      */
     protected void addGamePlayer(Game<?> game, int playersNumber) {
     	for (int i = 0; i < playersNumber; i++) {
-    		final int currentIndex = i;
+    		final int currentIndex = i + 1;
             game.getPlayers().add(new Player() {
                 {
                     this.id = "user" + currentIndex;
@@ -37,7 +37,6 @@ public class PersistScoreTestCase extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        HibernateSessionFactory.getSession().getTransaction().commit();
         HibernateSessionFactory.closeSession();
         super.tearDown();
     }
