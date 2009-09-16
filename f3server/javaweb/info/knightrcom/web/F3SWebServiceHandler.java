@@ -82,7 +82,7 @@ public class F3SWebServiceHandler {
                     HibernateSessionFactory.getSession().getTransaction().rollback();
                 }
                 // 记录日志
-                LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().toString(), null, ex.getMessage(), LogType.WEB_ERROR);
+                LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().getClass().getName(), ex.getMessage(), ex.getCause().toString(), LogType.WEB_ERROR);
                 HibernateSessionFactory.getSession().save(logInfo);
                 HibernateSessionFactory.getSession().flush();
                 throw ex;

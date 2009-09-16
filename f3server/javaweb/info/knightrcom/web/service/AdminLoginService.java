@@ -8,7 +8,6 @@ import info.knightrcom.web.model.EntityInfo;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -19,9 +18,11 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
 	public String LOGIN_ADMIN_SERVER(HttpServletRequest request, HttpServletResponse response) {
 		String username = request.getParameter("USERNAME");
 		String password = EncryptionUtil.encryptSHA(request.getParameter("PASSWORD"));
-        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(
-                Restrictions.and(Property.forName("userId").eq(username), 
-                                 Property.forName("password").eq(password))).uniqueResult();
+        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(
+                        Restrictions.eq("userId", username)).add(
+                        Restrictions.eq("password", password)).add(
+                        Restrictions.eq("status", "1")).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
         if (profile != null && !"User".equals(profile.getRole())) {
             info.setEntity(new Object() {

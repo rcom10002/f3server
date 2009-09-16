@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -57,9 +56,11 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
     		}
         }
         String results[] = message.getContent().split("~");
-        PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.and(
-                Property.forName("userId").eq(results[0]), 
-                Property.forName("password").eq(EncryptionUtil.encryptSHA(results[1])))).uniqueResult();
+        PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(
+                        Restrictions.eq("userId", results[0])).add(
+                        Restrictions.eq("password", EncryptionUtil.encryptSHA(results[1]))).add(
+                        Restrictions.eq("status", "1")).uniqueResult();
         if (profile == null) {
             // 用户名或密码错误
             echoMessage.setResult(LOGIN_ERROR_USERNAME_OR_PASSWORD);
