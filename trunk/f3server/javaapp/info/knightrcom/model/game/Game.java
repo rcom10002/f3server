@@ -1,6 +1,7 @@
 package info.knightrcom.model.game;
 
 import info.knightrcom.model.global.Player;
+import info.knightrcom.util.ModelUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -257,7 +258,7 @@ public abstract class Game<T> {
 	private BigDecimal getSystemScoreRate(int currentScore) {
 		if (systemScoreRate == 0) {
 			// FIXME 取得系统全局配置的参数
-			systemScoreRate = 5;
+			systemScoreRate = Integer.parseInt(ModelUtil.getSystemParameters("SYSTEM_SCORE_RATE"));
 		}
 		return new BigDecimal(systemScoreRate);
 	}
@@ -268,7 +269,10 @@ public abstract class Game<T> {
 	 * @param currentScore
 	 * @return the customSystemScore
 	 */
-	public BigDecimal getCustomSystemScore(int currentScore) {
-		return new BigDecimal(currentScore).multiply(getSystemScoreRate(currentScore)).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
+	public int getCustomSystemScore(int currentScore) {
+		if (currentScore > 0) {
+			return new BigDecimal(currentScore).multiply(getSystemScoreRate(currentScore)).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).intValue();
+		}
+		return 0;
 	}
 }
