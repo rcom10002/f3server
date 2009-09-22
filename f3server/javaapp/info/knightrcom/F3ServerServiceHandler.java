@@ -27,6 +27,7 @@ import info.knightrcom.model.global.Room;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.util.SystemLogger;
 
 import java.util.Collections;
@@ -178,7 +179,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
             // session.close(false) ???
             // 需要移除内存中相关的在线用户信息
             session.close(true);
-            LogInfo logInfo = SystemLogger.createLog(LogType.SYSTEM_ERROR.toString(), cause.getMessage(), cause.getStackTrace().toString(), LogType.SYSTEM_ERROR);
+            LogInfo logInfo = SystemLogger.createLog(LogType.SYSTEM_ERROR.toString(), cause.getMessage(), StringHelper.convertExceptionStack2String(cause), LogType.SYSTEM_ERROR);
             HibernateSessionFactory.getSession().save(logInfo);
             HibernateSessionFactory.getSession().flush();
             HibernateSessionFactory.getSession().close();

@@ -4,9 +4,9 @@ import info.knightrcom.F3ServerProxy;
 import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.service.F3SWebService;
 
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,32 +67,29 @@ public class F3SWebServiceHandler {
         String serviceName = request.getServletPath().replaceAll("/|\\.f3s", "");
         F3SWebService<?> service = services.get(serviceName);
         Method process = methods.get(serviceName + "#" + request.getParameter("PROCESS"));
-        PrintWriter out = response.getWriter();
-        if (process != null) {
-            try {
-                HibernateSessionFactory.getSession().beginTransaction();
-                String responseText = (String)process.invoke(service, request, response);
-                out.println(responseText);
-                log.debug(responseText);
+        try {
+            HibernateSessionFactory.getSession().beginTransaction();
+            String responseText = null;
+            if (process != null) {
+                responseText = (String)process.invoke(service, request, response);
                 if (HibernateSessionFactory.getSession().getTransaction().isActive()) {
                     HibernateSessionFactory.getSession().getTransaction().commit();
                 }
-            } catch (Exception ex) {
-                if (HibernateSessionFactory.getSession().getTransaction().isActive()) {
-                    HibernateSessionFactory.getSession().getTransaction().rollback();
-                }
-                // 记录日志
-                LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().getClass().getName(), ex.getMessage(), ex.getCause().toString(), LogType.WEB_ERROR);
-                HibernateSessionFactory.getSession().save(logInfo);
-                HibernateSessionFactory.getSession().flush();
-                throw ex;
-            } finally {
-        		HibernateSessionFactory.closeSession();
+            } else {
+                responseText = (String)service.serializeResponseStream(request, response);
             }
-        } else {
-            String responseText = (String)service.serializeResponseStream(request, response);
             log.debug(responseText);
-            out.println(responseText);
+            response.getWriter().print(responseText);
+        } catch (Exception ex) {
+            if (HibernateSessionFactory.getSession().getTransaction().isActive()) {
+                HibernateSessionFactory.getSession().getTransaction().rollback();
+            }
+            // 记录日志
+            LogInfo logInfo = F3ServerProxy.createLogInfo(ex.getCause().getClass().getName(), ex.getMessage(), StringHelper.convertExceptionStack2String(ex), LogType.WEB_ERROR);
+            HibernateSessionFactory.getSession().save(logInfo);
+            throw ex;
+        } finally {
+            HibernateSessionFactory.closeSession();
         }
     }
 

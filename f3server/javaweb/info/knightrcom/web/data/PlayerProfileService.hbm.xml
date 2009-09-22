@@ -24,13 +24,13 @@ from
 where
     (`ROLE` = ? or ? IS NULL) and
     (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
-    (`USER_ID` LIKE CONCAT(?, '%') or ? IS NULL)
+    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL)
 order by 
     CASE `ROLE`
     WHEN 'SuperGameMaster' THEN 'B'
     WHEN 'GameMaster' THEN 'C'
     ELSE `ROLE`
-    END, `STATUS` `CREATE_TIME` desc
+    END, `STATUS`, `CREATE_TIME` desc
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_COUNT">
@@ -40,7 +40,7 @@ SELECT COUNT(*) AS RECORD_COUNT
  WHERE
     (`ROLE` = ? or ? IS NULL) and
     (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
-    (`USER_ID` LIKE CONCAT(?, '%') or ? IS NULL)
+    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL)
     ]]>
     </sql-query>
     <sql-query name="PLAYER_PROFILE_ALL_RLS_PATH">

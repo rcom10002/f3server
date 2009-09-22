@@ -60,6 +60,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
                 PlayerProfile.class).add(
                         Restrictions.eq("userId", results[0])).add(
                         Restrictions.eq("password", EncryptionUtil.encryptSHA(results[1]))).add(
+                        Restrictions.ne("role", "Administrator")).add(
                         Restrictions.eq("status", "1")).uniqueResult();
         if (profile == null) {
             // 用户名或密码错误

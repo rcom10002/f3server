@@ -6,6 +6,7 @@ import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.model.global.Platform;
 import info.knightrcom.ssl.BogusSslContextFactory;
 import info.knightrcom.util.ModelUtil;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.util.SystemLogger;
 
 import java.net.InetSocketAddress;
@@ -127,7 +128,7 @@ class F3Server {
     	} catch (Exception e) {
     		// 启动失败日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to start!", 
-	        		e.getMessage(), String.valueOf(e.getCause()), LogType.SYSTEM_ERROR);
+	        		e.getMessage(), StringHelper.convertExceptionStack2String(e), LogType.SYSTEM_ERROR);
 	        HibernateSessionFactory.getSession().save(logInfo);
 	        HibernateSessionFactory.closeSession();
 
@@ -160,7 +161,7 @@ class F3Server {
         } catch (Exception e) {
         	// 启动失败日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to stop!", 
-	        		e.getMessage(), String.valueOf(e.getCause()), LogType.SYSTEM_ERROR);
+	        		e.getMessage(), StringHelper.convertExceptionStack2String(e), LogType.SYSTEM_ERROR);
 	        HibernateSessionFactory.getSession().save(logInfo);
 	        HibernateSessionFactory.closeSession();
 

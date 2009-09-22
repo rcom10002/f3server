@@ -22,6 +22,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 PlayerProfile.class).add(
                         Restrictions.eq("userId", username)).add(
                         Restrictions.eq("password", password)).add(
+                        Restrictions.ne("role", "User")).add(
                         Restrictions.eq("status", "1")).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
         if (profile != null && !"User".equals(profile.getRole())) {

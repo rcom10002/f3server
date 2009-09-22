@@ -18,6 +18,11 @@ import org.apache.commons.logging.LogFactory;
 abstract class F3SServlet extends HttpServlet {
 
 	/**
+     * 
+     */
+    private static final long serialVersionUID = -4114083020111046180L;
+
+    /**
 	 * 
 	 */
 	protected Log log = LogFactory.getLog(this.getClass());
@@ -57,7 +62,7 @@ abstract class F3SServlet extends HttpServlet {
      *             if an error occurred
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doProcess(request, response);
+        _doProcess(request, response);
     }
 
     /**
@@ -76,10 +81,21 @@ abstract class F3SServlet extends HttpServlet {
      *             if an error occurred
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        _doProcess(request, response);
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void _doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 输出流编码设置
         response.setCharacterEncoding("utf-8");
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8");
+        // 执行处理
         doProcess(request, response);
     }
 
