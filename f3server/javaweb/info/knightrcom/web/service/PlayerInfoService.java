@@ -5,6 +5,7 @@ import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.entity.TodayInfo;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
@@ -38,4 +39,24 @@ public class PlayerInfoService extends F3SWebService<PlayerScore> {
     public Class<?>[] getAliasTypes() {
         return new Class<?>[] {PlayerScore.class, TodayInfo.class};
     }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public String HISTORY_RECHARGE_INFO(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return null;
+	}
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public String CHANGE_PASSWORD(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return null;
+	}
 }
