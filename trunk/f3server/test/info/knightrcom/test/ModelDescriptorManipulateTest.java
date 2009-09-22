@@ -70,6 +70,7 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	    Map<String, String> allConfigParameters = new HashMap<String, String>();
         allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
         allConfigParameters.put("SYSTEM_SCORE_RATE", "5");
+        allConfigParameters.put("PAGE_SIZE", "15");
         allConfigParameters.put("WAITING_QUEUE_CAN_RANDOM", "false");
         allConfigParameters.put("WAITING_QUEUE_MAX_NUMBER", "10");
 	    for (String key : allConfigParameters.keySet()) {

@@ -67,6 +67,8 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     }
 
     /**
+     * 用户关系
+     * 
      * @param request
      * @param response
      * @return
@@ -89,6 +91,8 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     }
 
     /**
+     * 用户角色
+     * 
      * @param request
      * @param response
      * @return
@@ -186,6 +190,8 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
     }
 
     /**
+     * 用户关系树
+     * 
 	 * @param request
 	 * @param response
 	 * 
@@ -237,6 +243,8 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 	}
 
     /**
+     * 用户人数比例图
+     * 
 	 * @param request
 	 * @param response
 	 * 

@@ -1,5 +1,7 @@
 package info.knightrcom.web.model;
 
+import info.knightrcom.util.ModelUtil;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -8,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Pagination {
 
-    public static final int DEFAULT_PAGE_SIZE = 10;
+    public static final int DEFAULT_PAGE_SIZE = Integer.valueOf(ModelUtil.getSystemParameters("PAGE_SIZE"));
 
     private Log log = LogFactory.getLog(Pagination.class);
 
