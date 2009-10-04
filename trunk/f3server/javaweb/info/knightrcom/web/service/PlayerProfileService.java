@@ -29,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.w3c.dom.Document;
@@ -201,6 +202,15 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 	public String SHOW_RLS_PATH_TREE(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_TREE");
+		PlayerProfile profile = (PlayerProfile) request.getSession().getAttribute("PROFILE");
+		if (profile.getRole().equals("Administrator")) {
+			query.setString(0, "null");
+			query.setString(1, "null");
+			
+		} else {
+			query.setString(0, profile.getUserId());
+			query.setString(1, profile.getUserId());
+		}
 		List<Object[]> resultList = (List<Object[]>)query.list();
 		Map<String, Element> parents = new HashMap<String, Element>();
 
@@ -213,12 +223,13 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 
 		for (Object[] eachRow : resultList) {
 			// key is the user_id and value is the "root!" + rls_path
-			String pathKeyStr = eachRow[0].toString();
+//			String pathKeyStr = eachRow[0].toString();
 			String pathValStr = eachRow[1].toString();
 			String pathRole = eachRow[2].toString();
 			String parentPathValStr = pathValStr.replaceFirst("![^!]+$", "");
 			Element path = document.createElement("rlspath");
-			path.setAttribute("key", pathKeyStr);
+//			path.setAttribute("key", pathKeyStr);
+			path.setAttribute("key", pathValStr.replace(parentPathValStr, "").replace("!", ""));
 			path.setAttribute("val", pathValStr);
 			path.setAttribute("role", pathRole);
 			path.setAttribute("parent", parentPathValStr);
@@ -259,4 +270,20 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         info.setTag(resultList.toArray());
 		return toXML(info, getAliasTypes());
 	}
+	
+	
+	/**
+	 * 通过USERID取得PLAYER对象
+     * @param request
+     * @param response
+     * @return
+     */
+    public String READ_PLAYER_PROFILE_BY_USER_ID(HttpServletRequest request, HttpServletResponse response) {
+    	final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("USER_ID"))).uniqueResult();
+        EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
+        info.setEntity(profile);
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        return toXML(info, new Class[] {PlayerProfile.class});
+    }
 }
