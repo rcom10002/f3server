@@ -52,6 +52,7 @@
 	<mapping resource="info/knightrcom/web/data/GlobalConfigService.hbm.xml" />
 	<mapping resource="info/knightrcom/web/data/LogInfoService.hbm.xml" />
 	<mapping resource="info/knightrcom/web/data/SystemInfoService.hbm.xml" />
+	<mapping resource="info/knightrcom/web/data/RechargeRecordService.hbm.xml" />
 </session-factory>
 
 </hibernate-configuration>

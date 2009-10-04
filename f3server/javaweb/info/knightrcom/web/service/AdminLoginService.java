@@ -28,7 +28,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
         if (profile != null && !"User".equals(profile.getRole())) {
             info.setEntity(new Object() {
                 @SuppressWarnings("unused")
-                String profileId = profile.getRole();
+                String profileId = profile.getProfileId();
                 @SuppressWarnings("unused")
                 String userId = profile.getUserId();
                 @SuppressWarnings("unused")
