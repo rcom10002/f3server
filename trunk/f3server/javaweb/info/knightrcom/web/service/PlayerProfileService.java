@@ -203,10 +203,9 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 			HttpServletResponse response) throws Exception {
 		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_TREE");
 		PlayerProfile profile = (PlayerProfile) request.getSession().getAttribute("PROFILE");
-		if (profile.getRole().equals("Administrator")) {
+		if ("Administrator".equals(profile.getRlsPath())) {
 			query.setString(0, "null");
 			query.setString(1, "null");
-			
 		} else {
 			query.setString(0, profile.getUserId());
 			query.setString(1, profile.getUserId());

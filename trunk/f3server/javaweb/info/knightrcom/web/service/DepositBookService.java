@@ -49,6 +49,7 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
 
     /**
      * 我的充值记录
+     * 
      * @param request
      * @param response
      * @return
@@ -62,9 +63,10 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
     	info.setEntityList(query.list());
         return toXML(info, getAliasTypes());
     }
-    
+
     /**
      * 玩家的充值记录
+     * 
      * @param request
      * @param response
      * @return
@@ -78,14 +80,14 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
     	info.setEntityList(query.list());
         return toXML(info, getAliasTypes());
     }
-    
+
     /**
      * 充值
+     * 
      * @param request
      * @param response
      * @return
      */
-    @SuppressWarnings("unchecked")
 	public String SAVE_RECHARGE_RECORD(HttpServletRequest request, HttpServletResponse response) {
     	EntityInfo<RechargeRecord> info = new EntityInfo<RechargeRecord>();
         String fromPlayer = request.getParameter("FROM_PLAYER");
