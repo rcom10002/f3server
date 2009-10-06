@@ -53,7 +53,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 	 * @param query
 	 * @param request
 	 */
-	public void processInsertSetting(Query query, HttpServletRequest request) {
+	private void processInsertSetting(Query query, HttpServletRequest request) {
 		query.setTimestamp(0, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
         query.setTimestamp(1, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
 		query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
