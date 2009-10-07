@@ -202,13 +202,20 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
 	public String SHOW_RLS_PATH_TREE(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		Query query = HibernateSessionFactory.getSession().getNamedQuery("RLS_PATH_TREE");
-		PlayerProfile profile = (PlayerProfile) request.getSession().getAttribute("PROFILE");
-		if ("Administrator".equals(profile.getRlsPath())) {
+		final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("USER_ID"))).uniqueResult();
+		if (profile != null) {
+	        if ("Administrator".equals(profile.getRlsPath())) {
+				query.setString(0, "null");
+				query.setString(1, "null");
+				
+			} else {
+				query.setString(0, profile.getUserId());
+				query.setString(1, profile.getUserId());
+			}
+		} else {
 			query.setString(0, "null");
 			query.setString(1, "null");
-		} else {
-			query.setString(0, profile.getUserId());
-			query.setString(1, profile.getUserId());
 		}
 		List<Object[]> resultList = (List<Object[]>)query.list();
 		Map<String, Element> parents = new HashMap<String, Element>();
