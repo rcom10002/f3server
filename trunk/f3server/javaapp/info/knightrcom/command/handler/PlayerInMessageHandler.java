@@ -102,7 +102,6 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
             currentPlayer.getParent().removeChild(currentPlayer.getId());
             currentPlayer.setParent(null);
         }
-        currentPlayer.setCurrentStatus(GameStatus.IDLE);
         // 重新设置房间与玩家的关系
         String roomId = message.getContent();
         Room currentRoom = ModelUtil.getRoom(roomId);
