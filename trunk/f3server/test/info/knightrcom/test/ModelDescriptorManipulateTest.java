@@ -71,8 +71,8 @@ public class ModelDescriptorManipulateTest extends TestCase {
         allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
         allConfigParameters.put("SYSTEM_SCORE_RATE", "5");
         allConfigParameters.put("PAGE_SIZE", "15");
-        allConfigParameters.put("WAITING_QUEUE_CAN_RANDOM", "false");
-        allConfigParameters.put("WAITING_QUEUE_MAX_NUMBER", "10");
+        allConfigParameters.put("WAITING_QUEUE_RANDOM_ENABLE", "false");
+        allConfigParameters.put("WAITING_QUEUE_GROUP_QUANTITY", "1");
 	    for (String key : allConfigParameters.keySet()) {
 	        GlobalConfig config = new GlobalConfig();
 	        config.setGlobalConfigId(UUID.randomUUID().toString());
