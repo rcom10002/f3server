@@ -36,7 +36,6 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 @SuppressWarnings("unused")
                 String role = profile.getRole();
             });
-            request.getSession().setAttribute("PROFILE", profile);
         	info.setResult(F3SWebServiceResult.SUCCESS);
         } else {
         	info.setResult(F3SWebServiceResult.FAIL);

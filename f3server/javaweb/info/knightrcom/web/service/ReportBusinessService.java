@@ -38,7 +38,8 @@ public class ReportBusinessService extends F3SWebService<PlayerScore> {
         query.setTimestamp(4, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
         query.setInteger(5, new Integer(request.getParameter("SHOW_CONDITION")));
         query.setInteger(6, new Integer(request.getParameter("SHOW_CONDITION")));
-        PlayerProfile profile = (PlayerProfile) request.getSession().getAttribute("PROFILE");
+        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("CURRENT_USER_ID"))).uniqueResult();
         if ("GroupUser".equals(profile.getRole())) {
         	query.setString(7, profile.getUserId());
         } else {
