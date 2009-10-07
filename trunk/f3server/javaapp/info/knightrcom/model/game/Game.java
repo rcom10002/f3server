@@ -252,10 +252,9 @@ public abstract class Game<T> {
 	/**
 	 * 默认系统分
 	 * 
-	 * @param currentScore
 	 * @return the defaultSystemScore
 	 */
-	private BigDecimal getSystemScoreRate(int currentScore) {
+	private BigDecimal getSystemScoreRate() {
 		if (systemScoreRate == 0) {
 			// FIXME 取得系统全局配置的参数
 			systemScoreRate = Integer.parseInt(ModelUtil.getSystemParameters("SYSTEM_SCORE_RATE"));
@@ -271,7 +270,7 @@ public abstract class Game<T> {
 	 */
 	public int getCustomSystemScore(int currentScore) {
 		if (currentScore > 0) {
-			return new BigDecimal(currentScore).multiply(getSystemScoreRate(currentScore)).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).intValue();
+			return new BigDecimal(currentScore).multiply(getSystemScoreRate()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).intValue();
 		}
 		return 0;
 	}
