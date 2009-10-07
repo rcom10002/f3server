@@ -42,6 +42,7 @@ public class ModelUtil {
     	lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     	rooms = Collections.synchronizedMap(new HashMap<String, Room>());
     	systemParameters = new HashMap<String, String>();
+        load();
     }
 
     /**
@@ -58,12 +59,16 @@ public class ModelUtil {
         sessions = sessionSet;
     }
 
+    static {
+        load();
+    }
+
     /**
      * @return
      * @throws FileNotFoundException
      * @throws IOException
      */
-    static {
+    private static void load() {
         // 获取匹配信息
         // MOD 2009/07/02 BEGIN
 //        ResourceBundle bundle = ResourceBundle.getBundle(ModelUtil.class.getPackage().getName() + ".model_defination");
