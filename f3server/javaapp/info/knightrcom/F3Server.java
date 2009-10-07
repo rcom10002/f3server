@@ -3,7 +3,6 @@ package info.knightrcom;
 import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
-import info.knightrcom.model.global.Platform;
 import info.knightrcom.ssl.BogusSslContextFactory;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.StringHelper;
@@ -113,8 +112,7 @@ class F3Server {
 	        addLogger(chain);
 
 	        // 绑定处理器和监听
-	        Platform platform = ModelUtil.getPlatform();
-	        acceptor.setHandler(new F3ServerServiceHandler(platform));
+	        acceptor.setHandler(new F3ServerServiceHandler(ModelUtil.getPlatform()));
 	        acceptor.bind(new InetSocketAddress(PORT));
 	        log.info("LISTENING ON PORT " + PORT);
 

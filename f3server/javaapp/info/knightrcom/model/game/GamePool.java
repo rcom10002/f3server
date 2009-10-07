@@ -33,7 +33,7 @@ public class GamePool {
      * 
      * @param players
      */
-    public static void prepareRed5Game(List<Player> players) {
+    public static String prepareRed5Game(List<Player> players) {
         // 创建游戏信息
         Red5Game game = new Red5Game();
         String gameId = game.getId();
@@ -58,6 +58,7 @@ public class GamePool {
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);
+        return gameId;
     }
 
     /**
@@ -174,7 +175,8 @@ public class GamePool {
      */
     public static synchronized <T extends Game<?>> void distroyGame(String gameId, Class<T> gameType) {
         T game = gameType.cast(games.remove(gameId));
-        game.getPlayers().clear();
-        games.remove(gameId);
+        if (game != null) {
+            game.getPlayers().clear();
+        }
     }
 }

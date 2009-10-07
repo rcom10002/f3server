@@ -32,13 +32,13 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
 
     @Override
     public void GAME_JOIN_MATCHING_QUEUE(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
-        // 按优先级别选择游戏玩家进行游戏安排
-        // TODO 玩家进入游戏等待队列
-        // 判断当前房间内等候的玩家个数是否足够以开始游戏
+        // 玩家进入游戏等待队列
         Player currentPlayer = ModelUtil.getPlayer(session);
         currentPlayer.setCurrentStatus(GameStatus.MATCHING);
         Room currentRoom = currentPlayer.getCurrentRoom();
-        if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < Red5Game.PLAYER_COGAME_NUMBER) {
+        // 判断当前房间内等候的玩家个数是否足够以开始游戏
+        int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+        if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) {
             String content = "当前房间等候的玩家数(" + currentRoom.getGameStatusNumber(GameStatus.MATCHING) + 
                 ")不足以开始新的游戏，请稍候。";
             echoMessage.setResult(GAME_WAIT);
@@ -55,7 +55,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     playersInQueue.add(eachPlayer);
                 }
             }
-            // 按照等候的优先顺序进行排序
+            // 按照等候的优先顺序进行排序，使先进入等待队列的玩家排在前面
             Collections.sort(playersInQueue, new Comparator<Player>() {
                 public int compare(Player p1, Player p2) {
                     if (p1.getLastPlayTime() > p2.getLastPlayTime()) {
@@ -66,56 +66,69 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     return 0;
                 }
             });
-            playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER);
-            // 根据玩家当前的所在的房间进来开始游戏
-            GamePool.prepareRed5Game(playersInQueue);
-            for (Player eachPlayer : playersInQueue) {
-                // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
-                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
-                echoMessage.setResult(GAME_CREATE);
-                echoMessage.setContent(
-                        eachPlayer.getGameId() + "~" + 
-                        eachPlayer.getCurrentNumber() + "~" + 
-                        Red5Game.PLAYER_COGAME_NUMBER);
-                sessionWrite(eachPlayer.getIosession(), echoMessage);
+            // 按照系统设置的最大游戏开始人数进行人数截取
+            playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER * groupQuantity);
+            if ("true".equals(ModelUtil.getSystemParameters("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
+                // 将玩家再次随机调整顺序
+                Collections.shuffle(playersInQueue);
             }
-        }
-        // 根据当前触发游戏开始的玩家所携带的游戏id来取得游戏实例
-        Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
-        List<Player> playersInGame = game.getPlayers();
-        // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
-        boolean isFirstOut = false;
-        Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
-        // 取得合作玩家手中所持有的牌数
-        String pokerNumberOfEachPlayer = "";
-        for (int i = 0; i < eachShuffledPokers.length; i++) {
-            int lastIndex = eachShuffledPokers[i].length - 1;
-            pokerNumberOfEachPlayer += i + "=";
-            if (eachShuffledPokers[i][lastIndex] == null) {
-                pokerNumberOfEachPlayer += (eachShuffledPokers[i].length - 1) + ","; 
-            } else {
-                pokerNumberOfEachPlayer += eachShuffledPokers[i].length + ",";
-            }
-        }
-        pokerNumberOfEachPlayer = pokerNumberOfEachPlayer.replaceFirst(",$", "");
-        // 开始发牌 
-        for (int i = 0; i < eachShuffledPokers.length; i++) {
-            StringBuilder builder = new StringBuilder();
-            for (int j = 0; j < eachShuffledPokers[i].length; j++) {
-                builder.append(eachShuffledPokers[i][j].getValue() + ",");
-            }
-            echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
-            echoMessage.setResult(GAME_STARTED);
-            echoMessage.setContent(builder.toString().replaceFirst(",$", "~") + pokerNumberOfEachPlayer);
-            sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
-            // 记录游戏初始时玩家手中的牌信息
-            game.appendGameRecord(echoMessage.getContent());
-            if (!isFirstOut && builder.indexOf(Red5Game.START_POKER.getValue()) > -1) {
-                // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则为首次发牌的玩家发送消息
-                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
-                echoMessage.setResult(GAME_FIRST_PLAY);
-                sessionWrite(playersInGame.get(i).getIosession(), echoMessage);
-                isFirstOut = true;
+            List<Player> playersInGroup = new ArrayList<Player>();
+            for (int i = 0; i < playersInQueue.size(); i++) {
+                playersInGroup.add(playersInQueue.get(i));
+                if ((i + 1) % Red5Game.PLAYER_COGAME_NUMBER != 0) {
+                    continue;
+                }
+                // 根据玩家当前的所在的房间进来开始游戏
+                String gameId = GamePool.prepareRed5Game(playersInGroup);
+                for (Player eachPlayer : playersInGroup) {
+                    // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
+                    echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                    echoMessage.setResult(GAME_CREATE);
+                    echoMessage.setContent(
+                            eachPlayer.getGameId() + "~" + 
+                            eachPlayer.getCurrentNumber() + "~" + 
+                            Red5Game.PLAYER_COGAME_NUMBER);
+                    sessionWrite(eachPlayer.getIosession(), echoMessage);
+                }
+                // 根据当前触发游戏开始的玩家所携带的游戏id来取得游戏实例
+                Red5Game game = GamePool.getGame(gameId, Red5Game.class);
+                List<Player> playersInGame = game.getPlayers();
+                // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
+                boolean isFirstOut = false;
+                Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
+                // 取得合作玩家手中所持有的牌数
+                String pokerNumberOfEachPlayer = "";
+                for (int index = 0; index < eachShuffledPokers.length; index++) {
+                    int lastIndex = eachShuffledPokers[index].length - 1;
+                    pokerNumberOfEachPlayer += index + "=";
+                    if (eachShuffledPokers[index][lastIndex] == null) {
+                        pokerNumberOfEachPlayer += (eachShuffledPokers[index].length - 1) + ","; 
+                    } else {
+                        pokerNumberOfEachPlayer += eachShuffledPokers[index].length + ",";
+                    }
+                }
+                pokerNumberOfEachPlayer = pokerNumberOfEachPlayer.replaceFirst(",$", "");
+                // 开始发牌 
+                for (int m = 0; m < eachShuffledPokers.length; m++) {
+                    StringBuilder builder = new StringBuilder();
+                    for (int n = 0; n < eachShuffledPokers[m].length; n++) {
+                        builder.append(eachShuffledPokers[m][n].getValue() + ",");
+                    }
+                    echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                    echoMessage.setResult(GAME_STARTED);
+                    echoMessage.setContent(builder.toString().replaceFirst(",$", "~") + pokerNumberOfEachPlayer);
+                    sessionWrite(playersInGame.get(m).getIosession(), echoMessage);
+                    // 记录游戏初始时玩家手中的牌信息
+                    game.appendGameRecord(echoMessage.getContent());
+                    if (!isFirstOut && builder.indexOf(Red5Game.START_POKER.getValue()) > -1) {
+                        // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则为首次发牌的玩家发送消息
+                        echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                        echoMessage.setResult(GAME_FIRST_PLAY);
+                        sessionWrite(playersInGame.get(m).getIosession(), echoMessage);
+                        isFirstOut = true;
+                    }
+                }
+                playersInGroup.clear();
             }
         }
     }

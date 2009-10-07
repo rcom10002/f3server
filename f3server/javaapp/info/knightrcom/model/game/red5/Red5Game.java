@@ -92,7 +92,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             // 假设此局的大小为“X”，如果没有玩家叫牌，那么
             // 第一个出完牌的玩家赢2X，第二位出完牌的玩家赢X，第三为出完牌的玩家输X，最后一 位玩家输2X
             int resultScore = 0;
-            int systemScore = 0;
             switch (playerPlace) {
             case 1:
                 // 第一名
@@ -128,8 +127,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
         }
         gameRecord.setPlayers(playerIds);
     }
@@ -269,7 +268,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
             int resultScore = 0;
-            int systemScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
@@ -304,8 +302,8 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(resultScore);
-            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(systemScore);
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
         }
         gameRecord.setPlayers(playerIds);
     }
