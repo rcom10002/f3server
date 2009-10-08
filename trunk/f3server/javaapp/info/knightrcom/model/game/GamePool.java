@@ -167,6 +167,9 @@ public class GamePool {
      */
     @SuppressWarnings("unchecked")
     public static synchronized <T extends Game> T getGame(String gameId, Class<T> gameType) {
+        if (gameId == null) {
+            return null;
+        }
         return gameType.cast(games.get(gameId));
     }
 
