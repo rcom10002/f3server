@@ -91,10 +91,6 @@ abstract class F3SServlet extends HttpServlet {
      * @throws IOException
      */
     private void _doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 输出流编码设置
-        response.setCharacterEncoding("utf-8");
-        request.setCharacterEncoding("utf-8");
-        response.setContentType("text/html; charset=utf-8");
         // 执行处理
         doProcess(request, response);
     }
