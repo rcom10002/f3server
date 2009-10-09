@@ -25,6 +25,8 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
 
     private Integer fromCurScore;
 
+    private Integer score;
+
     private String toPlayer;
 
     private Integer toOrgScore;
@@ -50,22 +52,24 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
     }
 
     /** minimal constructor */
-    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, String toPlayer, Integer toOrgScore, Integer toCurScore) {
+    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, Integer score, String toPlayer, Integer toOrgScore, Integer toCurScore) {
         this.rechargeId = rechargeId;
         this.fromPlayer = fromPlayer;
         this.fromOrgScore = fromOrgScore;
         this.fromCurScore = fromCurScore;
+        this.score = score;
         this.toPlayer = toPlayer;
         this.toOrgScore = toOrgScore;
         this.toCurScore = toCurScore;
     }
 
     /** full constructor */
-    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, String toPlayer, Integer toOrgScore, Integer toCurScore, String memo, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, Integer score, String toPlayer, Integer toOrgScore, Integer toCurScore, String memo, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.rechargeId = rechargeId;
         this.fromPlayer = fromPlayer;
         this.fromOrgScore = fromOrgScore;
         this.fromCurScore = fromCurScore;
+        this.score = score;
         this.toPlayer = toPlayer;
         this.toOrgScore = toOrgScore;
         this.toCurScore = toCurScore;
@@ -115,7 +119,17 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
         this.fromCurScore = fromCurScore;
     }
 
-    @Column(name = "TO_PLAYER", nullable = false, length = 100)
+    
+    @Column(name = "SCORE", nullable = false)
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
+	@Column(name = "TO_PLAYER", nullable = false, length = 100)
     public String getToPlayer() {
         return this.toPlayer;
     }
