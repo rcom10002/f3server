@@ -1,7 +1,9 @@
 package info.knightrcom.web;
 
 import info.knightrcom.F3ServerProxy;
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.web.service.F3SWebService;
 
 import java.io.File;
@@ -64,11 +66,11 @@ public class F3SApplicationServlet extends F3SServlet {
     @SuppressWarnings("unchecked")
     @Override
 	public void init() throws ServletException {
+        LogInfo log = null;
         try {
         	super.init();
             Class[] classes = getClasses(F3SWebServiceHandler.getServicePackageName());
             for (Class thisClass : classes) {
-                log.debug(thisClass.getName());
                 if (Modifier.isAbstract(thisClass.getModifiers())) {
                     continue;
                 }
@@ -80,8 +82,17 @@ public class F3SApplicationServlet extends F3SServlet {
 	        HibernateSessionFactory.init();
 	        // 应用服务器初始化
         	F3ServerProxy.startServer();
+        	// 记录日志
+        	log = F3ServerProxy.createLogInfo("Web Server", "Web server started successfully!", null, LogType.SYSTEM_LOG);
         } catch (Exception e) {
+            // 记录日志
+            log = F3ServerProxy.createLogInfo("Web Server", "Web server started successfully!", null, LogType.SYSTEM_LOG);
             throw new RuntimeException(e);
+        } finally {
+            if (log != null) {
+                HibernateSessionFactory.getSession().save(log);
+                HibernateSessionFactory.closeSession();
+            }
         }
     }
 
@@ -97,6 +108,10 @@ public class F3SApplicationServlet extends F3SServlet {
         	// 停止Hibernate服务
         	HibernateSessionFactory.getSessionFactory().close();
         }
+        // 记录日志
+        LogInfo log = F3ServerProxy.createLogInfo("Web Server", "Web server shutdown successfully!", null, LogType.SYSTEM_LOG);
+        HibernateSessionFactory.getSession().save(log);
+        HibernateSessionFactory.closeSession();
     }
 
     /**
