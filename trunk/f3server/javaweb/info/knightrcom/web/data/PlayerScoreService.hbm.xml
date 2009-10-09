@@ -75,4 +75,12 @@ FROM   player_profile
     SELECT *
       FROM player_profile
 	</sql-query>
+	<sql-query name="VIEW_CURRENT_PLAYER_INFO">
+	<![CDATA[
+SELECT user_id, to_org_score, to_cur_score, recharge_record.create_time
+  FROM recharge_record, player_profile
+ WHERE to_player = ? and from_player = profile_id
+ ORDER BY create_time DESC
+    ]]>
+	</sql-query>
 </hibernate-mapping>

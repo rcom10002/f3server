@@ -327,7 +327,7 @@ public class StringHelper {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
-        return sw.toString().toUpperCase();
+        return sw.toString();
     }
 
     /**
@@ -338,6 +338,6 @@ public class StringHelper {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         cause.printStackTrace(pw);
-        return sw.toString().toUpperCase();
+        return sw.toString();
     }
 }
