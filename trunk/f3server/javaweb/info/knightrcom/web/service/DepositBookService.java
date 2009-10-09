@@ -92,10 +92,11 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
     	EntityInfo<RechargeRecord> info = new EntityInfo<RechargeRecord>();
         String fromPlayer = request.getParameter("FROM_PLAYER");
         String fromOrgScore = request.getParameter("FROM_ORG_SCORE");
-        String fromCurScore = request.getParameter("FROM_CUR_SCORE");
+        String score = request.getParameter("SCORE");
+        int fromCurScore = Integer.valueOf(fromOrgScore) - Integer.valueOf(score);
         String toPlayer = request.getParameter("TO_PLAYER");
         String toOrgScore = request.getParameter("TO_ORG_SCORE");
-        String toCurScore = request.getParameter("TO_CUR_SCORE");
+        int toCurScore = Integer.valueOf(toOrgScore) + Integer.valueOf(score);
         
     	// 获取原始积分
     	Criteria criteriaFrom = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
@@ -107,14 +108,14 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
     	PlayerProfile toPlayerProfile = (PlayerProfile) criteriaTo.uniqueResult();
 		// 更新用户当前积分
     	if (fromPlayerProfile != null) {
-    		fromPlayerProfile.setCurrentScore(Integer.parseInt(fromOrgScore) - Integer.parseInt(fromCurScore));
+    		fromPlayerProfile.setCurrentScore(fromCurScore);
     		fromPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
     		fromPlayerProfile.setUpdateTime(new Date());
     	}
 		HibernateSessionFactory.getSession().save(fromPlayerProfile);
 		
 		if (toPlayerProfile != null) {
-			toPlayerProfile.setCurrentScore(Integer.parseInt(toOrgScore) + Integer.parseInt(toCurScore));
+			toPlayerProfile.setCurrentScore(toCurScore);
 			toPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
 			toPlayerProfile.setUpdateTime(new Date());
     	}
@@ -125,10 +126,11 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
 		rechargeRecord.setRechargeId(UUID.randomUUID().toString());
 		rechargeRecord.setFromPlayer(fromPlayer);
 		rechargeRecord.setFromOrgScore(Integer.parseInt(fromOrgScore));
-		rechargeRecord.setFromCurScore(Integer.parseInt(fromCurScore));
+		rechargeRecord.setFromCurScore(fromCurScore);
+		rechargeRecord.setScore(Integer.parseInt(score));
 		rechargeRecord.setToPlayer(toPlayer);
 		rechargeRecord.setToOrgScore(Integer.parseInt(toOrgScore));
-		rechargeRecord.setToCurScore(Integer.parseInt(toCurScore));
+		rechargeRecord.setToCurScore(toCurScore);
 		rechargeRecord.setCreateBy(fromPlayerProfile.getProfileId());
 		rechargeRecord.setCreateTime(new Date());
 		rechargeRecord.setUpdateBy(fromPlayerProfile.getProfileId());
@@ -141,8 +143,8 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
         logInfo.setCaption("DepositBookService Successfully");
         logInfo.setKeyCause1(fromPlayer);
         logInfo.setKeyCause2(toPlayer);
-        logInfo.setKeyCause3(fromCurScore);
-        logInfo.setInfo("from user [" + fromPlayer + "] to user [" + toPlayer + "] add score is [" + fromCurScore + "] !" );
+        logInfo.setKeyCause3(String.valueOf(score));
+        logInfo.setInfo("from user [" + fromPlayer + "] to user [" + toPlayer + "] add score is [" + score + "] !" );
         logInfo.setType(LogType.SYSTEM_LOG.name());
         HibernateSessionFactory.getSession().save(logInfo);
 		info.setResult(F3SWebServiceResult.SUCCESS);
