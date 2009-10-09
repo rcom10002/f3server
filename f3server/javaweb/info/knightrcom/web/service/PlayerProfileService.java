@@ -124,6 +124,12 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
      * @return
      */
     public String CREATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
+        EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
+    	List<PlayerProfile> playerList = new PlayerProfileDAO().findByUserId(request.getParameter("USER_ID"));
+    	if (playerList != null && playerList.size() > 0) {
+            info.setResult(F3SWebServiceResult.WARNING);
+            return toXML(info, new Class[] {PlayerProfile.class});
+    	}
         PlayerProfile playerProfile = new PlayerProfile();
         playerProfile.setProfileId(UUID.randomUUID().toString());
         playerProfile.setUserId(request.getParameter("USER_ID"));
@@ -135,7 +141,6 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         playerProfile.setRole(request.getParameter("ROLE"));
         playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
         HibernateSessionFactory.getSession().save(playerProfile);
-        EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
         info.setEntity(playerProfile);
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {PlayerProfile.class});
@@ -161,7 +166,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
      */
     public String UPDATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
-        playerProfile.setUserId(request.getParameter("USER_ID"));
+//        playerProfile.setUserId(request.getParameter("USER_ID"));
         if (!"******".equals(request.getParameter("PASSWORD"))) {
         	playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         }
@@ -173,6 +178,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         playerProfile.setUpdateTime(new Date());
         HibernateSessionFactory.getSession().update(playerProfile);
         EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
+        info.setEntity(playerProfile);
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {PlayerProfile.class});
     }
