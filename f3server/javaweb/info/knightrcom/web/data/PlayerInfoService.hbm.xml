@@ -77,12 +77,12 @@ FROM   player_profile
 	</sql-query>
 	<sql-query name="VIEW_CURRENT_PLAYER_INFO">
 	<![CDATA[
-SELECT user_id from_player,
+SELECT from_player,
        to_org_score,
        to_cur_score,
        DATE_FORMAT(recharge_record.create_time, "%Y年%m月%d日%H时%i分%S秒") create_time
-  FROM recharge_record, player_profile
- WHERE to_player = ? and from_player = profile_id
+  FROM recharge_record
+ WHERE to_player = ?
  ORDER BY create_time DESC
     ]]>
 	</sql-query>
