@@ -82,72 +82,93 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
     }
 
     /**
-     * 充值
+     * 充值(内部服务)
+     * 
+     * @param fromPlayer userId for recharging score
+     * @param toPlayer userId for getting score
+     * @param score recharege score
+     * @return
+     */
+    static EntityInfo<RechargeRecord> INNER_SAVE_RECHARGE_RECORD(PlayerProfile fromPlayerProfile, PlayerProfile toPlayerProfile, int score) {
+        // 设置玩家ID信息
+        String fromPlayer = fromPlayerProfile.getUserId();
+        String toPlayer = toPlayerProfile.getUserId();
+
+        // 获取原始积分
+        int fromCurScore = fromPlayerProfile.getCurrentScore() - score;
+        int fromOrgScore = fromPlayerProfile.getCurrentScore();
+        int toCurScore = toPlayerProfile.getCurrentScore() + score;
+        int toOrgScore = toPlayerProfile.getCurrentScore();
+
+        // 更新用户当前积分
+        if ("GroupUser".equals(fromPlayerProfile.getRole())) {
+            fromPlayerProfile.setCurrentScore(fromCurScore);
+            fromPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
+            fromPlayerProfile.setUpdateTime(new Date());
+            HibernateSessionFactory.getSession().merge(fromPlayerProfile);
+        }
+        // 更新被充值玩家积分
+        toPlayerProfile.setCurrentScore(toCurScore);
+        toPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
+        toPlayerProfile.setUpdateTime(new Date());
+        HibernateSessionFactory.getSession().merge(toPlayerProfile);
+        
+        // 保存充值记录
+        RechargeRecord rechargeRecord = new RechargeRecord();
+        rechargeRecord.setRechargeId(UUID.randomUUID().toString());
+        rechargeRecord.setFromPlayer(fromPlayer);
+        if ("GroupUser".equals(fromPlayerProfile.getRole())) {
+            // 组用户
+            rechargeRecord.setFromOrgScore(fromOrgScore);
+            rechargeRecord.setFromCurScore(fromCurScore);
+        } else {
+            // 系统管理员，超级游戏管理员，游戏管理员
+            rechargeRecord.setFromOrgScore(-1);
+            rechargeRecord.setFromCurScore(-1);
+        }
+        rechargeRecord.setScore(score);
+        rechargeRecord.setToPlayer(toPlayer);
+        rechargeRecord.setToOrgScore(toOrgScore);
+        rechargeRecord.setToCurScore(toCurScore);
+        rechargeRecord.setCreateBy(fromPlayerProfile.getProfileId());
+        rechargeRecord.setCreateTime(new Date());
+        rechargeRecord.setUpdateBy(fromPlayerProfile.getProfileId());
+        rechargeRecord.setUpdateTime(new Date());
+        HibernateSessionFactory.getSession().save(rechargeRecord);
+        
+        // 保存日志
+        LogInfo logInfo = new LogInfo();
+        logInfo.setLogId(UUID.randomUUID().toString());
+        logInfo.setCaption("DepositBookService Successfully");
+        logInfo.setKeyCause1(fromPlayer);
+        logInfo.setKeyCause2(toPlayer);
+        logInfo.setKeyCause3(String.valueOf(score));
+        logInfo.setInfo("from user [" + fromPlayer + "] to user [" + toPlayer + "] add score [" + score + "] !" );
+        logInfo.setType(LogType.SYSTEM_LOG.name());
+        HibernateSessionFactory.getSession().save(logInfo);
+        EntityInfo<RechargeRecord> info = new EntityInfo<RechargeRecord>();
+        info.setResult(F3SWebServiceResult.SUCCESS);
+        return info;
+    }
+
+    /**
+     * 充值(外部服务)
      * 
      * @param request
      * @param response
      * @return
      */
 	public String SAVE_RECHARGE_RECORD(HttpServletRequest request, HttpServletResponse response) {
-    	EntityInfo<RechargeRecord> info = new EntityInfo<RechargeRecord>();
         String fromPlayer = request.getParameter("FROM_PLAYER");
-        String fromOrgScore = request.getParameter("FROM_ORG_SCORE");
         String score = request.getParameter("SCORE");
-        int fromCurScore = Integer.valueOf(fromOrgScore) - Integer.valueOf(score);
         String toPlayer = request.getParameter("TO_PLAYER");
-        String toOrgScore = request.getParameter("TO_ORG_SCORE");
-        int toCurScore = Integer.valueOf(toOrgScore) + Integer.valueOf(score);
-        
-    	// 获取原始积分
-    	Criteria criteriaFrom = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
-    	criteriaFrom.add(Expression.eq("userId", fromPlayer));
-    	PlayerProfile fromPlayerProfile = (PlayerProfile) criteriaFrom.uniqueResult();
-
-    	Criteria criteriaTo = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
-    	criteriaTo.add(Expression.eq("userId", toPlayer));
-    	PlayerProfile toPlayerProfile = (PlayerProfile) criteriaTo.uniqueResult();
-		// 更新用户当前积分
-    	if (fromPlayerProfile != null) {
-    		fromPlayerProfile.setCurrentScore(fromCurScore);
-    		fromPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
-    		fromPlayerProfile.setUpdateTime(new Date());
-    	}
-		HibernateSessionFactory.getSession().save(fromPlayerProfile);
-		
-		if (toPlayerProfile != null) {
-			toPlayerProfile.setCurrentScore(toCurScore);
-			toPlayerProfile.setUpdateBy(fromPlayerProfile.getProfileId());
-			toPlayerProfile.setUpdateTime(new Date());
-    	}
-		HibernateSessionFactory.getSession().save(toPlayerProfile);
-		
-		// 保存充值记录
-		RechargeRecord rechargeRecord = new RechargeRecord();
-		rechargeRecord.setRechargeId(UUID.randomUUID().toString());
-		rechargeRecord.setFromPlayer(fromPlayer);
-		rechargeRecord.setFromOrgScore(Integer.parseInt(fromOrgScore));
-		rechargeRecord.setFromCurScore(fromCurScore);
-		rechargeRecord.setScore(Integer.parseInt(score));
-		rechargeRecord.setToPlayer(toPlayer);
-		rechargeRecord.setToOrgScore(Integer.parseInt(toOrgScore));
-		rechargeRecord.setToCurScore(toCurScore);
-		rechargeRecord.setCreateBy(fromPlayerProfile.getProfileId());
-		rechargeRecord.setCreateTime(new Date());
-		rechargeRecord.setUpdateBy(fromPlayerProfile.getProfileId());
-		rechargeRecord.setUpdateTime(new Date());
-		HibernateSessionFactory.getSession().save(rechargeRecord);
-		
-		// 保存日志
-		LogInfo logInfo = new LogInfo();
-        logInfo.setLogId(UUID.randomUUID().toString());
-        logInfo.setCaption("DepositBookService Successfully");
-        logInfo.setKeyCause1(fromPlayer);
-        logInfo.setKeyCause2(toPlayer);
-        logInfo.setKeyCause3(String.valueOf(score));
-        logInfo.setInfo("from user [" + fromPlayer + "] to user [" + toPlayer + "] add score is [" + score + "] !" );
-        logInfo.setType(LogType.SYSTEM_LOG.name());
-        HibernateSessionFactory.getSession().save(logInfo);
-		info.setResult(F3SWebServiceResult.SUCCESS);
+        Criteria criteriaFrom = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
+        criteriaFrom.add(Expression.eq("userId", fromPlayer));
+        PlayerProfile fromPlayerProfile = (PlayerProfile) criteriaFrom.uniqueResult();
+        Criteria criteriaTo = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
+        criteriaTo.add(Expression.eq("userId", toPlayer));
+        PlayerProfile toPlayerProfile = (PlayerProfile) criteriaTo.uniqueResult();
+        EntityInfo<RechargeRecord> info = INNER_SAVE_RECHARGE_RECORD(fromPlayerProfile, toPlayerProfile, Integer.valueOf(score));
         return toXML(info, getAliasTypes());
     }
 }

@@ -7,6 +7,8 @@ import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.command.message.game.Red5GameMessage;
 import info.knightrcom.data.HibernateTransactionSupport;
+import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.model.game.GamePool;
 import info.knightrcom.model.game.red5.Red5Game;
 import info.knightrcom.model.game.red5.Red5GameSetting;
@@ -32,10 +34,22 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
 
     @Override
     public void GAME_JOIN_MATCHING_QUEUE(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
-        // 玩家进入游戏等待队列
+        // 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
-        currentPlayer.setCurrentStatus(GameStatus.MATCHING);
         Room currentRoom = currentPlayer.getCurrentRoom();
+        PlayerProfile currentPlayerProfile = new PlayerProfileDAO().findByUserId(currentPlayer.getId()).get(0);
+        if (currentPlayerProfile.getCurrentScore() < currentRoom.getMinGameMarks()) {
+            currentPlayer.setCurrentStatus(GameStatus.IDLE);
+            String content = "当前房间所需最低游戏分数为" + currentPlayer.getCurrentRoom().getMinGameMarks() + "分，您的分数不足，请充值！";
+            echoMessage.setResult(GAME_WAIT);
+            echoMessage.setContent(content);
+            sessionWrite(session, echoMessage);
+            return;
+        }
+
+        // 将当前玩家加入游戏等待队列中
+        ModelUtil.getPlayer(session).setCurrentStatus(GameStatus.MATCHING);
+
         // 判断当前房间内等候的玩家个数是否足够以开始游戏
         int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
         if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) {
@@ -46,9 +60,17 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             sessionWrite(session, echoMessage);
             return;
         }
-        Map<String, Player> playersInRoom = currentRoom.getChildren();
+
+        // 开始游戏
+        GAME_START(session, message, echoMessage);
+    }
+
+    @Override
+    public synchronized void GAME_START(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
+        // 取得玩家所在房间内所有的玩家
+        Map<String, Player> playersInRoom = ModelUtil.getPlayer(session).getCurrentRoom().getChildren();
         synchronized (playersInRoom) {
-            // 将同一个房间内的等待队列中的玩家进行排序
+            // 取得当前房间内的等待队列中的玩家
             List<Player> playersInQueue = new ArrayList<Player>();
             for (Player eachPlayer : playersInRoom.values()) {
                 if (GameStatus.MATCHING.equals(eachPlayer.getCurrentStatus())) {
@@ -58,15 +80,16 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             // 按照等候的优先顺序进行排序，使先进入等待队列的玩家排在前面
             Collections.sort(playersInQueue, new Comparator<Player>() {
                 public int compare(Player p1, Player p2) {
-                    if (p1.getLastPlayTime() > p2.getLastPlayTime()) {
+                    if (p1.getLastPlayTime() < p2.getLastPlayTime()) {
                         return 1;
-                    } else if (p1.getLastPlayTime() < p2.getLastPlayTime()) {
+                    } else if (p1.getLastPlayTime() > p2.getLastPlayTime()) {
                         return -1;
                     }
                     return 0;
                 }
             });
             // 按照系统设置的最大游戏开始人数进行人数截取
+            int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
             playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER * groupQuantity);
             if ("true".equals(ModelUtil.getSystemParameters("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
                 // 将玩家再次随机调整顺序
@@ -82,6 +105,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 String gameId = GamePool.prepareRed5Game(playersInGroup);
                 for (Player eachPlayer : playersInGroup) {
                     // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
+                    eachPlayer.setCurrentStatus(GameStatus.PLAYING);
                     echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                     echoMessage.setResult(GAME_CREATE);
                     echoMessage.setContent(
@@ -108,12 +132,13 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     }
                 }
                 pokerNumberOfEachPlayer = pokerNumberOfEachPlayer.replaceFirst(",$", "");
-                // 开始发牌 
+                // 准备发牌开始游戏 
                 for (int m = 0; m < eachShuffledPokers.length; m++) {
                     StringBuilder builder = new StringBuilder();
                     for (int n = 0; n < eachShuffledPokers[m].length; n++) {
                         builder.append(eachShuffledPokers[m][n].getValue() + ",");
                     }
+                    // 为每位玩家发牌
                     echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                     echoMessage.setResult(GAME_STARTED);
                     echoMessage.setContent(builder.toString().replaceFirst(",$", "~") + pokerNumberOfEachPlayer);
@@ -170,35 +195,6 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         setting.setPlayerNumber(playerNumber);
         game.setSetting(setting);
         log.debug(setting);
-    }
-
-    @Override
-    public void GAME_START(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
-//        // 更改当前游戏状态
-//        Player currentPlayer = ModelUtil.getPlayer(session);
-//        Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
-//        List<Player> players = game.getPlayers();
-//        // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
-//        boolean isFirstOut = false;
-//        Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
-//        for (int i = 0; i < eachShuffledPokers.length; i++) {
-//            // 开始发牌
-//            StringBuilder builder = new StringBuilder();
-//            for (int j = 0; j < eachShuffledPokers[i].length; j++) {
-//                builder.append(eachShuffledPokers[i][j] + ",");
-//            }
-//            echoMessage = F3ServerMessage.createInstance(MessageType.MSG_RED5GAME).getEchoMessage();
-//            echoMessage.setResult(GAME_STARTED);
-//            echoMessage.setContent(builder.toString().replaceFirst(",$", ""));
-//            sessionWrite(players.get(i).getIosession(), echoMessage);
-//            if (!isFirstOut && builder.indexOf(Red5Game.START_POKER.toString()) > -1) {
-//                // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则为首次发牌的玩家发送消息
-//                echoMessage = F3ServerMessage.createInstance(MessageType.MSG_RED5GAME).getEchoMessage();
-//                echoMessage.setResult(GAME_FIRST_PLAY);
-//                sessionWrite(players.get(i).getIosession(), echoMessage);
-//                isFirstOut = true;
-//            }
-//        }
     }
 
     @Override
@@ -289,6 +285,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             message.setContent(message.getContent() + "~" + game.getGameDetailScore());
             while (itr.hasNext()) {
                 Player player = itr.next();
+                player.setCurrentStatus(GameStatus.IDLE);
                 echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                 echoMessage.setResult(GAME_OVER);
                 echoMessage.setContent(message.getContent());

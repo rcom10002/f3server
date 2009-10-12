@@ -51,7 +51,8 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
 
     private static final Log log = LogFactory.getLog(F3ServerServiceHandler.class);
 
-    // TODO What's the differences between sessions and managed-sessions ?
+    // TODO What's the differences between sessions and managed-sessions of mina ?
+    // In the example of mina a third sessions is used for session management. 
     private final Set<IoSession> sessions = Collections.synchronizedSet(new HashSet<IoSession>());
 
     /**
@@ -125,12 +126,10 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
                 }
             }
             GamePool.distroyGame(game.getId(), game.getClass());
-            
         }
         HibernateSessionFactory.getSession().save(SystemLogger.createLog("SESSION CLOSED", null, player.getId(), LogType.SYSTEM_LOG));
         HibernateSessionFactory.getSession().flush();
         HibernateSessionFactory.getSession().close();
-        // broadcast("The user " + player + " has left the chat session.");
         super.sessionClosed(session);
     }
 
@@ -139,6 +138,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         // Flex安全策略
         if (String.valueOf(message).trim().equalsIgnoreCase("<policy-file-request/>")) {
             session.write(F3Server.SECURITY_CONFIGURATION);
+            // FIXME THE FOLLOWING LINE MAY BE REMOVED SO THAT ONLY ONE CONNECTION WILL FETCH INFO FROM SOCKET SERVER.
             session.close(true);
             return;
         }
@@ -161,7 +161,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         serverMessage.setSignature(signature);
         serverMessage.setContent(content);
         serverMessage.setCurrentSession(session);
-        serverMessage.setSessions(sessions);
+        // serverMessage.setSessions(sessions);
         // 派发消息
         super.messageReceived(session, serverMessage);
     }
@@ -189,6 +189,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         try {
             log.warn("Global exception is found.");
             if (cause instanceof IOException) {
+                // FIXME 原始IOException可能已经被RuntimeException包装，判断条件可能不合适
                 log.warn("Try to close socket session and persist current game scores!");
                 sessionClosed(session);
                 session.close(true);

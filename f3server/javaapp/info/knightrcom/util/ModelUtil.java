@@ -11,6 +11,8 @@ import info.knightrcom.model.global.Room;
 import info.knightrcom.web.constant.GameConfigureConstant;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -155,7 +157,7 @@ public class ModelUtil {
      * @param session
      * @return
      */
-    public static Player getPlayer(IoSession session) {
+    public static synchronized Player getPlayer(IoSession session) {
         return (Player)session.getAttribute(Player.ATTR_NAME);
     }
 
@@ -163,7 +165,7 @@ public class ModelUtil {
      * @param session
      * @return
      */
-    public static void setPlayer(IoSession session, Player player) {
+    public static synchronized void setPlayer(IoSession session, Player player) {
         session.setAttribute(Player.ATTR_NAME, player);
         player.setIosession(session);
     }

@@ -352,7 +352,7 @@ public class Red5Game extends Game<Red5GameSetting> {
 				playerIds += player.getCurrentNumber() + "~" + player.getId() + "~";
 				if (player.getId().equals(disconnectedPlayer.getId())) {
 					// 掉线玩家
-					resultScore = -1 * (deductedMark * 3 + this.getGameMark());
+					resultScore = -1 * (deductedMark * 3);
 				} else {
 					// 非掉线玩家
 					resultScore = deductedMark;
