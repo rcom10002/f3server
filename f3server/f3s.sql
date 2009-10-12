@@ -145,6 +145,7 @@ create table RECHARGE_RECORD
    FROM_PLAYER          VARCHAR(100) not null,
    FROM_ORG_SCORE       INT not null,
    FROM_CUR_SCORE       INT not null,
+   SCORE                INT not null,
    TO_PLAYER            VARCHAR(100) not null,
    TO_ORG_SCORE         INT not null,
    TO_CUR_SCORE         INT not null,
