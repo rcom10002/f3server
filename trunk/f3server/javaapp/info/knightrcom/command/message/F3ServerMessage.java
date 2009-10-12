@@ -7,8 +7,6 @@ import info.knightrcom.command.message.game.QiongWinGameMessage;
 import info.knightrcom.command.message.game.Red5GameMessage;
 import info.knightrcom.util.HandlerDispatcher;
 
-import java.util.Set;
-
 import org.apache.mina.core.session.IoSession;
 
 /**
@@ -32,8 +30,6 @@ public abstract class F3ServerMessage {
     }
 
     private IoSession currentSession;
-
-    private Set<IoSession> sessions;
 
     private String content;
 
@@ -167,21 +163,6 @@ public abstract class F3ServerMessage {
      */
     public void setSignature(String signature) {
         this.signature = signature;
-    }
-
-    /**
-     * @return the sessions
-     */
-    public Set<IoSession> getSessions() {
-        return sessions;
-    }
-
-    /**
-     * @param sessions
-     *            the sessions to set
-     */
-    public void setSessions(Set<IoSession> sessions) {
-        this.sessions = sessions;
     }
 
     /**

@@ -51,13 +51,14 @@ public class ModelDescriptorManipulateTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testInitRoles() throws Exception {
-		String roles = "Administrator~系统管理员;SuperGameMaster~超级游戏管理员;GameMaster~游戏管理员;GroupUser~组用户;User~普通用户";
+		String roles = "0~Administrator~系统管理员;1~SuperGameMaster~超级游戏管理员;2~GameMaster~游戏管理员;3~GroupUser~组用户;4~User~普通用户";
 		String[] roleArray = roles.split(";");
 		for (String role : roleArray) {
 			GlobalConfig config = new GlobalConfig();
 			config.setGlobalConfigId(UUID.randomUUID().toString());
-			config.setName(role.split("~")[0]);
-			config.setValue(role.split("~")[1]);
+			config.setNumber(role.split("~")[0]);
+			config.setName(role.split("~")[1]);
+			config.setValue(role.split("~")[2]);
 			config.setType("PLAYER_ROLE");
 			HibernateSessionFactory.getSession().save(config);
 		}
@@ -96,7 +97,7 @@ public class ModelDescriptorManipulateTest extends TestCase {
 		properties.loadFromXML(new ByteArrayInputStream(config.getValue().getBytes("utf-8")));
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		properties.storeToXML(bytes, null);
-		System.out.println(bytes.toString("utf-8"));
+		assertTrue(bytes.toString("utf-8").length() > 0);
 	}
 
 	@Override

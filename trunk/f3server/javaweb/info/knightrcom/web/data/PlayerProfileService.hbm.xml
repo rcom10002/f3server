@@ -2,8 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <sql-query name="PLAYER_PROFILE">
-	<![CDATA[
+  <sql-query name="PLAYER_PROFILE">
+  <![CDATA[
 select
     `PROFILE_ID`,
     `NUMBER`,
@@ -24,44 +24,48 @@ from
 where
     (`ROLE` = ? or ? IS NULL) and
     (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
-    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL)
+    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL) and
+    (`ROLE` != 'Administrator')
 order by 
     CASE `ROLE`
     WHEN 'SuperGameMaster' THEN 'B'
     WHEN 'GameMaster' THEN 'C'
     ELSE `ROLE`
     END, `STATUS`, `CREATE_TIME` desc
-    ]]>
-    </sql-query>
-    <sql-query name="PLAYER_PROFILE_COUNT">
-	<![CDATA[
+  ]]>
+  </sql-query>
+  <sql-query name="PLAYER_PROFILE_COUNT">
+  <![CDATA[
 SELECT COUNT(*) AS RECORD_COUNT
   FROM player_profile
  WHERE
     (`ROLE` = ? or ? IS NULL) and
     (UPPER(`USER_ID`) LIKE UPPER(CONCAT(CONCAT('%', ?), '%')) or ? IS NULL) and
-    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL)
-    ]]>
-    </sql-query>
-    <sql-query name="PLAYER_PROFILE_ALL_RLS_PATH">
-	<![CDATA[
+    (`RLS_PATH` LIKE CONCAT(?, '%') or ? IS NULL) and
+    (`ROLE` != 'Administrator')
+  ]]>
+  </sql-query>
+  <sql-query name="PLAYER_PROFILE_ALL_RLS_PATH">
+  <![CDATA[
 SELECT player_profile.rls_path
   FROM player_profile
  WHERE role = 'GroupUser' or role = 'Administrator'
-    ]]>
-    </sql-query>
-    <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">
-	<![CDATA[
+ ORDER BY rls_path
+  ]]>
+  </sql-query>
+  <sql-query name="PLAYER_PROFILE_CURRENT_RLS_PATH">
+  <![CDATA[
 SELECT player_profile.rls_path
   FROM player_profile INNER JOIN (
   	   SELECT rls_path FROM player_profile WHERE rls_path = ?
        ) target 
     ON player_profile.rls_path LIKE CONCAT(target.rls_path, '%')
  WHERE player_profile.role = 'GroupUser'
-    ]]>
-    </sql-query>
-    <sql-query name="RLS_PATH_TREE">
-	<![CDATA[
+ ORDER BY rls_path
+  ]]>
+  </sql-query>
+  <sql-query name="RLS_PATH_TREE">
+  <![CDATA[
 select replace(rls_path, concat("!", user_id), "") as path_key, 
        concat("root!", rls_path) as path_value,
        role
@@ -69,10 +73,10 @@ select replace(rls_path, concat("!", user_id), "") as path_key,
  where (role ='GroupUser' or role = 'User')
  and (replace(rls_path, concat("!", user_id), "") = ? or ? = 'null') 
  order by rls_path
-    ]]>
-    </sql-query>
-    <sql-query name="RLS_PATH_CHART">
-	<![CDATA[
+  ]]>
+  </sql-query>
+  <sql-query name="RLS_PATH_CHART">
+  <![CDATA[
 select cast(x.num as signed) num, cast(x.group_user as char(100)) group_user
   from (select count(rls_path) num,
                case 
@@ -82,6 +86,6 @@ select cast(x.num as signed) num, cast(x.group_user as char(100)) group_user
           from player_profile
          where role ='GroupUser' or role = 'User'
          group by group_user) x
-    ]]>
-    </sql-query>
+  ]]>
+  </sql-query>
 </hibernate-mapping>

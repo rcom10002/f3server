@@ -28,7 +28,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -99,12 +101,14 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
      * @return
      */
     public String RETRIEVE_PLAYER_ROLE(HttpServletRequest request, HttpServletResponse response) {
+        // 取得所有用户角色
     	List<GlobalConfig> roleList = new GlobalConfigDAO().findByType(GameConfigureConstant.PLAYER_ROLE);
     	String roles = "";
     	Iterator<GlobalConfig> itr = roleList.iterator();
     	while (itr.hasNext()) {
     		GlobalConfig config = itr.next();
     		if ("GroupUser".equals(request.getParameter("CURRENT_ROLE"))) {
+    		    // 当前用户为组用户时，只保留组用户和普通用户角色
     			if (config.getName().indexOf("User") > -1) {
     				roles += config.getName() + "~" + config.getValue() + ";";
     			}
@@ -127,20 +131,32 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         EntityInfo<PlayerProfile> info = new EntityInfo<PlayerProfile>();
     	List<PlayerProfile> playerList = new PlayerProfileDAO().findByUserId(request.getParameter("USER_ID"));
     	if (playerList != null && playerList.size() > 0) {
+    	    // USER_ID唯一性验证
             info.setResult(F3SWebServiceResult.WARNING);
             return toXML(info, new Class[] {PlayerProfile.class});
     	}
+    	// 添加新用户
         PlayerProfile playerProfile = new PlayerProfile();
         playerProfile.setProfileId(UUID.randomUUID().toString());
+        playerProfile.setName(request.getParameter("USER_ID"));
         playerProfile.setUserId(request.getParameter("USER_ID"));
         playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
-        playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
+        playerProfile.setCurrentScore(0);
         playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
         playerProfile.setLevel(new Integer(0));
         playerProfile.setRole(request.getParameter("ROLE"));
         playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
+        playerProfile.setCreateBy(request.getParameter("CURRENT_USER_ID"));
+        playerProfile.setUpdateBy(request.getParameter("CURRENT_USER_ID"));
         HibernateSessionFactory.getSession().save(playerProfile);
+
+        Criteria criteria = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
+        PlayerProfile currentProfile = (PlayerProfile)criteria.add(Expression.eq("userId", request.getParameter("CURRENT_USER_ID"))).uniqueResult();
+        DepositBookService.INNER_SAVE_RECHARGE_RECORD(
+                currentProfile,
+                playerProfile,
+                Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         info.setEntity(playerProfile);
         info.setResult(F3SWebServiceResult.SUCCESS);
         return toXML(info, new Class[] {PlayerProfile.class});
@@ -166,14 +182,15 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
      */
     public String UPDATE_PLAYER_PROFILE(HttpServletRequest request, HttpServletResponse response) {
         PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("PROFILE_ID"));
-//        playerProfile.setUserId(request.getParameter("USER_ID"));
-        if (!"******".equals(request.getParameter("PASSWORD"))) {
+        // playerProfile.setUserId(request.getParameter("USER_ID"));
+        if (playerProfile.getPassword().indexOf(request.getParameter("PASSWORD")) > -1) {
+        } else {
         	playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         }
         // playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
         // playerProfile.setCurrentScore(Integer.valueOf(request.getParameter("CURRENT_SCORE")));
         // playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
-        playerProfile.setRole(request.getParameter("ROLE"));
+        // playerProfile.setRole(request.getParameter("ROLE"));
         playerProfile.setStatus(request.getParameter("STATUS")); // 0:禁用、1:启用
         playerProfile.setUpdateTime(new Date());
         HibernateSessionFactory.getSession().update(playerProfile);
