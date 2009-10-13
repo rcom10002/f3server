@@ -32,11 +32,13 @@
 		  from player_profile pp
 		  left join (select to_player, sum(score) totalRechargeScore
 		               from recharge_record
+		               where create_time BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 		              group by to_player) v1 on pp.user_id = v1.to_player
 		  left join (select user_id,
 		                    sum(cur_score) totalGameScore,
 		                    sum(sys_score) totalSysScore
 		               from player_score
+		               where create_time BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 		              group by user_id) v2 on pp.user_id = v2.user_id
 	]]>
 	</sql-query>
@@ -47,11 +49,13 @@
 		  from player_profile pp
 		  left join (select to_player, sum(score) totalRechargeScore
 		               from recharge_record
+		               where create_time BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 		              group by to_player) v1 on pp.user_id = v1.to_player
 		  left join (select user_id,
 		                    sum(cur_score) totalGameScore,
 		                    sum(sys_score) totalSysScore
 		               from player_score
+		               where create_time BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
 		              group by user_id) v2 on pp.user_id = v2.user_id
 	]]>
 	</sql-query>
