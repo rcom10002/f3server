@@ -70,10 +70,10 @@ public class ReportRechargeHistoryService extends F3SWebService<RechargeHistoryn
 		
     	Query query = HibernateSessionFactory.getSession().getNamedQuery(getNamedQuery());
     	processQuerySetting(query, request);
-    	query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    	query.setResultTransformer(getResultTransformer());
     	List<RechargeHistorynfo> list = (List<RechargeHistorynfo>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
-    	String filename = "RECHARGE_HISTORY_" + request.getParameter("CREATE_MONTH") + ".csv";
+    	String filename = "RECHARGE_HISTORY.csv";
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
