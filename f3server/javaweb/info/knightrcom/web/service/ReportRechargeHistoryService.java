@@ -73,7 +73,7 @@ public class ReportRechargeHistoryService extends F3SWebService<RechargeHistoryI
     	query.setResultTransformer(getResultTransformer());
     	List<RechargeHistoryInfo> list = (List<RechargeHistoryInfo>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
-    	String filename = "RECHARGE_HISTORY.csv";
+    	String filename = "RECHARGE_HISTORY_" + request.getParameter("CREATE_MONTH") + ".csv";
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
