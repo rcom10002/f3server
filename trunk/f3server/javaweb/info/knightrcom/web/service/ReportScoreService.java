@@ -162,7 +162,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 				
 				writer.write(data, header);
 			}
-			info.setTag("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH + filename);
+			info.setTag(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH + filename);
 			info.setResult(F3SWebServiceResult.SUCCESS);
 		} finally {
 			writer.close();
