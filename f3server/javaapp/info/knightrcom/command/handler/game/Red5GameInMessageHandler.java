@@ -132,7 +132,8 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     }
                 }
                 pokerNumberOfEachPlayer = pokerNumberOfEachPlayer.replaceFirst(",$", "");
-                // 准备发牌开始游戏 
+                // 准备发牌开始游戏
+                String firstPlayerNumber = null;
                 for (int m = 0; m < eachShuffledPokers.length; m++) {
                     StringBuilder builder = new StringBuilder();
                     for (int n = 0; n < eachShuffledPokers[m].length; n++) {
@@ -146,12 +147,17 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     // 记录游戏初始时玩家手中的牌信息
                     game.appendGameRecord(echoMessage.getContent());
                     if (!isFirstOut && builder.indexOf(Red5Game.START_POKER.getValue()) > -1) {
-                        // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则为首次发牌的玩家发送消息
-                        echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
-                        echoMessage.setResult(GAME_FIRST_PLAY);
-                        sessionWrite(playersInGame.get(m).getIosession(), echoMessage);
+                        // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则确定为首次发牌的玩家
+                    	firstPlayerNumber = playersInGame.get(m).getCurrentNumber();
                         isFirstOut = true;
                     }
+                }
+                // 广播首次发牌玩家并将各个玩家初始牌发送到各个玩家手中，以便游戏结束亮牌用
+                for (Player eachPlayer : playersInGame) {
+                    echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                    echoMessage.setContent(firstPlayerNumber + "~" + game.getGameRecord());
+                    echoMessage.setResult(GAME_FIRST_PLAY);
+                    sessionWrite(eachPlayer.getIosession(), echoMessage);
                 }
                 playersInGroup.clear();
             }

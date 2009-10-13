@@ -200,4 +200,14 @@ public  class AbstractModel<PT, CT> {
 		this.disabled = disabled;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !obj.getClass().equals(this.getClass())) {
+			return false;
+		}
+		if (this.id == null || ((AbstractModel<?, ?>)obj).getId() == null) {
+			return false;
+		}
+		return this.id.equals(((AbstractModel<?, ?>)obj).getId());
+	}
 }
