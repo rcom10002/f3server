@@ -318,7 +318,11 @@ public class Red5Game extends Game<Red5GameSetting> {
         gameRecord.setGameId(UUID.randomUUID().toString());
         gameRecord.setGameId(this.getId());
         gameRecord.setGameType(Red5Game.class.getSimpleName());
-        gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        if (this.getSetting() != null) {
+            gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        } else {
+            gameRecord.setGameSetting((short)Red5GameSetting.NO_RUSH.ordinal());
+        }
         gameRecord.setWinnerNumbers(this.getWinnerNumbers());
         gameRecord.setSystemScore(this.getGameMark());
         gameRecord.setStatus("DISCONNECTED");
@@ -327,14 +331,14 @@ public class Red5Game extends Game<Red5GameSetting> {
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
 		// 取得当前游戏设置
-		int deductStandard = 0;
+		int deductStandard = 1;
 		if (this.getSetting().equals(Red5GameSetting.RUSH)) {
 			// 独牌
 			deductStandard = this.getLowLevelMark();
 		} else if (this.getSetting().equals(Red5GameSetting.DEADLY_RUSH)) {
 			// 天独
 			deductStandard = this.getMidLevelMark();
-		} else if (this.getSetting().equals(Red5GameSetting.NO_RUSH)) {
+		} else if (this.getSetting().equals(Red5GameSetting.EXTINCT_RUSH)) {
 			// 天外天
 			deductStandard = this.getHighLevelMark();
 		}
