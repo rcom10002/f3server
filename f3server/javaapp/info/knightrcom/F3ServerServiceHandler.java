@@ -113,8 +113,6 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         if (game != null) {
             List<Player> players = game.getPlayers();
             synchronized (players) {
-                // 计算掉线积分
-                game.persistDisconnectScore(player);
                 for (Player eachPlayer : players) {
                     // 通知游戏中的其他玩家游戏已经中断，如果想重新加入游戏，必须进入游戏队列中
                     if (!session.equals(eachPlayer.getIosession())) {
@@ -124,10 +122,15 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
                         sessionWrite(eachPlayer.getIosession(), echoMessage);
                     }
                 }
+                // 计算掉线积分
+                game.persistDisconnectScore(player);
             }
             GamePool.distroyGame(game.getId(), game.getClass());
         }
-        HibernateSessionFactory.getSession().save(SystemLogger.createLog("SESSION CLOSED", null, player.getId(), LogType.SYSTEM_LOG));
+        HibernateSessionFactory.getSession().save(SystemLogger.createLog("SESSION CLOSED", 
+                session.getRemoteAddress().toString(), 
+                player.getId(), 
+                LogType.SYSTEM_LOG));
         HibernateSessionFactory.getSession().flush();
         HibernateSessionFactory.getSession().close();
         super.sessionClosed(session);
@@ -139,7 +142,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         if (String.valueOf(message).trim().equalsIgnoreCase("<policy-file-request/>")) {
             session.write(F3Server.SECURITY_CONFIGURATION);
             // FIXME THE FOLLOWING LINE MAY BE REMOVED SO THAT ONLY ONE CONNECTION WILL FETCH INFO FROM SOCKET SERVER.
-            session.close(true);
+            // session.close(true);
             return;
         }
         // 解析消息，消息构成格式为：消息类型、消息编号、消息签名、消息内容
