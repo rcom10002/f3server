@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	<hibernate-mapping>
+	<sql-query name="REPORT_RECHARGE_HISTORY_INFO">
+	<![CDATA[
+		SELECT 
+			RECHARGE_ID rechargeId,
+			FROM_PLAYER fromPlayer,
+			FROM_ORG_SCORE fromOrgScore,
+			FROM_CUR_SCORE fromCurScore,
+			SCORE score,
+			TO_PLAYER toPlayer,
+			TO_ORG_SCORE toOrgScore,
+			TO_CUR_SCORE toCurScore,
+			DATE_FORMAT(CREATE_TIME, "%Y年%m月%d日%H时%i分%S秒") createTime
+		FROM
+			RECHARGE_RECORD
+		WHERE 
+			1 = 1
+		AND (UPPER(FROM_PLAYER) LIKE UPPER(?))
+		AND (UPPER(TO_PLAYER) LIKE UPPER(?))
+		AND (DATE_FORMAT(CREATE_TIME, "%Y年%m月") = ? OR ? = '')
+		ORDER BY CREATE_TIME DESC
+	 ]]>
+	</sql-query>
+	<sql-query name="REPORT_RECHARGE_HISTORY_INFO_COUNT">
+	<![CDATA[
+		SELECT COUNT(*) AS RECORD_COUNT
+		FROM
+			RECHARGE_RECORD
+		WHERE 
+			1 = 1
+		AND (UPPER(FROM_PLAYER) LIKE UPPER(?))
+		AND (UPPER(TO_PLAYER) LIKE UPPER(?))
+		AND (DATE_FORMAT(CREATE_TIME, "%Y年%m月") = ? OR ? = '')
+		ORDER BY CREATE_TIME DESC
+    ]]>
+	</sql-query>
+</hibernate-mapping>
