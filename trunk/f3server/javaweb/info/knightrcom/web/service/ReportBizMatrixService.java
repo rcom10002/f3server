@@ -1,6 +1,7 @@
 package info.knightrcom.web.service;
 
 import info.knightrcom.data.HibernateSessionFactory;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 import info.knightrcom.web.model.entity.BizMatrixInfo;
@@ -27,6 +28,10 @@ public class ReportBizMatrixService extends F3SWebService<BizMatrixInfo> {
 	 * @see info.knightrcom.web.service.F3SWebService#processQuerySetting(org.hibernate.Query, javax.servlet.http.HttpServletRequest)
 	 */
 	public void processQuerySetting(Query query, HttpServletRequest request) {
+		query.setTimestamp(0, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(1, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+		query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+        query.setTimestamp(3, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
 	}
 	
     @Override
@@ -66,7 +71,7 @@ public class ReportBizMatrixService extends F3SWebService<BizMatrixInfo> {
     	query.setResultTransformer(getResultTransformer());
     	List<BizMatrixInfo> list = (List<BizMatrixInfo>)query.list();
     	String url = request.getSession().getServletContext().getRealPath("/");
-    	String filename = "BIZ_MATRIX.csv";
+    	String filename = "BIZ_MATRIX_" + request.getParameter("FROM_DATE") + "-" + request.getParameter("TO_DATE") + ".csv";
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
