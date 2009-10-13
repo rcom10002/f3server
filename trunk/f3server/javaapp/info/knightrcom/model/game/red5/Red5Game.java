@@ -31,7 +31,7 @@ public class Red5Game extends Game<Red5GameSetting> {
     /**
      * 首发扑克：红桃10
      */
-    public static final Red5Poker START_POKER = new Red5Poker(PokerColor.HEART, PokerValue.V5);
+    public static final Red5Poker START_POKER = new Red5Poker(PokerColor.HEART, PokerValue.V10);
 
     public Red5Game() {
     }
@@ -154,7 +154,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             int resultScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
-                if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
+                if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
                     resultScore = 1 * 3 * gameMark * this.getLowLevelMark();
                 } else {
@@ -205,6 +205,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到5X+5X+5X，反之叫牌者输15X
         while (itr.hasNext()) {
+            // 取得玩家信息
             Player player = itr.next();
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
@@ -214,10 +215,10 @@ public class Red5Game extends Game<Red5GameSetting> {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
                     // 为独牌玩家设置积分
-                    resultScore =  1 * 3 * gameMark * this.getMidLevelMark();
+                    resultScore = 1 * 3 * gameMark * this.getMidLevelMark();
                 } else {
                     // 为其他玩家设置积分
-                    resultScore =  -1 * gameMark * this.getMidLevelMark();
+                    resultScore = -1 * gameMark * this.getMidLevelMark();
                 }
             } else {
                 // 独牌失败
@@ -226,7 +227,7 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = 1 * gameMark * this.getMidLevelMark();
                 } else {
                     // 为独牌玩家设置积分
-                    resultScore =  -1 * 3 * gameMark * this.getMidLevelMark();
+                    resultScore = -1 * 3 * gameMark * this.getMidLevelMark();
                 }
             }
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
@@ -263,6 +264,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到10X+10X+10X，反之叫牌者输50X
         while (itr.hasNext()) {
+            // 取得玩家信息
             Player player = itr.next();
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
