@@ -64,7 +64,7 @@ public class GamePool {
     /**
      * @param players
      */
-    public static void prepareFightLandlordGame(List<Player> players) {
+    public static String prepareFightLandlordGame(List<Player> players) {
         FightLandlordGame game = new FightLandlordGame();
         String gameId = game.getId();
         games.put(gameId, game);
@@ -87,6 +87,7 @@ public class GamePool {
         int minGameMarks = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameMarks);
         postInitProcess(game);
+        return gameId;
     }
 
     /**
