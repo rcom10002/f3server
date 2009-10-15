@@ -13,7 +13,7 @@ select
     `CURRENT_SCORE`,
     `LEVEL`,
     `RLS_PATH`,
-    `ROLE`,
+    CAST((select value from global_config where type='PLAYER_ROLE' and name=`player_profile`.`ROLE`) as  CHAR) as ROLE,
     `STATUS`,
     DATE_FORMAT(`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") AS `CREATE_TIME`,
     `CREATE_BY`,
