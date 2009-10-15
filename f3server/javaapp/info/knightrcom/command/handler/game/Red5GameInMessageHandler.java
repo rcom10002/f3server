@@ -6,6 +6,7 @@ import info.knightrcom.command.message.F3ServerMessage;
 import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.command.message.game.Red5GameMessage;
+import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.HibernateTransactionSupport;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
@@ -37,6 +38,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         // 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
         Room currentRoom = currentPlayer.getCurrentRoom();
+        HibernateSessionFactory.getSession().clear();
         PlayerProfile currentPlayerProfile = new PlayerProfileDAO().findByUserId(currentPlayer.getId()).get(0);
         if (currentPlayerProfile.getCurrentScore() < currentRoom.getMinGameMarks()) {
             currentPlayer.setCurrentStatus(GameStatus.IDLE);
@@ -200,6 +202,15 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         Red5GameSetting setting = Red5GameSetting.fromOrdinal(settingValue);
         setting.setPlayerNumber(playerNumber);
         game.setSetting(setting);
+        List<Player> players = game.getPlayers();
+        synchronized (players) {
+            for (Player eachPlayer : players) {
+                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                echoMessage.setResult(GAME_SETTING_OVER);
+                echoMessage.setContent(playerNumber + "~" + settingValue);
+                sessionWrite(eachPlayer.getIosession(), echoMessage);
+            }
+        }
         log.debug(setting);
     }
 

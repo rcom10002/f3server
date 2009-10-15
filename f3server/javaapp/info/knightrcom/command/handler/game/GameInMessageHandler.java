@@ -13,6 +13,8 @@ public abstract class GameInMessageHandler<T> extends F3ServerInMessageHandler {
     public static final String GAME_SETTING_UPDATE = "GAME_SETTING_UPDATE";
     /** 设置游戏 */
     public abstract void GAME_SETTING(IoSession session, T message, EchoMessage echoMessage) throws Exception;
+
+    public static final String GAME_SETTING_OVER = "GAME_SETTING_OVER";
     /** 游戏设置结束 */
     public abstract void GAME_SETTING_FINISH(IoSession session, T message, EchoMessage echoMessage) throws Exception;
     
