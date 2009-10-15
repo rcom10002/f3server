@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * GameFeedback entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "game_feedback", catalog = "f3s")
+@Table(name = "game_feedback")
 public class GameFeedback extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String feedbackId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7025028648920871532L;
+
+	private String feedbackId;
 
     private String gameId;
 

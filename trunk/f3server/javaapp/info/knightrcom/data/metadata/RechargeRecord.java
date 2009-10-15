@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * RechargeRecord entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "recharge_record", catalog = "f3s")
+@Table(name = "recharge_record")
 public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String rechargeId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6021040286898388999L;
+
+	private String rechargeId;
 
     private String fromPlayer;
 

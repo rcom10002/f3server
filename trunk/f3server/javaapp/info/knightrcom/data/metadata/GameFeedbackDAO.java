@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,7 +72,8 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<GameFeedback> findByExample(GameFeedback instance) {
+    @SuppressWarnings("unchecked")
+	public List<GameFeedback> findByExample(GameFeedback instance) {
         log.debug("finding GameFeedback instance by example");
         try {
             List<GameFeedback> results = (List<GameFeedback>) getSession().createCriteria("info.knightrcom.data.metadata.GameFeedback").add(create(instance)).list();
@@ -85,7 +85,8 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<GameFeedback> findByProperty(String propertyName, Object value) {
         log.debug("finding GameFeedback instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from GameFeedback as model where model." + propertyName + "= ?";
@@ -130,7 +131,8 @@ public class GameFeedbackDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<GameFeedback> findAll() {
         log.debug("finding all GameFeedback instances");
         try {
             String queryString = "from GameFeedback";

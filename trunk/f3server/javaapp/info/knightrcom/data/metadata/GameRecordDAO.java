@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +76,8 @@ public class GameRecordDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<GameRecord> findByExample(GameRecord instance) {
+    @SuppressWarnings("unchecked")
+	public List<GameRecord> findByExample(GameRecord instance) {
         log.debug("finding GameRecord instance by example");
         try {
             List<GameRecord> results = (List<GameRecord>) getSession().createCriteria("info.knightrcom.data.metadata.GameRecord").add(create(instance)).list();
@@ -89,7 +89,8 @@ public class GameRecordDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<GameRecord> findByProperty(String propertyName, Object value) {
         log.debug("finding GameRecord instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from GameRecord as model where model." + propertyName + "= ?";
@@ -142,7 +143,8 @@ public class GameRecordDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<GameRecord> findAll() {
         log.debug("finding all GameRecord instances");
         try {
             String queryString = "from GameRecord";

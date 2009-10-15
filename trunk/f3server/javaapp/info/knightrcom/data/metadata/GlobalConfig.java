@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * GlobalConfig entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "global_config", catalog = "f3s")
+@Table(name = "global_config")
 public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String globalConfigId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7599501822071353104L;
+
+	private String globalConfigId;
 
     private String number;
 

@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +76,8 @@ public class LogInfoDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<LogInfo> findByExample(LogInfo instance) {
+    @SuppressWarnings("unchecked")
+	public List<LogInfo> findByExample(LogInfo instance) {
         log.debug("finding LogInfo instance by example");
         try {
             List<LogInfo> results = (List<LogInfo>) getSession().createCriteria("info.knightrcom.data.metadata.LogInfo").add(create(instance)).list();
@@ -89,7 +89,8 @@ public class LogInfoDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<LogInfo> findByProperty(String propertyName, Object value) {
         log.debug("finding LogInfo instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from LogInfo as model where model." + propertyName + "= ?";
@@ -142,7 +143,8 @@ public class LogInfoDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<LogInfo> findAll() {
         log.debug("finding all LogInfo instances");
         try {
             String queryString = "from LogInfo";
