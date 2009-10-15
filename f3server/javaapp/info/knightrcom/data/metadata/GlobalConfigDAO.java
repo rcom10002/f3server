@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,7 +70,8 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<GlobalConfig> findByExample(GlobalConfig instance) {
+    @SuppressWarnings("unchecked")
+	public List<GlobalConfig> findByExample(GlobalConfig instance) {
         log.debug("finding GlobalConfig instance by example");
         try {
             List<GlobalConfig> results = (List<GlobalConfig>) getSession().createCriteria("info.knightrcom.data.metadata.GlobalConfig").add(create(instance)).list();
@@ -83,7 +83,8 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<GlobalConfig> findByProperty(String propertyName, Object value) {
         log.debug("finding GlobalConfig instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from GlobalConfig as model where model." + propertyName + "= ?";
@@ -124,7 +125,8 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<GlobalConfig> findAll() {
         log.debug("finding all GlobalConfig instances");
         try {
             String queryString = "from GlobalConfig";

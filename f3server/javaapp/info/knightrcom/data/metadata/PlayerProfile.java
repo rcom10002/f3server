@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * PlayerProfile entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "player_profile", catalog = "f3s")
+@Table(name = "player_profile")
 public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String profileId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2745954701731300294L;
+
+	private String profileId;
 
     private String number;
 

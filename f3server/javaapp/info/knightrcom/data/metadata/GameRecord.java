@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * GameRecord entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "game_record", catalog = "f3s")
+@Table(name = "game_record")
 public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String gameId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8016457849782483047L;
+
+	private String gameId;
 
     private String gameType;
 

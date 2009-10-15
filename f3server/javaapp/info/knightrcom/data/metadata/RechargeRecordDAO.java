@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +76,8 @@ public class RechargeRecordDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<RechargeRecord> findByExample(RechargeRecord instance) {
+    @SuppressWarnings("unchecked")
+	public List<RechargeRecord> findByExample(RechargeRecord instance) {
         log.debug("finding RechargeRecord instance by example");
         try {
             List<RechargeRecord> results = (List<RechargeRecord>) getSession().createCriteria("info.knightrcom.data.metadata.RechargeRecord").add(create(instance)).list();
@@ -89,7 +89,8 @@ public class RechargeRecordDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<RechargeRecord> findByProperty(String propertyName, Object value) {
         log.debug("finding RechargeRecord instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from RechargeRecord as model where model." + propertyName + "= ?";
@@ -142,7 +143,8 @@ public class RechargeRecordDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<RechargeRecord> findAll() {
         log.debug("finding all RechargeRecord instances");
         try {
             String queryString = "from RechargeRecord";

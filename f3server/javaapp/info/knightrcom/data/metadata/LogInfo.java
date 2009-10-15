@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * LogInfo entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "log_info", catalog = "f3s")
+@Table(name = "log_info")
 public class LogInfo extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String logId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4623565790275445000L;
+
+	private String logId;
 
     private String number;
 

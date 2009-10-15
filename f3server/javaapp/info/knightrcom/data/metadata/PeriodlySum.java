@@ -12,12 +12,17 @@ import javax.persistence.TemporalType;
  * PeriodlySum entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "periodly_sum", catalog = "f3s")
+@Table(name = "periodly_sum")
 public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
     // Fields
 
-    private String periodlyId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6892000712630189307L;
+
+	private String periodlyId;
 
     private String profileId;
 

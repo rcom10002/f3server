@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,7 +80,8 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<PlayerProfile> findByExample(PlayerProfile instance) {
+    @SuppressWarnings("unchecked")
+	public List<PlayerProfile> findByExample(PlayerProfile instance) {
         log.debug("finding PlayerProfile instance by example");
         try {
             List<PlayerProfile> results = (List<PlayerProfile>) getSession().createCriteria("info.knightrcom.data.metadata.PlayerProfile").add(create(instance)).list();
@@ -93,7 +93,8 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<PlayerProfile> findByProperty(String propertyName, Object value) {
         log.debug("finding PlayerProfile instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from PlayerProfile as model where model." + propertyName + "= ?";
@@ -154,7 +155,8 @@ public class PlayerProfileDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<PlayerProfile> findAll() {
         log.debug("finding all PlayerProfile instances");
         try {
             String queryString = "from PlayerProfile";

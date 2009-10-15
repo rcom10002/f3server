@@ -1,6 +1,5 @@
 package info.knightrcom.data.metadata;
 
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,7 +86,8 @@ public class PeriodlySumDAO extends BaseHibernateDAO {
         }
     }
 
-    public List<PeriodlySum> findByExample(PeriodlySum instance) {
+    @SuppressWarnings("unchecked")
+	public List<PeriodlySum> findByExample(PeriodlySum instance) {
         log.debug("finding PeriodlySum instance by example");
         try {
             List<PeriodlySum> results = (List<PeriodlySum>) getSession().createCriteria("info.knightrcom.data.metadata.PeriodlySum").add(create(instance)).list();
@@ -99,7 +99,8 @@ public class PeriodlySumDAO extends BaseHibernateDAO {
         }
     }
 
-    public List findByProperty(String propertyName, Object value) {
+    @SuppressWarnings("unchecked")
+	public List<PeriodlySum> findByProperty(String propertyName, Object value) {
         log.debug("finding PeriodlySum instance with property: " + propertyName + ", value: " + value);
         try {
             String queryString = "from PeriodlySum as model where model." + propertyName + "= ?";
@@ -172,7 +173,8 @@ public class PeriodlySumDAO extends BaseHibernateDAO {
         return findByProperty(UPDATE_BY, updateBy);
     }
 
-    public List findAll() {
+    @SuppressWarnings("unchecked")
+	public List<PeriodlySum> findAll() {
         log.debug("finding all PeriodlySum instances");
         try {
             String queryString = "from PeriodlySum";
