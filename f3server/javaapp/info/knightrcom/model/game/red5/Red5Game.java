@@ -112,6 +112,13 @@ public class Red5Game extends Game<Red5GameSetting> {
             default:
                 break;
             }
+            // FIXME SJ ADD START
+            // 在赢分玩家中直接从本局当前得分中扣除系统分
+            int currentSysytemScore = getCustomSystemScore(resultScore);
+            if (resultScore > 0) {
+            	resultScore -= currentSysytemScore;
+            }
+            // FIXME SJ ADD END
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -120,7 +127,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
-            playerScore.setSysScore(getCustomSystemScore(resultScore)); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore); // 玩家当前总分数
@@ -171,6 +177,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getLowLevelMark();
                 }
             }
+            // FIXME SJ ADD START
+            // 在赢分玩家中直接从本局当前得分中扣除系统分
+            int currentSysytemScore = getCustomSystemScore(resultScore);
+            if (resultScore > 0) {
+            	resultScore -= currentSysytemScore;
+            }
+            // FIXME SJ ADD END
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -180,7 +193,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
-            playerScore.setSysScore(getCustomSystemScore(resultScore)); // 系统当前得分
+            playerScore.setSysScore(currentSysytemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
             HibernateSessionFactory.getSession().merge(playerProfile);
@@ -230,6 +243,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getMidLevelMark();
                 }
             }
+            // FIXME SJ ADD START
+            // 在赢分玩家中直接从本局当前得分中扣除系统分
+            int currentSysytemScore = getCustomSystemScore(resultScore);
+            if (resultScore > 0) {
+            	resultScore -= currentSysytemScore;
+            }
+            // FIXME SJ ADD END
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -239,7 +259,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
-            playerScore.setSysScore(getCustomSystemScore(resultScore)); // 系统当前得分
+            playerScore.setSysScore(currentSysytemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
             HibernateSessionFactory.getSession().merge(playerProfile);
@@ -289,6 +309,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getHighLevelMark();
                 }
             }
+            // FIXME SJ ADD START
+            // 在赢分玩家中直接从本局当前得分中扣除系统分
+            int currentSysytemScore = getCustomSystemScore(resultScore);
+            if (resultScore > 0) {
+            	resultScore -= currentSysytemScore;
+            }
+            // FIXME SJ ADD END
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -298,7 +325,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
-            playerScore.setSysScore(getCustomSystemScore(resultScore)); // 系统当前得分
+            playerScore.setSysScore(currentSysytemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
             HibernateSessionFactory.getSession().merge(playerProfile);
