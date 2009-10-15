@@ -6,6 +6,7 @@ import info.knightrcom.command.message.F3ServerMessage;
 import info.knightrcom.command.message.PlatformMessage;
 import info.knightrcom.command.message.F3ServerMessage.MessageType;
 import info.knightrcom.command.message.game.FightLandlordGameMessage;
+import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.HibernateTransactionSupport;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
@@ -42,6 +43,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 		// 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
         Room currentRoom = currentPlayer.getCurrentRoom();
+        HibernateSessionFactory.getSession().clear();
         PlayerProfile currentPlayerProfile = new PlayerProfileDAO().findByUserId(currentPlayer.getId()).get(0);
         if (currentPlayerProfile.getCurrentScore() < currentRoom.getMinGameMarks()) {
             currentPlayer.setCurrentStatus(GameStatus.IDLE);
@@ -239,6 +241,15 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 		FightLandlordGameSetting setting = FightLandlordGameSetting.fromOrdinal(settingValue);
 		setting.setPlayerNumber(playerNumber);
 		game.setSetting(setting);
+		List<Player> players = game.getPlayers();
+        synchronized (players) {
+            for (Player eachPlayer : players) {
+                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                echoMessage.setResult(GAME_SETTING_OVER);
+                echoMessage.setContent(playerNumber + "~" + settingValue);
+                sessionWrite(eachPlayer.getIosession(), echoMessage);
+            }
+        }
 		log.debug(setting);
 
 		// 为地主发底牌,并为其它两家显示底牌
@@ -246,12 +257,9 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 		for (int i = 0; i < FightLandlordPoker.handlePokers.length; i++) {
 			builder.append(FightLandlordPoker.handlePokers[i].getValue() + ",");
 		}
-		List<Player> players = game.getPlayers();
 		boolean isHandlerPokers = true;
 		synchronized (players) {
-			Iterator<Player> itr = players.iterator();
-			while (itr.hasNext()) {
-				Player player = itr.next();
+			for (Player player : players) {
 				echoMessage = F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
 				echoMessage.setResult(GAME_SETTING_UPDATE_FINISH);
 				echoMessage.setContent(builder.toString().replaceFirst(",$","~") + playerNumber);
