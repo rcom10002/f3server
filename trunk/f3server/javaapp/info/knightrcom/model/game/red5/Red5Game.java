@@ -127,6 +127,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerScore.setUserId(playerProfile.getUserId());
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setSysScore(currentSysytemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
             playerProfile.setCurrentScore(playerProfile.getCurrentScore().intValue() + resultScore); // 玩家当前总分数
