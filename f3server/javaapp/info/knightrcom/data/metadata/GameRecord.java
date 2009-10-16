@@ -32,9 +32,9 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
 
     private String players;
 
-    private Integer score;
+    private Double score;
 
-    private Integer systemScore;
+    private Double systemScore;
 
     private String record;
 
@@ -62,7 +62,7 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
     }
 
     /** full constructor */
-    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Integer score, Integer systemScore, String record, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public GameRecord(String gameId, String gameType, Short gameSetting, String winnerNumbers, String players, Double score, Double systemScore, String record, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.gameId = gameId;
         this.gameType = gameType;
         this.gameSetting = gameSetting;
@@ -126,20 +126,20 @@ public class GameRecord extends info.knightrcom.data.SimplePojoImpl implements j
     }
 
     @Column(name = "SCORE")
-    public Integer getScore() {
+    public Double getScore() {
         return this.score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
     @Column(name = "SYSTEM_SCORE")
-    public Integer getSystemScore() {
+    public Double getSystemScore() {
         return this.systemScore;
     }
 
-    public void setSystemScore(Integer systemScore) {
+    public void setSystemScore(Double systemScore) {
         this.systemScore = systemScore;
     }
 

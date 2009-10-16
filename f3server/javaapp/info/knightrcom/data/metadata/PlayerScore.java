@@ -32,13 +32,13 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
 
     private String currentNumber;
 
-    private Integer curScore;
+    private Double curScore;
 
-    private Integer sysScore;
+    private Double sysScore;
 
-    private Integer orgScores;
+    private Double orgScores;
 
-    private Integer curScores;
+    private Double curScores;
 
     private String status;
 
@@ -57,7 +57,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** minimal constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Double curScore, Double sysScore, Double orgScores, Double curScores) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
@@ -70,7 +70,7 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** full constructor */
-    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Integer curScore, Integer sysScore, Integer orgScores, Integer curScores, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerScore(String scoreId, String profileId, String gameId, String userId, String currentNumber, Double curScore, Double sysScore, Double orgScores, Double curScores, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.scoreId = scoreId;
         this.profileId = profileId;
         this.gameId = gameId;
@@ -135,38 +135,38 @@ public class PlayerScore extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     @Column(name = "CUR_SCORE", nullable = false)
-    public Integer getCurScore() {
+    public Double getCurScore() {
         return this.curScore;
     }
 
-    public void setCurScore(Integer curScore) {
+    public void setCurScore(Double curScore) {
         this.curScore = curScore;
     }
 
     @Column(name = "SYS_SCORE", nullable = false)
-    public Integer getSysScore() {
+    public Double getSysScore() {
         return this.sysScore;
     }
 
-    public void setSysScore(Integer sysScore) {
+    public void setSysScore(Double sysScore) {
         this.sysScore = sysScore;
     }
 
     @Column(name = "ORG_SCORES", nullable = false)
-    public Integer getOrgScores() {
+    public Double getOrgScores() {
         return this.orgScores;
     }
 
-    public void setOrgScores(Integer orgScores) {
+    public void setOrgScores(Double orgScores) {
         this.orgScores = orgScores;
     }
 
     @Column(name = "CUR_SCORES", nullable = false)
-    public Integer getCurScores() {
+    public Double getCurScores() {
         return this.curScores;
     }
 
-    public void setCurScores(Integer curScores) {
+    public void setCurScores(Double curScores) {
         this.curScores = curScores;
     }
 

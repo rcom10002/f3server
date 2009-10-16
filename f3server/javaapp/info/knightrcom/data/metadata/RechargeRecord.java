@@ -26,17 +26,17 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
 
     private String fromPlayer;
 
-    private Integer fromOrgScore;
+    private Double fromOrgScore;
 
-    private Integer fromCurScore;
+    private Double fromCurScore;
 
-    private Integer score;
+    private Double score;
 
     private String toPlayer;
 
-    private Integer toOrgScore;
+    private Double toOrgScore;
 
-    private Integer toCurScore;
+    private Double toCurScore;
 
     private String memo;
 
@@ -57,7 +57,7 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
     }
 
     /** minimal constructor */
-    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, Integer score, String toPlayer, Integer toOrgScore, Integer toCurScore) {
+    public RechargeRecord(String rechargeId, String fromPlayer, Double fromOrgScore, Double fromCurScore, Double score, String toPlayer, Double toOrgScore, Double toCurScore) {
         this.rechargeId = rechargeId;
         this.fromPlayer = fromPlayer;
         this.fromOrgScore = fromOrgScore;
@@ -69,7 +69,7 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
     }
 
     /** full constructor */
-    public RechargeRecord(String rechargeId, String fromPlayer, Integer fromOrgScore, Integer fromCurScore, Integer score, String toPlayer, Integer toOrgScore, Integer toCurScore, String memo, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public RechargeRecord(String rechargeId, String fromPlayer, Double fromOrgScore, Double fromCurScore, Double score, String toPlayer, Double toOrgScore, Double toCurScore, String memo, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.rechargeId = rechargeId;
         this.fromPlayer = fromPlayer;
         this.fromOrgScore = fromOrgScore;
@@ -107,30 +107,30 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
     }
 
     @Column(name = "FROM_ORG_SCORE", nullable = false)
-    public Integer getFromOrgScore() {
+    public Double getFromOrgScore() {
         return this.fromOrgScore;
     }
 
-    public void setFromOrgScore(Integer fromOrgScore) {
+    public void setFromOrgScore(Double fromOrgScore) {
         this.fromOrgScore = fromOrgScore;
     }
 
     @Column(name = "FROM_CUR_SCORE", nullable = false)
-    public Integer getFromCurScore() {
+    public Double getFromCurScore() {
         return this.fromCurScore;
     }
 
-    public void setFromCurScore(Integer fromCurScore) {
+    public void setFromCurScore(Double fromCurScore) {
         this.fromCurScore = fromCurScore;
     }
 
     
     @Column(name = "SCORE", nullable = false)
-	public Integer getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 
@@ -144,20 +144,20 @@ public class RechargeRecord extends info.knightrcom.data.SimplePojoImpl implemen
     }
 
     @Column(name = "TO_ORG_SCORE", nullable = false)
-    public Integer getToOrgScore() {
+    public Double getToOrgScore() {
         return this.toOrgScore;
     }
 
-    public void setToOrgScore(Integer toOrgScore) {
+    public void setToOrgScore(Double toOrgScore) {
         this.toOrgScore = toOrgScore;
     }
 
     @Column(name = "TO_CUR_SCORE", nullable = false)
-    public Integer getToCurScore() {
+    public Double getToCurScore() {
         return this.toCurScore;
     }
 
-    public void setToCurScore(Integer toCurScore) {
+    public void setToCurScore(Double toCurScore) {
         this.toCurScore = toCurScore;
     }
 

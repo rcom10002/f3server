@@ -36,21 +36,21 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
 
     private Integer winTimes;
 
-    private Integer winScores;
+    private Double winScores;
 
     private Integer loseTimes;
 
-    private Integer loseScores;
+    private Double loseScores;
 
     private Integer drawTimes;
 
-    private Integer drawScores;
+    private Double drawScores;
 
     private Integer totalTimes;
 
-    private Integer totalScores;
+    private Double totalScores;
 
-    private Integer totalSystemScore;
+    private Double totalSystemScore;
 
     private String status;
 
@@ -69,7 +69,7 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** minimal constructor */
-    public PeriodlySum(String periodlyId, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore) {
+    public PeriodlySum(String periodlyId, String title, Date startDate, Date endDate, Integer winTimes, Double winScores, Integer loseTimes, Double loseScores, Integer drawTimes, Double drawScores, Integer totalTimes, Double totalScores, Double totalSystemScore) {
         this.periodlyId = periodlyId;
         this.title = title;
         this.startDate = startDate;
@@ -86,7 +86,7 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     /** full constructor */
-    public PeriodlySum(String periodlyId, String profileId, String number, String title, Date startDate, Date endDate, Integer winTimes, Integer winScores, Integer loseTimes, Integer loseScores, Integer drawTimes, Integer drawScores, Integer totalTimes, Integer totalScores, Integer totalSystemScore, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PeriodlySum(String periodlyId, String profileId, String number, String title, Date startDate, Date endDate, Integer winTimes, Double winScores, Integer loseTimes, Double loseScores, Integer drawTimes, Double drawScores, Integer totalTimes, Double totalScores, Double totalSystemScore, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.periodlyId = periodlyId;
         this.profileId = profileId;
         this.number = number;
@@ -177,11 +177,11 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     @Column(name = "WIN_SCORES", nullable = false)
-    public Integer getWinScores() {
+    public Double getWinScores() {
         return this.winScores;
     }
 
-    public void setWinScores(Integer winScores) {
+    public void setWinScores(Double winScores) {
         this.winScores = winScores;
     }
 
@@ -195,11 +195,11 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     @Column(name = "LOSE_SCORES", nullable = false)
-    public Integer getLoseScores() {
+    public Double getLoseScores() {
         return this.loseScores;
     }
 
-    public void setLoseScores(Integer loseScores) {
+    public void setLoseScores(Double loseScores) {
         this.loseScores = loseScores;
     }
 
@@ -213,11 +213,11 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     @Column(name = "DRAW_SCORES", nullable = false)
-    public Integer getDrawScores() {
+    public Double getDrawScores() {
         return this.drawScores;
     }
 
-    public void setDrawScores(Integer drawScores) {
+    public void setDrawScores(Double drawScores) {
         this.drawScores = drawScores;
     }
 
@@ -231,20 +231,20 @@ public class PeriodlySum extends info.knightrcom.data.SimplePojoImpl implements 
     }
 
     @Column(name = "TOTAL_SCORES", nullable = false)
-    public Integer getTotalScores() {
+    public Double getTotalScores() {
         return this.totalScores;
     }
 
-    public void setTotalScores(Integer totalScores) {
+    public void setTotalScores(Double totalScores) {
         this.totalScores = totalScores;
     }
 
     @Column(name = "TOTAL_SYSTEM_SCORE", nullable = false)
-    public Integer getTotalSystemScore() {
+    public Double getTotalSystemScore() {
         return this.totalSystemScore;
     }
 
-    public void setTotalSystemScore(Integer totalSystemScore) {
+    public void setTotalSystemScore(Double totalSystemScore) {
         this.totalSystemScore = totalSystemScore;
     }
 
