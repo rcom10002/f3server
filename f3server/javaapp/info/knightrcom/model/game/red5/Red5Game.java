@@ -360,7 +360,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
-		// 取得当前游戏设置
+		// 根据当前游戏设置，取得惩罚标准，默认扣一倍
 		int deductStandard = 1;
 		if (this.getSetting().equals(Red5GameSetting.RUSH)) {
 			// 独牌
@@ -378,8 +378,6 @@ public class Red5Game extends Game<Red5GameSetting> {
 			int resultScore = 0;
 			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
 			int deductedMark = this.getGameMark() * deductStandard;
-			// 另拿出一份基本分作为系统分
-			int systemScore = this.getGameMark();
 			for (Player player : this.getPlayers()) {
 				playerId = player.getId();
 				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
@@ -402,11 +400,12 @@ public class Red5Game extends Game<Red5GameSetting> {
 	            playerScore.setCurScore(resultScore); // 玩家当前得分
 	            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
 	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
-	            if (player.getId().equals(disconnectedPlayer.getId())) {
+	            if (!player.getId().equals(disconnectedPlayer.getId())) {
 	            	// 掉线玩家
-		            playerScore.setSysScore(systemScore); // 系统当前得分
-	            } else {
 		            playerScore.setSysScore(0); // 系统当前得分
+	            } else {
+	            	// 非掉线玩家
+		            playerScore.setSysScore(getCustomSystemScore(deductedMark)); // 系统当前得分
 	            }
 	            HibernateSessionFactory.getSession().merge(playerProfile);
 	            HibernateSessionFactory.getSession().merge(playerScore);
