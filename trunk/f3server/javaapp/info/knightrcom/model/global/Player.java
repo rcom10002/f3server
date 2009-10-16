@@ -21,13 +21,13 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     private String gameId;
 
     /** 当前游戏玩家在游戏中的序号 */
-    private int currentNumber;
+    private double currentNumber;
 
     /** 玩家本局得分 */
-    private int currentScore;
+    private double currentScore;
 
     /** 玩家本局所产生的系统分 */
-    private int systemScore; 
+    private double systemScore; 
 
     /** 当前玩家所对应的会话 */
     private IoSession iosession;
@@ -137,35 +137,35 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     /**
      * @param currentNumber the currentSn to set
      */
-    public void setCurrentNumber(int currentNumber) {
+    public void setCurrentNumber(double currentNumber) {
         this.currentNumber = currentNumber;
     }
 
     /**
      * @return the currentScore
      */
-    public int getCurrentScore() {
+    public double getCurrentScore() {
         return currentScore;
     }
 
     /**
      * @param currentScore the currentScore to set
      */
-    public void setCurrentScore(int currentScore) {
+    public void setCurrentScore(double currentScore) {
         this.currentScore = currentScore;
     }
 
     /**
      * @return the systemScore
      */
-    public int getSystemScore() {
+    public double getSystemScore() {
         return systemScore;
     }
 
     /**
      * @param systemScore the systemScore to set
      */
-    public void setSystemScore(int systemScore) {
+    public void setSystemScore(double systemScore) {
         this.systemScore = systemScore;
     }
 
