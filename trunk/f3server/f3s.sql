@@ -81,7 +81,7 @@ create table PERIODLY_SUM
    START_DATE           DATE not null,
    END_DATE             DATE not null,
    WIN_TIMES            INT not null,
-   WIN_SCORES           NUMERIC(10,2)) not null,
+   WIN_SCORES           NUMERIC(10,2) not null,
    LOSE_TIMES           INT not null,
    LOSE_SCORES          NUMERIC(10,2) not null,
    DRAW_TIMES           INT not null,
