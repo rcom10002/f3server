@@ -36,19 +36,19 @@ public abstract class Game<T> {
     private StringBuilder winnerNumbers = new StringBuilder();
 
     /** 当前房间每局游戏所需要的分数 */
-    private int gameMark;
+    private double gameMark;
     
     /** 扑克类专用 【红五 独牌】或【斗地主 青龙】记分 */
-    private int lowLevelMark;
+    private double lowLevelMark;
     
     /** 扑克类专用 【红五 天独】或【斗地主 白虎】记分 */
-    private int midLevelMark;
+    private double midLevelMark;
     
     /** 扑克类专用 【红五 天外天】或【斗地主 朱雀】记分 */
-    private int highLevelMark;
+    private double highLevelMark;
 
     /** 游戏进行所需要的最少底分 */
-    private int minGameStartMark;
+    private double minGameStartMark;
 
     /** 游戏设置 */
     private T setting; 
@@ -136,63 +136,63 @@ public abstract class Game<T> {
     /**
      * @return the gameMark
      */
-    public int getGameMark() {
+    public double getGameMark() {
         return gameMark;
     }
 
     /**
      * @param gameMark the gameMark to set
      */
-    public void setGameMark(int gameMark) {
+    public void setGameMark(double gameMark) {
         this.gameMark = gameMark;
     }
 
     /**
 	 * @return the lowLevelMark
 	 */
-	public int getLowLevelMark() {
+	public double getLowLevelMark() {
 		return lowLevelMark;
 	}
 
 	/**
 	 * @param lowLevelMark the lowLevelMark to set
 	 */
-	public void setLowLevelMark(int lowLevelMark) {
+	public void setLowLevelMark(double lowLevelMark) {
 		this.lowLevelMark = lowLevelMark;
 	}
 
 	/**
 	 * @return the midLevelMark
 	 */
-	public int getMidLevelMark() {
+	public double getMidLevelMark() {
 		return midLevelMark;
 	}
 
 	/**
 	 * @param midLevelMark the midLevelMark to set
 	 */
-	public void setMidLevelMark(int midLevelMark) {
+	public void setMidLevelMark(double midLevelMark) {
 		this.midLevelMark = midLevelMark;
 	}
 
 	/**
 	 * @return the highLevelMark
 	 */
-	public int getHighLevelMark() {
+	public double getHighLevelMark() {
 		return highLevelMark;
 	}
 
 	/**
 	 * @param highLevelMark the highLevelMark to set
 	 */
-	public void setHighLevelMark(int highLevelMark) {
+	public void setHighLevelMark(double highLevelMark) {
 		this.highLevelMark = highLevelMark;
 	}
 
 	/**
      * @return the minGameStartMark
      */
-    public int getMinGameStartMark() {
+    public double getMinGameStartMark() {
         return minGameStartMark;
     }
 
@@ -233,8 +233,8 @@ public abstract class Game<T> {
             Iterator<String> keyItr  = playerNumberMap.keySet().iterator();
             while (keyItr.hasNext()) {
                 String key = keyItr.next();
-                int currentScore = playerNumberMap.get(key).getCurrentScore();
-                int systemScore = playerNumberMap.get(key).getSystemScore();
+                double currentScore = playerNumberMap.get(key).getCurrentScore();
+                double systemScore = playerNumberMap.get(key).getSystemScore();
                 gameDetailScore += String.format("%1$s,%2$s,%3$s;", key, currentScore, systemScore);
             }
             gameDetailScore = gameDetailScore.replaceFirst(";$", "");
@@ -268,9 +268,9 @@ public abstract class Game<T> {
 	 * @param currentScore
 	 * @return the customSystemScore
 	 */
-	public int getCustomSystemScore(int currentScore) {
+	public double getCustomSystemScore(double currentScore) {
 		if (currentScore > 0) {
-			return new BigDecimal(currentScore).multiply(getSystemScoreRate()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).intValue();
+			return new BigDecimal(currentScore).multiply(getSystemScoreRate()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).doubleValue();
 		}
 		return 0;
 	}
