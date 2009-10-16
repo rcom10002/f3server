@@ -32,7 +32,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
 
     private String password;
 
-    private Integer currentScore;
+    private Double currentScore;
 
     private Integer initLimit;
 
@@ -59,7 +59,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     }
 
     /** minimal constructor */
-    public PlayerProfile(String profileId, String userId, String password, Integer currentScore, Integer level, String rlsPath, String role) {
+    public PlayerProfile(String profileId, String userId, String password, Double currentScore, Integer level, String rlsPath, String role) {
         this.profileId = profileId;
         this.userId = userId;
         this.password = password;
@@ -70,7 +70,7 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     }
 
     /** full constructor */
-    public PlayerProfile(String profileId, String number, String name, String userId, String password, Integer currentScore, Integer initLimit, Integer level, String rlsPath, String role, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
+    public PlayerProfile(String profileId, String number, String name, String userId, String password, Double currentScore, Integer initLimit, Integer level, String rlsPath, String role, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
         this.profileId = profileId;
         this.number = number;
         this.name = name;
@@ -136,11 +136,11 @@ public class PlayerProfile extends info.knightrcom.data.SimplePojoImpl implement
     }
 
     @Column(name = "CURRENT_SCORE", nullable = false)
-    public Integer getCurrentScore() {
+    public Double getCurrentScore() {
         return this.currentScore;
     }
 
-    public void setCurrentScore(Integer currentScore) {
+    public void setCurrentScore(Double currentScore) {
         this.currentScore = currentScore;
     }
 
