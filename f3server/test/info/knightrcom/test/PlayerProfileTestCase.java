@@ -25,7 +25,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setPassword(EncryptionUtil.encryptSHA("bountyofking:)123"));
         profile.setRole("Administrator");
         profile.setRlsPath("Administrator");
-        profile.setCurrentScore(-1);
+        profile.setCurrentScore(-1d);
         profile.setInitLimit(-1);
         profile.setLevel(100);
         profile.setStatus("1");
@@ -40,7 +40,7 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setPassword(EncryptionUtil.encryptSHA("SuperGameMaster"));
         profile.setRole("SuperGameMaster");
         profile.setRlsPath("Administrator");
-        profile.setCurrentScore(-1);
+        profile.setCurrentScore(-1d);
         profile.setInitLimit(-1);
         profile.setLevel(100);
         profile.setStatus("0");
@@ -52,55 +52,55 @@ public class PlayerProfileTestCase extends TestCase {
         profile.setPassword(EncryptionUtil.encryptSHA("GameMaster"));
         profile.setRole("GameMaster");
         profile.setRlsPath("Administrator");
-        profile.setCurrentScore(-1);
+        profile.setCurrentScore(-1d);
         profile.setInitLimit(-1);
         profile.setLevel(100);
         profile.setStatus("1");
         HibernateSessionFactory.getSession().save(profile);
     }
 
-//    public void testCreatePlayerProfile() {
-//        PlayerProfile profile = new PlayerProfile();
-//        for (int i = 1; i <= 6; i++) {
-//            profile = new PlayerProfile();
-//            profile.setProfileId(UUID.randomUUID().toString());
-//            profile.setName("user" + i);
-//            profile.setUserId("user" + i);
-//            profile.setPassword(EncryptionUtil.encryptSHA("user" + i));
-//            profile.setRole("GroupUser");
-//            profile.setRlsPath("user" + i);
-//            profile.setCurrentScore(500);
-//            profile.setInitLimit(500);
-//            profile.setLevel(0);
-//            profile.setStatus("1");
-//            HibernateSessionFactory.getSession().save(profile);
-//        }
-//        // 添加组用户
-//        profile = new PlayerProfile();
-//        profile.setProfileId(UUID.randomUUID().toString());
-//        profile.setName("user33");
-//        profile.setUserId("user33");
-//        profile.setPassword(EncryptionUtil.encryptSHA("user33"));
-//        profile.setRole("GroupUser");
-//        profile.setRlsPath("user3!user33");
-//        profile.setCurrentScore(300);
-//        profile.setInitLimit(300);
-//        profile.setLevel(0);
-//        profile.setStatus("0");
-//        HibernateSessionFactory.getSession().save(profile);
-//        profile = new PlayerProfile();
-//        profile.setProfileId(UUID.randomUUID().toString());
-//        profile.setName("user44");
-//        profile.setUserId("user44");
-//        profile.setPassword(EncryptionUtil.encryptSHA("user44"));
-//        profile.setRole("User");
-//        profile.setRlsPath("user4!user44");
-//        profile.setCurrentScore(300);
-//        profile.setInitLimit(300);
-//        profile.setLevel(0);
-//        profile.setStatus("0");
-//        HibernateSessionFactory.getSession().save(profile);
-//    }
+    public void testCreatePlayerProfile() {
+        PlayerProfile profile = new PlayerProfile();
+        for (int i = 1; i <= 6; i++) {
+            profile = new PlayerProfile();
+            profile.setProfileId(UUID.randomUUID().toString());
+            profile.setName("user" + i);
+            profile.setUserId("user" + i);
+            profile.setPassword(EncryptionUtil.encryptSHA("user" + i));
+            profile.setRole("GroupUser");
+            profile.setRlsPath("user" + i);
+            profile.setCurrentScore(500d);
+            profile.setInitLimit(500);
+            profile.setLevel(0);
+            profile.setStatus("1");
+            HibernateSessionFactory.getSession().save(profile);
+        }
+        // 添加组用户
+        profile = new PlayerProfile();
+        profile.setProfileId(UUID.randomUUID().toString());
+        profile.setName("user33");
+        profile.setUserId("user33");
+        profile.setPassword(EncryptionUtil.encryptSHA("user33"));
+        profile.setRole("GroupUser");
+        profile.setRlsPath("user3!user33");
+        profile.setCurrentScore(300d);
+        profile.setInitLimit(300);
+        profile.setLevel(0);
+        profile.setStatus("0");
+        HibernateSessionFactory.getSession().save(profile);
+        profile = new PlayerProfile();
+        profile.setProfileId(UUID.randomUUID().toString());
+        profile.setName("user44");
+        profile.setUserId("user44");
+        profile.setPassword(EncryptionUtil.encryptSHA("user44"));
+        profile.setRole("User");
+        profile.setRlsPath("user4!user44");
+        profile.setCurrentScore(300d);
+        profile.setInitLimit(300);
+        profile.setLevel(0);
+        profile.setStatus("0");
+        HibernateSessionFactory.getSession().save(profile);
+    }
 
     @Override
     protected void tearDown() throws Exception {
