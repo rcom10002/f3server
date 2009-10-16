@@ -20,7 +20,7 @@ public class PlayerProfileUsersTestCase extends TestCase {
             profile.setPassword(EncryptionUtil.encryptSHA("user" + i));
             profile.setRole("GroupUser");
             profile.setRlsPath("user" + i);
-            profile.setCurrentScore(500);
+            profile.setCurrentScore(500d);
             profile.setInitLimit(500);
             profile.setLevel(0);
             profile.setStatus("1");
@@ -34,7 +34,7 @@ public class PlayerProfileUsersTestCase extends TestCase {
         profile.setPassword(EncryptionUtil.encryptSHA("user33"));
         profile.setRole("GroupUser");
         profile.setRlsPath("user3!user33");
-        profile.setCurrentScore(300);
+        profile.setCurrentScore(300d);
         profile.setInitLimit(300);
         profile.setLevel(0);
         profile.setStatus("0");
@@ -46,7 +46,7 @@ public class PlayerProfileUsersTestCase extends TestCase {
         profile.setPassword(EncryptionUtil.encryptSHA("user44"));
         profile.setRole("User");
         profile.setRlsPath("user4!user44");
-        profile.setCurrentScore(300);
+        profile.setCurrentScore(300d);
         profile.setInitLimit(300);
         profile.setLevel(0);
         profile.setStatus("0");
