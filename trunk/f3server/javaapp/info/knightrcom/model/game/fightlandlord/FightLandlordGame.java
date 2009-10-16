@@ -97,9 +97,9 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
      * @param isFinalSettingPlayerWon
      * @param pointMark
      */
-    private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon, int pointMark) {
+    private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon, double pointMark) {
         // 独牌
-        int gameMark = this.getGameMark();
+    	double gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到2X+2X，反之叫牌者输4X
         while (itr.hasNext()) {
@@ -108,7 +108,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
-            int resultScore = 0;
+            double resultScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
                 if (getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
@@ -130,7 +130,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             }
             // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
-            int currentSysytemScore = getCustomSystemScore(resultScore);
+            double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
@@ -196,7 +196,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
 		// 取得当前游戏设置
-		int deductStandard = 0;
+		double deductStandard = 0;
 		if (FightLandlordGameSetting.NO_RUSH.equals(this.getSetting())) {
 			// 不叫
 			deductStandard = this.getLowLevelMark();
@@ -214,11 +214,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 		synchronized(this.getPlayers()) {
 			String playerIds = "";
 			String playerId = null;
-			int resultScore = 0;
+			double resultScore = 0;
 			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级 × 翻倍 
-			int deductedMark = this.getGameMark() * deductStandard * getMultiple();
+			double deductedMark = this.getGameMark() * deductStandard * getMultiple();
 			// 另拿出一份基本分作为系统分
-			int systemScore = this.getGameMark();
+			double systemScore = this.getGameMark();
 			for (Player player : this.getPlayers()) {
 				playerId = player.getId();
 				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
@@ -245,7 +245,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 	            	// 掉线玩家
 		            playerScore.setSysScore(systemScore); // 系统当前得分
 	            } else {
-		            playerScore.setSysScore(0); // 系统当前得分
+		            playerScore.setSysScore(0d); // 系统当前得分
 	            }
 	            HibernateSessionFactory.getSession().merge(playerProfile);
 	            HibernateSessionFactory.getSession().merge(playerScore);

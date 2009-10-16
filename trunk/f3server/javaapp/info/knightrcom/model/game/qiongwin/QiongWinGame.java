@@ -81,9 +81,9 @@ public class QiongWinGame extends Game<QiongWinGameSetting> {
         // 点炮 => 取得底分与每番分
         final int basicScore = 20;
         final int pointScore = 10;
-        int resultScore = 0;
-        int systemScore = 0;
-        int points = 0;
+        double resultScore = 0;
+        double systemScore = 0;
+        double points = 0;
         String playerIds = "";
 
         while (itr.hasNext()) {
@@ -121,7 +121,7 @@ public class QiongWinGame extends Game<QiongWinGameSetting> {
             } else if (loserNumber.equals(player.getCurrentNumber())) {
             	playerScore.setCurScore(-1 * resultScore); // 玩家当前得分
             } else {
-            	playerScore.setCurScore(0); // 玩家当前得分
+            	playerScore.setCurScore(0d); // 玩家当前得分
             }
             playerScore.setSysScore(systemScore); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
@@ -147,9 +147,9 @@ public class QiongWinGame extends Game<QiongWinGameSetting> {
         // 自摸 => 取得底分与每番分
         final int basicScore = 20;
         final int pointScore = 10;
-        int resultScore = 0;
-        int systemScore = 0;
-        int points = 0;
+        double resultScore = 0;
+        double systemScore = 0;
+        double points = 0;
         String playerIds = "";
         while (itr.hasNext()) {
             // 取得玩家信息
