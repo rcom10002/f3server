@@ -89,16 +89,16 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
      * @param score recharege score
      * @return
      */
-    static EntityInfo<RechargeRecord> INNER_SAVE_RECHARGE_RECORD(PlayerProfile fromPlayerProfile, PlayerProfile toPlayerProfile, int score) {
+    static EntityInfo<RechargeRecord> INNER_SAVE_RECHARGE_RECORD(PlayerProfile fromPlayerProfile, PlayerProfile toPlayerProfile, double score) {
         // 设置玩家ID信息
         String fromPlayer = fromPlayerProfile.getUserId();
         String toPlayer = toPlayerProfile.getUserId();
 
         // 获取原始积分
-        int fromCurScore = fromPlayerProfile.getCurrentScore() - score;
-        int fromOrgScore = fromPlayerProfile.getCurrentScore();
-        int toCurScore = toPlayerProfile.getCurrentScore() + score;
-        int toOrgScore = toPlayerProfile.getCurrentScore();
+        double fromCurScore = fromPlayerProfile.getCurrentScore() - score;
+        double fromOrgScore = fromPlayerProfile.getCurrentScore();
+        double toCurScore = toPlayerProfile.getCurrentScore() + score;
+        double toOrgScore = toPlayerProfile.getCurrentScore();
 
         // 更新用户当前积分
         if ("GroupUser".equals(fromPlayerProfile.getRole())) {
@@ -123,8 +123,8 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
             rechargeRecord.setFromCurScore(fromCurScore);
         } else {
             // 系统管理员，超级游戏管理员，游戏管理员
-            rechargeRecord.setFromOrgScore(-1);
-            rechargeRecord.setFromCurScore(-1);
+            rechargeRecord.setFromOrgScore(-1d);
+            rechargeRecord.setFromCurScore(-1d);
         }
         rechargeRecord.setScore(score);
         rechargeRecord.setToPlayer(toPlayer);
@@ -168,7 +168,7 @@ public class DepositBookService extends F3SWebService<RechargeRecord> {
         Criteria criteriaTo = HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class);
         criteriaTo.add(Expression.eq("userId", toPlayer));
         PlayerProfile toPlayerProfile = (PlayerProfile) criteriaTo.uniqueResult();
-        EntityInfo<RechargeRecord> info = INNER_SAVE_RECHARGE_RECORD(fromPlayerProfile, toPlayerProfile, Integer.valueOf(score));
+        EntityInfo<RechargeRecord> info = INNER_SAVE_RECHARGE_RECORD(fromPlayerProfile, toPlayerProfile, Double.valueOf(score));
         return toXML(info, getAliasTypes());
     }
 }

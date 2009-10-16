@@ -142,7 +142,7 @@ public class PlayerProfileService extends F3SWebService<PlayerProfile> {
         playerProfile.setUserId(request.getParameter("USER_ID"));
         playerProfile.setPassword(EncryptionUtil.encryptSHA(request.getParameter("PASSWORD")));
         playerProfile.setRlsPath(request.getParameter("RLS_PATH"));
-        playerProfile.setCurrentScore(0);
+        playerProfile.setCurrentScore(0d);
         playerProfile.setInitLimit(Integer.valueOf(request.getParameter("INIT_LIMIT")));
         playerProfile.setLevel(new Integer(0));
         playerProfile.setRole(request.getParameter("ROLE"));
