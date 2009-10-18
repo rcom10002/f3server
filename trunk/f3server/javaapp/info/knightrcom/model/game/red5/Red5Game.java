@@ -80,7 +80,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistNoRushScore(Iterator<Player> itr, GameRecord gameRecord) {
         // 不独
-        int gameMark = this.getGameMark();
+        double gameMark = this.getGameMark();
         String playerIds = "";
         while (itr.hasNext()) {
             // 取得玩家信息
@@ -91,7 +91,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
             // 假设此局的大小为“X”，如果没有玩家叫牌，那么
             // 第一个出完牌的玩家赢2X，第二位出完牌的玩家赢X，第三为出完牌的玩家输X，最后一 位玩家输2X
-            int resultScore = 0;
+            double resultScore = 0;
             switch (playerPlace) {
             case 1:
                 // 第一名
@@ -114,7 +114,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             }
             // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
-            int currentSysytemScore = getCustomSystemScore(resultScore);
+            double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
@@ -149,7 +149,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 独牌
-        int gameMark = this.getGameMark();
+        double gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“独牌”的玩家胜，那么叫牌者赢到3X+3X+3X，反之叫牌者输9X
         while (itr.hasNext()) {
@@ -158,7 +158,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
-            int resultScore = 0;
+            double resultScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
@@ -180,7 +180,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             }
             // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
-            int currentSysytemScore = getCustomSystemScore(resultScore);
+            double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
@@ -215,7 +215,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistDeadlyRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天独
-        int gameMark = this.getGameMark();
+        double gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到5X+5X+5X，反之叫牌者输15X
         while (itr.hasNext()) {
@@ -224,7 +224,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
-            int resultScore = 0;
+            double resultScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
@@ -246,7 +246,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             }
             // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
-            int currentSysytemScore = getCustomSystemScore(resultScore);
+            double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
@@ -281,7 +281,7 @@ public class Red5Game extends Game<Red5GameSetting> {
      */
     private void persistExtinctRushScore(Iterator<Player> itr, GameRecord gameRecord, boolean isFinalSettingPlayerWon) {
         // 天外天
-        int gameMark = this.getGameMark();
+        double gameMark = this.getGameMark();
         String playerIds = "";
         // 假设此局的大小为“X”，如果叫到“天独”的玩家胜，那么叫牌者赢到10X+10X+10X，反之叫牌者输50X
         while (itr.hasNext()) {
@@ -290,7 +290,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             String playerId = player.getId();
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
-            int resultScore = 0;
+            double resultScore = 0;
             if (isFinalSettingPlayerWon) {
                 // 独牌成功
                 if (this.getSetting().getPlayerNumber().equals(player.getCurrentNumber())) {
@@ -312,7 +312,7 @@ public class Red5Game extends Game<Red5GameSetting> {
             }
             // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
-            int currentSysytemScore = getCustomSystemScore(resultScore);
+            double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
@@ -361,7 +361,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
 		// 根据当前游戏设置，取得惩罚标准，默认扣一倍
-		int deductStandard = 1;
+        double deductStandard = 1;
 		if (this.getSetting().equals(Red5GameSetting.RUSH)) {
 			// 独牌
 			deductStandard = this.getLowLevelMark();
@@ -375,9 +375,9 @@ public class Red5Game extends Game<Red5GameSetting> {
 		synchronized(this.getPlayers()) {
 			String playerIds = "";
 			String playerId = null;
-			int resultScore = 0;
+			double resultScore = 0;
 			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
-			int deductedMark = this.getGameMark() * deductStandard;
+			double deductedMark = this.getGameMark() * deductStandard;
 			for (Player player : this.getPlayers()) {
 				playerId = player.getId();
 				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
@@ -402,7 +402,7 @@ public class Red5Game extends Game<Red5GameSetting> {
 	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
 	            if (!player.getId().equals(disconnectedPlayer.getId())) {
 	            	// 掉线玩家
-		            playerScore.setSysScore(0); // 系统当前得分
+		            playerScore.setSysScore(0d); // 系统当前得分
 	            } else {
 	            	// 非掉线玩家
 		            playerScore.setSysScore(getCustomSystemScore(deductedMark)); // 系统当前得分
