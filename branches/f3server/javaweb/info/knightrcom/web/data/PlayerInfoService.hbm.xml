@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="SCORE_INFO">
+	<![CDATA[
+SELECT 
+	   CASE 
+         WHEN game_record.game_type  = 'Red5Game'
+         THEN "红五"
+         WHEN game_record.game_type  = 'FightLandlordGame'
+         THEN "斗地主"
+         WHEN game_record.game_type  = 'PushdownWinGame'
+         THEN "推倒胡"
+         WHEN game_record.game_type  = 'QiongWinGame'
+         THEN "穷胡"
+         ELSE "未知"
+       END AS gametype,
+	   CASE 
+         WHEN player_score.cur_score > 0
+         THEN "胜利"
+         WHEN player_score.cur_score < 0
+         THEN "失败"
+         WHEN player_score.cur_score = 0
+         THEN "平局"
+         ELSE "未知"
+       END AS winandlose,
+       player_score.cur_score AS score,
+       player_score.sys_score  AS systemscore,
+       game_record.game_id       AS gameId,
+       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE player_profile.profile_id = ?
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.cur_score > 0
+         THEN 1
+         WHEN player_score.cur_score < 0
+         THEN -1
+         WHEN player_score.cur_score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+   AND (? = '' or game_record.game_type = ?)
+ ORDER BY player_score.create_time desc
+    ]]>
+	</sql-query>
+	<sql-query name="SCORE_INFO_COUNT">
+	<![CDATA[
+SELECT COUNT(*) AS RECORD_COUNT
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE player_profile.profile_id = ?
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.cur_score > 0
+         THEN 1
+         WHEN player_score.cur_score < 0
+         THEN -1
+         WHEN player_score.cur_score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+   AND (? = '' or game_record.game_type = ?)
+    ]]>
+	</sql-query>
+	<sql-query name="CUSTOM_INFO">
+    SELECT *
+      FROM player_profile
+	</sql-query>
+	<sql-query name="VIEW_CURRENT_PLAYER_INFO">
+	<![CDATA[
+SELECT from_player,
+       to_org_score,
+       to_cur_score,
+       DATE_FORMAT(recharge_record.create_time, "%Y年%m月%d日%H时%i分%S秒") create_time
+  FROM recharge_record
+ WHERE to_player = ?
+ ORDER BY create_time DESC
+    ]]>
+	</sql-query>
+</hibernate-mapping>

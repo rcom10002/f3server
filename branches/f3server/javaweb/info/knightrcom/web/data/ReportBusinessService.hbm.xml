@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="BUSINESS_INFO">
+	<![CDATA[
+SELECT 
+		player_profile.user_id userId,
+		CASE 
+         WHEN player_score.cur_score > 0
+         THEN "胜利"
+         WHEN player_score.cur_score < 0
+         THEN "失败"
+         WHEN player_score.cur_score = 0
+         THEN "平局"
+         ELSE "未知"
+       END AS winandlose,
+       player_score.cur_score        AS score,
+       player_score.sys_score AS systemscore,
+       game_record.game_id       AS gameId,
+       game_record.game_type       AS gameType,
+       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime,
+       DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS startTime,
+       DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS endTime
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE (UPPER(player_profile.user_id) LIKE UPPER(?))
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.cur_score > 0
+         THEN 1
+         WHEN player_score.cur_score < 0
+         THEN -1
+         WHEN player_score.cur_score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+   AND (? is null or player_profile.rls_path like ?)
+ ORDER BY player_profile.create_time asc, game_record.game_type asc, player_score.create_time desc
+    ]]>
+	</sql-query>
+	<sql-query name="BUSINESS_INFO_COUNT">
+	<![CDATA[
+SELECT COUNT(*) AS RECORD_COUNT, ?, ?
+FROM   player_profile
+       LEFT JOIN player_score
+         ON player_score.profile_id = player_profile.profile_id
+       LEFT JOIN game_record
+         ON player_score.game_id = game_record.game_id
+ WHERE (UPPER(player_profile.user_id) LIKE UPPER(?))
+   AND player_score.create_time BETWEEN ? AND date_add(?, interval 1 day)
+   AND (CASE 
+         WHEN player_score.cur_score > 0
+         THEN 1
+         WHEN player_score.cur_score < 0
+         THEN -1
+         WHEN player_score.cur_score = 0
+         THEN 0
+        END = ?
+        OR 999 = ?)
+  AND (? is null or player_profile.rls_path like ?)
+    ]]>
+	</sql-query>
+</hibernate-mapping>
