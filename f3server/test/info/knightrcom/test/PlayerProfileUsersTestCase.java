@@ -10,6 +10,19 @@ import junit.framework.TestCase;
 
 public class PlayerProfileUsersTestCase extends TestCase {
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user1'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user2'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user3'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user3'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user4'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user5'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user6'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user33'").executeUpdate();
+        HibernateSessionFactory.getSession().createSQLQuery("delete from player_profile where user_id='user44'").executeUpdate();
+    }
 	public void testCreatePlayerProfile() {
     	PlayerProfile profile = new PlayerProfile();
         for (int i = 1; i <= 6; i++) {
