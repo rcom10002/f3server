@@ -21,7 +21,7 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     private String gameId;
 
     /** 当前游戏玩家在游戏中的序号 */
-    private double currentNumber;
+    private int currentNumber;
 
     /** 玩家本局得分 */
     private double currentScore;
@@ -137,7 +137,7 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     /**
      * @param currentNumber the currentSn to set
      */
-    public void setCurrentNumber(double currentNumber) {
+    public void setCurrentNumber(int currentNumber) {
         this.currentNumber = currentNumber;
     }
 

@@ -270,7 +270,8 @@ public abstract class Game<T> {
 	 */
 	public double getCustomSystemScore(double currentScore) {
 		if (currentScore > 0) {
-			return new BigDecimal(currentScore).multiply(getSystemScoreRate()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP).doubleValue();
+		    double systemScoreRate = getSystemScoreRate().doubleValue();
+		    return currentScore * systemScoreRate / 100;
 		}
 		return 0;
 	}
