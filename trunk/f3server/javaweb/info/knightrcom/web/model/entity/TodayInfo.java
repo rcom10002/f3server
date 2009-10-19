@@ -6,9 +6,9 @@ public class TodayInfo {
     
     private String winandlose;
 
-    private int score;
+    private String score;
 
-    private int systemscore;
+    private String systemscore;
 
     private String gameId;
 
@@ -48,28 +48,28 @@ public class TodayInfo {
     /**
      * @return the score
      */
-    public int getScore() {
+    public String getScore() {
         return score;
     }
 
     /**
      * @param score the score to set
      */
-    public void setScore(int score) {
+    public void setScore(String score) {
         this.score = score;
     }
 
     /**
      * @return the systemscore
      */
-    public int getSystemscore() {
+    public String getSystemscore() {
         return systemscore;
     }
 
     /**
      * @param systemscore the systemscore to set
      */
-    public void setSystemscore(int systemscore) {
+    public void setSystemscore(String systemscore) {
         this.systemscore = systemscore;
     }
 
