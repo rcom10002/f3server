@@ -1,13 +1,18 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GameRecord;
 import info.knightrcom.data.metadata.GameRecordDAO;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.data.metadata.PlayerScore;
-import info.knightrcom.data.metadata.PlayerScoreDAO;
+import info.knightrcom.util.StringHelper;
+import info.knightrcom.util.SystemLogger;
 import info.knightrcom.web.model.EntityInfo;
+
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,9 +58,9 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
      */
     public String LOAD_GAME_RECORD(HttpServletRequest request, HttpServletResponse response) {
     	GameRecord gameRecord = new GameRecordDAO().findById(request.getParameter("GAME_ID"));
+    	PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("CURRENT_PROFILE_ID"));
     	// 查看录像是否扣底分
     	if (!"PLAYVEDIO".equals(request.getParameter("STATUS"))) {
-    		PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("CURRENT_PROFILE_ID"));
     		playerProfile.setCurrentScore(playerProfile.getCurrentScore() - 2 * gameRecord.getScore());
     		HibernateSessionFactory.getSession().save(playerProfile);
     		// 更新看过录像标识
@@ -68,6 +73,9 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
     	}
         EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
         info.setEntity(gameRecord);
+        // 看录像需要写日志
+        LogInfo logInfo = SystemLogger.createLog("SystemInfoService Successfully", null, "user [" + playerProfile.getUserId() +"] at system time [" + StringHelper.formatTimeStamp(new Date()) + "] view vedio game id is [" + gameRecord.getGameId() + "]", LogType.SYSTEM_LOG);
+        HibernateSessionFactory.getSession().save(logInfo);
         return toXML(info, getAliasTypes());
     }
 
