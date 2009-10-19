@@ -2,4 +2,13 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<sql-query name="READ_PLAYER_INFO">
+		<![CDATA[
+			SELECT PP.USER_ID, PP.CURRENT_SCORE, PS.STATUS, GR.SCORE, CAST(GR.RECORD AS CHAR) RECORD
+			  FROM PLAYER_PROFILE PP
+			  LEFT JOIN PLAYER_SCORE PS ON PP.PROFILE_ID = PS.PROFILE_ID
+			  LEFT JOIN GAME_RECORD GR ON GR.GAME_ID = PS.GAME_ID
+			WHERE PP.PROFILE_ID = ? AND PS.GAME_ID = ?
+	    ]]>
+	</sql-query>
 </hibernate-mapping>
