@@ -56,6 +56,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSysScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setScore(this.getGameMark());
         gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
