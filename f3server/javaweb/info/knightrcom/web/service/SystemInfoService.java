@@ -59,15 +59,15 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
     public String LOAD_GAME_RECORD(HttpServletRequest request, HttpServletResponse response) {
     	GameRecord gameRecord = new GameRecordDAO().findById(request.getParameter("GAME_ID"));
     	PlayerProfile playerProfile = new PlayerProfileDAO().findById(request.getParameter("CURRENT_PROFILE_ID"));
+    	// 更新看过录像标识
+		PlayerScore playerScore = (PlayerScore)HibernateSessionFactory.getSession().createCriteria(
+				PlayerScore.class).add(
+                        Restrictions.eq("profileId", request.getParameter("CURRENT_PROFILE_ID"))).add(
+                        Restrictions.eq("gameId", request.getParameter("GAME_ID"))).uniqueResult();
     	// 查看录像是否扣底分
-    	if (!"PLAYVEDIO".equals(request.getParameter("STATUS"))) {
+    	if (!"PLAYVEDIO".equals(playerScore.getStatus())) {
     		playerProfile.setCurrentScore(playerProfile.getCurrentScore() - 2 * gameRecord.getScore());
     		HibernateSessionFactory.getSession().save(playerProfile);
-    		// 更新看过录像标识
-    		PlayerScore playerScore = (PlayerScore)HibernateSessionFactory.getSession().createCriteria(
-    				PlayerScore.class).add(
-                            Restrictions.eq("profileId", request.getParameter("CURRENT_PROFILE_ID"))).add(
-                            Restrictions.eq("gameId", request.getParameter("GAME_ID"))).uniqueResult();
     		playerScore.setStatus("PLAYVEDIO");
     		HibernateSessionFactory.getSession().save(playerScore);
     	}
