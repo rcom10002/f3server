@@ -114,12 +114,11 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
     }
     
     /**
-     * 查看用户信息（用户当前积分，查看录像的底分，是否查看过录像等）
+     * 读取游戏信息（游戏底分信息等）
      * 
      * @param request
      * @param response
      * @return
-     * @deprecated
      * 
      * ゲームビデオの放送について
      * 
@@ -132,13 +131,10 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
      * 
      * 業務をよく考えして、テストをして下さいな！
      */
-    public String READ_PLAYER_INFO(HttpServletRequest request, HttpServletResponse response) {
+    public String READ_GAME_INFO(HttpServletRequest request, HttpServletResponse response) {
     	EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
-    	Query query = HibernateSessionFactory.getSession().getNamedQuery(getNamedQuery());
-    	processQuerySetting(query, request);
-    	query.setResultTransformer(getResultTransformer());
-    	info.setTag(query.list().get(0));
-        return toXML(info, getAliasTypes());
+    	info.setEntity(new GameRecordDAO().findById(request.getParameter("GAME_ID")));
+        return toXML(info, GameRecord.class);
     }
     
     
