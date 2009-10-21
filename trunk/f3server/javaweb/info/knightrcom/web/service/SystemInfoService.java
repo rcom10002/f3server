@@ -79,7 +79,7 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
             playerScore.setProfileId(playerProfile.getProfileId());
             playerScore.setGameId(gameRecord.getGameId());
             playerScore.setUserId(playerProfile.getUserId());
-            playerScore.setCurrentNumber("-1");
+            playerScore.setCurrentNumber("0");
             playerScore.setCurScore(0d); // 玩家当前得分
             playerScore.setSysScore(2 * gameRecord.getScore()); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore() + 2 * gameRecord.getScore()); // 玩家原始总积分
