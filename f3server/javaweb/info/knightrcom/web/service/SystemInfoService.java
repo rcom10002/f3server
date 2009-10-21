@@ -137,6 +137,27 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
         return toXML(info, GameRecord.class);
     }
     
-    
+    /**
+     * 是否看过录像[用于是否扣分，看过不继续扣分]
+     * @param request
+     * @param response
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	public String PLAY_GAME_VEDIO(HttpServletRequest request, HttpServletResponse response) {
+    	// 是否看过录像
+		List<PlayerScore> playerScores = HibernateSessionFactory.getSession().createCriteria(
+				PlayerScore.class).add(
+                        Restrictions.eq("profileId", request.getParameter("CURRENT_PROFILE_ID"))).add(
+                        Restrictions.eq("gameId", request.getParameter("GAME_ID"))).add(
+                        Restrictions.eq("status", "PLAYVEDIO")).list();
+		EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
+		if (playerScores != null && playerScores.size() > 0) {
+			info.setResult(F3SWebServiceResult.SUCCESS);
+		} else {
+			info.setResult(F3SWebServiceResult.WARNING);
+		}
+        return toXML(info, GameRecord.class);
+    }
     
 }
