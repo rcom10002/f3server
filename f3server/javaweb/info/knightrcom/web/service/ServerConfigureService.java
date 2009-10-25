@@ -146,4 +146,17 @@ public class ServerConfigureService extends F3SWebService<GlobalConfig> {
         criteria.add(Expression.eq("name", name));
         return criteria.list();
 	}
+	
+	/**
+     * 读取大厅状态信息
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    public String RETRIEVE_LOBBY_STATUS(HttpServletRequest request, HttpServletResponse response) {
+        EntityInfo<GlobalConfig> entityInfo = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+        entityInfo.setTag(F3ServerProxy.getLobbyStatus());
+        return toXML(entityInfo, getAliasTypes());
+    }
 }

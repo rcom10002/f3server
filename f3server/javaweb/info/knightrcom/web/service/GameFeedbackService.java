@@ -128,6 +128,7 @@ public class GameFeedbackService extends F3SWebService<GameFeedback>{
     	Query query = HibernateSessionFactory.getSession().getNamedQuery("RETRIEVE_FEEDBACK_HISTORY");
         query.setResultTransformer(this.getResultTransformer());
         query.setString(0, FeedbackStatus.DONE.name());
+        query.setString(1, request.getParameter("CURRENT_USER_ID"));
         final List result = query.list();
         EntityInfo<GameFeedback> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
         info.setTag(result);
