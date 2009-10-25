@@ -3,13 +3,19 @@ package info.knightrcom;
 import info.knightrcom.command.message.EchoMessage;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
+import info.knightrcom.model.global.GameStatus;
+import info.knightrcom.model.global.Lobby;
+import info.knightrcom.model.global.Platform;
+import info.knightrcom.model.global.Room;
 import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
+import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.SystemLogger;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.mina.core.session.IoSession;
@@ -115,6 +121,35 @@ public class F3ServerProxy {
             Object[] row = (Object[])varItr.next();
             result[i] = row[0].toString().toLowerCase() + "~" + row[1];
             i++;
+        }
+		return result;
+	}
+	
+	/**
+	 * 获取大厅状态信息
+	 * 
+	 * @return
+	 */
+	public static Object getLobbyStatus() {
+		String[] result = new String[GameStatus.values().length];
+		Platform platform = ModelUtil.getPlatform();
+		Map<String, Lobby> lobbyMap = platform.getChildren();
+		int i = 0;
+		for (Object lobbyMapId : lobbyMap.entrySet()) {
+            Lobby lobby = lobbyMap.get(lobbyMapId.toString().split("=")[0]);
+            // 过滤未启动的大厅
+            if (Boolean.parseBoolean(lobby.getDisabled())) continue;
+            for (Object roomMapId : lobby.getChildren().entrySet()) {
+    			Room room = lobby.getChildren().get(roomMapId.toString().split("=")[0]);
+                // 过滤未启动的房间
+                if (Boolean.parseBoolean(room.getDisabled())) continue;
+    			String gameInfo = "";
+    			for (GameStatus gameStatus : GameStatus.values()) {
+    				gameInfo += room.getGameStatusNumber(gameStatus) + "~";
+    			}
+    			result[i] = room.getName() + "~" + gameInfo + room.getChildSize();
+                i++;
+    		}
         }
 		return result;
 	}
