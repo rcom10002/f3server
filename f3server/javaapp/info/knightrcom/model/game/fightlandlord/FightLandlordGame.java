@@ -135,6 +135,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             	resultScore -= currentSysytemScore;
             }
             // FIXME SJ ADD END
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -144,9 +145,8 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             playerScore.setCurrentNumber(player.getCurrentNumber());
             playerScore.setCurScore(resultScore); // 玩家当前得分
             playerScore.setSysScore(currentSysytemScore); // 系统当前得分
-            playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
-            playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
-            playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
+            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
+            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
@@ -187,7 +187,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         gameRecord.setGameId(UUID.randomUUID().toString());
         gameRecord.setGameId(this.getId());
         gameRecord.setGameType(FightLandlordGame.class.getSimpleName());
-        gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        if (this.getSetting() != null) {
+            gameRecord.setGameSetting((short)this.getSetting().ordinal());
+        } else {
+            gameRecord.setGameSetting((short)FightLandlordGameSetting.ONE_RUSH.ordinal());
+        }
         gameRecord.setWinnerNumbers(this.getWinnerNumbers());
         gameRecord.setSystemScore(this.getGameMark());
         gameRecord.setStatus("DISCONNECTED");
@@ -196,7 +200,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
 		// 取得当前游戏设置
-		double deductStandard = 0;
+		double deductStandard = 1;
 		if (FightLandlordGameSetting.NO_RUSH.equals(this.getSetting())) {
 			// 不叫
 			deductStandard = this.getLowLevelMark();
@@ -215,22 +219,28 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 			String playerIds = "";
 			String playerId = null;
 			double resultScore = 0;
-			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级 × 翻倍 
+			// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级 × 翻倍
 			double deductedMark = this.getGameMark() * deductStandard * getMultiple();
-			// 另拿出一份基本分作为系统分
-			double systemScore = this.getGameMark();
 			for (Player player : this.getPlayers()) {
 				playerId = player.getId();
 				PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
 				playerIds += player.getCurrentNumber() + "~" + player.getId() + "~";
 				if (player.getId().equals(disconnectedPlayer.getId())) {
 					// 掉线玩家
-					resultScore = -1 * (deductedMark * 2 + this.getGameMark());
+					resultScore = -1 * (deductedMark * 2);
 				} else {
 					// 非掉线玩家
 					resultScore = deductedMark;
 				}
-				 // 保存玩家得分信息
+	            // FIXME SJ ADD START
+	            // 在赢分玩家中直接从本局当前得分中扣除系统分
+	            double currentSysytemScore = getCustomSystemScore(resultScore);
+	            if (resultScore > 0) {
+	            	resultScore -= currentSysytemScore;
+	            }
+	            // FIXME SJ ADD END
+				playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
+	            // 保存玩家得分信息
 	            PlayerScore playerScore = new PlayerScore();
 	            playerScore.setScoreId(UUID.randomUUID().toString());
 	            playerScore.setProfileId(playerProfile.getProfileId());
@@ -238,15 +248,9 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 	            playerScore.setUserId(playerProfile.getUserId());
 	            playerScore.setCurrentNumber(player.getCurrentNumber());
 	            playerScore.setCurScore(resultScore); // 玩家当前得分
+	            playerScore.setSysScore(currentSysytemScore); // 系统当前得分
 	            playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
 	            playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
-	            playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
-	            if (player.getId().equals(disconnectedPlayer.getId())) {
-	            	// 掉线玩家
-		            playerScore.setSysScore(systemScore); // 系统当前得分
-	            } else {
-		            playerScore.setSysScore(0d); // 系统当前得分
-	            }
 	            HibernateSessionFactory.getSession().merge(playerProfile);
 	            HibernateSessionFactory.getSession().merge(playerScore);
 			}
