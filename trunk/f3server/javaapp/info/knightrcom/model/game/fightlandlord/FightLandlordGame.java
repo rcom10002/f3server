@@ -35,6 +35,18 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
      * 首发扑克：红桃3
      */
     public static final FightLandlordPoker START_POKER = new FightLandlordPoker(PokerColor.HEART, PokerValue.V3);
+    /**
+     * 首发扑克：方块3[候选]
+     */
+    public static final FightLandlordPoker START_POKER_DIAMOND = new FightLandlordPoker(PokerColor.DIAMOND, PokerValue.V3);
+    /**
+     * 首发扑克：黑桃3[候选]
+     */
+    public static final FightLandlordPoker START_POKER_SPADE = new FightLandlordPoker(PokerColor.SPADE, PokerValue.V3);
+    /**
+     * 首发扑克：梅花3[候选]
+     */
+    public static final FightLandlordPoker START_POKER_CLUB = new FightLandlordPoker(PokerColor.CLUB, PokerValue.V3);
 
     public FightLandlordGame() {
     }
