@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.mina.core.session.IoSession;
 
@@ -141,30 +140,53 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
                 pokerNumberOfEachPlayer = pokerNumberOfEachPlayer.replaceFirst(",$", "");
                 // 准备发牌开始游戏
                 String firstPlayerNumber = null;
+                StringBuilder builderTemp = new StringBuilder();
+                String playerCards[] = new String[eachShuffledPokers.length];
                 for (int m = 0; m < eachShuffledPokers.length; m++) {
                     StringBuilder builder = new StringBuilder();
                     for (int n = 0; n < eachShuffledPokers[m].length; n++) {
-                        builder.append(eachShuffledPokers[m][n].getValue() + ",");
+                    	builderTemp.append(eachShuffledPokers[m][n].getValue() + ",");
+                    	builder.append(eachShuffledPokers[m][n].getValue() + ",");
                     }
+                    playerCards[m] = builder.toString();
+                }
+                // 由于斗地主在发牌前会扣掉三张底牌，所以可能会将首发牌标志牌(红桃3)扣掉。
+                // 确定开始首次发牌标识
+                // 判断当前17 * 3 的扑克中是否包括发牌标识
+                String currentAllCard = builderTemp.toString();
+                boolean boolPK = false;
+                // 是否包括红桃3标识牌
+                String startPorker = FightLandlordGame.START_POKER.getValue();
+                if (currentAllCard.matches("^.*" + startPorker  + ".*$")) {
+                	boolPK = true;
+                }
+                // 是否包括方块3标识牌
+                if (!boolPK && currentAllCard.matches("^.*" + FightLandlordGame.START_POKER_DIAMOND.getValue()  + ".*$")) {
+                	startPorker = FightLandlordGame.START_POKER_DIAMOND.getValue();
+                    boolPK = true;
+                }
+             	// 是否包括黑桃3标识牌
+                if (!boolPK && currentAllCard.matches("^.*" + FightLandlordGame.START_POKER_SPADE.getValue()  + ".*$")) {
+                	startPorker = FightLandlordGame.START_POKER_SPADE.getValue();
+                	boolPK = true;
+                }
+                // 不包括前三种花色则直接设定梅花3为首发牌标识
+                if (!boolPK) {
+                	startPorker = FightLandlordGame.START_POKER_CLUB.getValue();
+                }
+                for (int x = 0; x < eachShuffledPokers.length; x++) {
                     // 为每位玩家发牌
                     echoMessage = F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
                     echoMessage.setResult(GAME_STARTED);
-                    echoMessage.setContent(builder.toString().replaceFirst(",$", "~") + pokerNumberOfEachPlayer);
-                    sessionWrite(playersInGame.get(m).getIosession(), echoMessage);
+                    echoMessage.setContent(playerCards[x].replaceFirst(",$", "~") + pokerNumberOfEachPlayer + "~" + startPorker);
+                    sessionWrite(playersInGame.get(x).getIosession(), echoMessage);
                     // 记录游戏初始时玩家手中的牌信息
                     game.appendGameRecord(echoMessage.getContent());
-                    if (!isFirstOut && builder.indexOf(FightLandlordGame.START_POKER.getValue()) > -1) {
-                        // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃3，则确定为首次发牌的玩家
-                    	firstPlayerNumber = playersInGame.get(m).getCurrentNumber();
+                    if (!isFirstOut && playerCards[x].indexOf(startPorker) > -1) {
+                        // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现标识牌，则确定为首次发牌的玩家
+                    	firstPlayerNumber = playersInGame.get(x).getCurrentNumber();
                         isFirstOut = true;
                     }
-                    // 由于斗地主在发牌前会扣掉三张底牌，所以可能会将首发牌标志牌(红桃3)扣掉。
-                    // 为防止这种情况发生，采用随机设置一个玩家为游戏初始设置玩家
-        			if (m == eachShuffledPokers.length - 1 && !isFirstOut) {
-        				int rndIndex = new Random().nextInt(eachShuffledPokers.length);
-        				firstPlayerNumber = playersInGame.get(rndIndex).getCurrentNumber();
-        				isFirstOut = true;
-        			}
                 }
                 // 广播首次发牌玩家并将各个玩家初始牌发送到各个玩家手中，以便游戏结束亮牌用
                 for (Player eachPlayer : playersInGame) {
