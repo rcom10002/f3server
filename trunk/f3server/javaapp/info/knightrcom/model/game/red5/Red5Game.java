@@ -10,9 +10,13 @@ import info.knightrcom.model.global.Player;
 import info.knightrcom.model.plaything.PokerColor;
 import info.knightrcom.model.plaything.PokerValue;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.hibernate.criterion.Restrictions;
 
@@ -46,6 +50,7 @@ public class Red5Game extends Game<Red5GameSetting> {
         Iterator<Player> itr = players.iterator();
         // 创建游戏记录
         GameRecord gameRecord = new GameRecord();
+        // FIXME DROP THIS LINE
         gameRecord.setGameId(UUID.randomUUID().toString());
         gameRecord.setGameId(this.getId());
         gameRecord.setGameType(Red5Game.class.getSimpleName());
@@ -71,6 +76,89 @@ public class Red5Game extends Game<Red5GameSetting> {
             persistExtinctRushScore(itr, gameRecord, isFinalSettingPlayerWon);
         }
         log.debug("计算积分 END");
+    }
+
+    /**
+     * 保存七独八天积分
+     * 
+     * @param winnerNumber 七独八天的玩家
+     * @param record 抓牌记录
+     * @param setting 独牌或天独
+     */
+    public String persistGameDeadly7Extinct8() {
+        // 取得玩家以及游戏等信息
+        List<Player> players = this.getPlayers();
+        Iterator<Player> itr = players.iterator();
+        // 分析游戏设置
+        // (.*?)(~(\d=\d*[,;]){4})
+        Pattern pattern = Pattern.compile("(.*?)(~(\\d=\\d*[,;]){4})");
+        Matcher matcher = pattern.matcher(this.getGameRecord());
+        String[] initPokers = new String[4];
+        int i = 0;
+        Red5GameSetting localSetting = null;
+        String localNumber = null;
+        while (matcher.find()) {
+            // 去除大小王和5后进行排序
+            initPokers[i++] = matcher.group(1);
+            initPokers[i - 1] = initPokers[i - 1].replaceAll("0V[XY]|\\dV5", "").replaceAll(",{2,}", ",").replaceAll("^,|,$", "");
+            String[] eachPokers = initPokers[i - 1].split(",");
+            Arrays.sort(eachPokers, new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    // 去花色后比较大小
+                    o1 = o1.replaceFirst("\\d", "");
+                    o2 = o2.replaceFirst("\\d", "");
+                    int p1 = Red5Poker.PRIORITY_SEQUENCE.indexOf(o1);
+                    int p2 = Red5Poker.PRIORITY_SEQUENCE.indexOf(o2);
+                    if (p1 > p2) {
+                        return 1;
+                    } else if (p1 < p2) {
+                        return -1;
+                    }
+                    return 0;
+                }
+            });
+            // 去花色并使每个元素后面有个逗号，(\dV\d*,)+
+            initPokers[i - 1] = Arrays.toString(eachPokers).replaceAll("[\\s\\[\\]]|\\b\\d", "") + ",";
+        }
+        // 查找八天
+        for (i = 0; i < initPokers.length; i++) {
+            if (initPokers[i].matches("^.*(V\\d,)\\1{7}.*$")) {
+                localSetting = Red5GameSetting.DEADLY_RUSH;
+                localNumber = String.valueOf(i + 1);
+                break;
+            }
+        }
+        if (i == initPokers.length) {
+            // 查找七独
+            for (i = 0; i < initPokers.length; i++) {
+                if (initPokers[i].matches("^.*(V\\d,)\\1{6}.*$")) {
+                    localSetting = Red5GameSetting.RUSH;
+                    localNumber = String.valueOf(i + 1);
+                    break;
+                }
+            }
+        }
+        if (i == initPokers.length) {
+            return null;
+        }
+        // 创建游戏记录
+        GameRecord gameRecord = new GameRecord();
+        gameRecord.setGameId(UUID.randomUUID().toString());
+        gameRecord.setGameType(Red5Game.class.getSimpleName());
+        gameRecord.setGameSetting((short)localSetting.ordinal());
+        gameRecord.setWinnerNumbers(localNumber);
+        gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setScore(this.getGameMark());
+        gameRecord.setStatus("GAME_DEADLY7_EXTINCT8");
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
+        // 根据当前游戏规则进行分数计算
+        if (Red5GameSetting.RUSH.equals(localSetting)) {
+            persistDeadlyRushScore(itr, gameRecord, true);
+        } else if (Red5GameSetting.DEADLY_RUSH.equals(localSetting)) {
+            persistExtinctRushScore(itr, gameRecord, true);
+        }
+        return localNumber + "~" + localSetting.ordinal();
     }
 
     /**
@@ -113,13 +201,13 @@ public class Red5Game extends Game<Red5GameSetting> {
             default:
                 break;
             }
-            // FIXME SJ ADD START
+
             // 在赢分玩家中直接从本局当前得分中扣除系统分
             double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
-            // FIXME SJ ADD END
+
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
             playerScore.setScoreId(UUID.randomUUID().toString());
@@ -179,13 +267,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getLowLevelMark();
                 }
             }
-            // FIXME SJ ADD START
+
             // 在赢分玩家中直接从本局当前得分中扣除系统分
             double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
-            // FIXME SJ ADD END
+
             playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -245,13 +333,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getMidLevelMark();
                 }
             }
-            // FIXME SJ ADD START
+
             // 在赢分玩家中直接从本局当前得分中扣除系统分
             double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
-            // FIXME SJ ADD END
+
             playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -311,13 +399,13 @@ public class Red5Game extends Game<Red5GameSetting> {
                     resultScore = -1 * 3 * gameMark * this.getHighLevelMark();
                 }
             }
-            // FIXME SJ ADD START
+
             // 在赢分玩家中直接从本局当前得分中扣除系统分
             double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
-            // FIXME SJ ADD END
+
             playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -390,13 +478,13 @@ public class Red5Game extends Game<Red5GameSetting> {
 					// 非掉线玩家
 					resultScore = deductedMark;
 				}
-	            // FIXME SJ ADD START
+	
 	            // 在赢分玩家中直接从本局当前得分中扣除系统分
 	            double currentSysytemScore = getCustomSystemScore(resultScore);
 	            if (resultScore > 0) {
 	            	resultScore -= currentSysytemScore;
 	            }
-	            // FIXME SJ ADD END
+
 				playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
 	            // 保存玩家得分信息
 	            PlayerScore playerScore = new PlayerScore();
