@@ -13,14 +13,14 @@ import java.util.List;
  */
 public class Red5Poker {
 
-    private static final String prioritySequence = "V3,V4,V6,V7,V8,V9,V10,VJ,VQ,VK,VA,V2,V5,VX,VY";
+    public static final String PRIORITY_SEQUENCE = "V3,V4,V6,V7,V8,V9,V10,VJ,VQ,VK,VA,V2,V5,VX,VY";
     private PokerColor colorStyle;
     private PokerValue valueStyle;
     private int priorityValue;
     public Red5Poker(PokerColor colorStyle, PokerValue valueStyle) {
         this.colorStyle = colorStyle;
         this.valueStyle = valueStyle;
-        this.priorityValue = prioritySequence.indexOf(valueStyle.name()) * 10;
+        this.priorityValue = PRIORITY_SEQUENCE.indexOf(valueStyle.name()) * 10;
         if (PokerValue.V5.equals(valueStyle) && PokerColor.HEART.equals(colorStyle)) {
             this.priorityValue += 3;
         }
