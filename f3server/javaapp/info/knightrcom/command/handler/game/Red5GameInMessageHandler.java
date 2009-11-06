@@ -163,6 +163,40 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 }
                 playersInGroup.clear();
             }
+            if ("true".equals(ModelUtil.getSystemParameters("XXX-123-XXX-123"))) {
+                // 为七独八天设置积分
+                GAME_DEADLY7_EXTINCT8(session, message, echoMessage);
+            }
+        }
+    }
+
+    public static final String GAME_DEADLY7_EXTINCT8 = "GAME_DEADLY7_EXTINCT8";
+    /**
+     * 七独八天
+     * 
+     * @param session
+     * @param message
+     * @param echoMessage
+     * @throws Exception
+     */
+    public void GAME_DEADLY7_EXTINCT8(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
+        Player currentPlayer = ModelUtil.getPlayer(session);
+        Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
+        List<Player> players = game.getPlayers();
+        synchronized (players) {
+            Iterator<Player> itr = players.iterator();
+            // 保存七独八天的积分
+            String result = game.persistGameDeadly7Extinct8();
+            while (itr.hasNext()) {
+                Player player = itr.next();
+                if (currentPlayer.equals(player)) {
+                    continue;
+                }
+                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                echoMessage.setResult(GAME_DEADLY7_EXTINCT8);
+                echoMessage.setContent(result);
+                sessionWrite(player.getIosession(), echoMessage);
+            }
         }
     }
 
