@@ -235,11 +235,30 @@ public abstract class Game<T> {
                 String key = keyItr.next();
                 double currentScore = playerNumberMap.get(key).getCurrentScore();
                 double systemScore = playerNumberMap.get(key).getSystemScore();
-                gameDetailScore += String.format("%1$s,%2$s,%3$s;", key, currentScore, systemScore);
+                gameDetailScore += String.format("%1$s,%2$s,%3$s,%4$s;", key, currentScore, systemScore);
             }
             gameDetailScore = gameDetailScore.replaceFirst(";$", "");
         }
         return gameDetailScore;
+    }
+    
+    // FIXME SJ ADD 新增为单个玩家提供游戏积分明细
+    public String getGameDetailScore(String currentNumber) {
+        gameDetailScore = "";
+        Iterator<String> keyItr  = playerNumberMap.keySet().iterator();
+        while (keyItr.hasNext()) {
+            String key = keyItr.next();
+            if (currentNumber.equals(key)) {
+            	double currentScore = playerNumberMap.get(key).getCurrentScore();
+                double systemScore = playerNumberMap.get(key).getSystemScore();
+                // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
+                double playerCurrentScore = playerNumberMap.get(key).getPlayerCurrentScore();
+                gameDetailScore += String.format("%1$s,%2$s,%3$s,%4$s;", key, currentScore, systemScore, playerCurrentScore);
+                gameDetailScore = gameDetailScore.replaceFirst(";$", "");
+                return gameDetailScore;
+            }
+        }
+        return null;
     }
 
     /**
