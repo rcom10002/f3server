@@ -29,6 +29,10 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     /** 玩家本局所产生的系统分 */
     private double systemScore; 
 
+    // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
+    /** 玩家当前总积分 */
+    private double playerCurrentScore;
+
     /** 当前玩家所对应的会话 */
     private IoSession iosession;
 
@@ -169,4 +173,19 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
         this.systemScore = systemScore;
     }
 
+	/**
+	 * @return the playerCurrentScore
+	 */
+	public double getPlayerCurrentScore() {
+		return playerCurrentScore;
+	}
+
+	/**
+	 * @param playerCurrentScore the playerCurrentScore to set
+	 */
+	public void setPlayerCurrentScore(double playerCurrentScore) {
+		this.playerCurrentScore = playerCurrentScore;
+	}
+
+    
 }
