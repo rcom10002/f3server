@@ -335,6 +335,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             // 构造积分显示信息
             // FIXME 为当前玩家提供个人的积分显示板
 //            message.setContent(message.getContent() + "~" + game.getGameDetailScore());
+            String content = message.getContent();
             while (itr.hasNext()) {
                 Player player = itr.next();
                 player.setCurrentStatus(GameStatus.IDLE);
@@ -342,7 +343,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 echoMessage.setResult(GAME_OVER);
 //                echoMessage.setContent(message.getContent());
              // FIXME 为当前玩家提供个人的积分显示板
-                echoMessage.setContent(message.getContent() + "~" + game.getGameDetailScore(player.getCurrentNumber()));
+                echoMessage.setContent(content + "~" + game.getGameDetailScore(player.getCurrentNumber()));
                 sessionWrite(player.getIosession(), echoMessage);
             }
         }
