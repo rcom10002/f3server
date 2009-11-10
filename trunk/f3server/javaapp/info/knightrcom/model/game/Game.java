@@ -242,23 +242,29 @@ public abstract class Game<T> {
         return gameDetailScore;
     }
     
-    // FIXME SJ ADD 新增为单个玩家提供游戏积分明细
+    /**
+     * 为客户端积分面板准备数据，格式为：编号~当前得分~系统分~玩家总积分<br>
+     * 除指定编号玩家外，其余玩家不显示总积分
+     * 
+     * @param currentNumber 当前玩家编号
+     * @return
+     */
     public String getGameDetailScore(String currentNumber) {
         gameDetailScore = "";
         Iterator<String> keyItr  = playerNumberMap.keySet().iterator();
         while (keyItr.hasNext()) {
             String key = keyItr.next();
+        	double currentScore = playerNumberMap.get(key).getCurrentScore();
+            double systemScore = playerNumberMap.get(key).getSystemScore();
             if (currentNumber.equals(key)) {
-            	double currentScore = playerNumberMap.get(key).getCurrentScore();
-                double systemScore = playerNumberMap.get(key).getSystemScore();
-                // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
                 double playerCurrentScore = playerNumberMap.get(key).getPlayerCurrentScore();
                 gameDetailScore += String.format("%1$s,%2$s,%3$s,%4$s;", key, currentScore, systemScore, playerCurrentScore);
-                gameDetailScore = gameDetailScore.replaceFirst(";$", "");
-                return gameDetailScore;
+            } else {
+                gameDetailScore += String.format("%1$s,%2$s,%3$s,%4$s;", key, currentScore, systemScore, "");
             }
         }
-        return null;
+        gameDetailScore = gameDetailScore.replaceFirst(";$", "");
+        return gameDetailScore;
     }
 
     /**
