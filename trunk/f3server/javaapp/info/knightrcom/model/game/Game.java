@@ -235,7 +235,7 @@ public abstract class Game<T> {
                 String key = keyItr.next();
                 double currentScore = playerNumberMap.get(key).getCurrentScore();
                 double systemScore = playerNumberMap.get(key).getSystemScore();
-                gameDetailScore += String.format("%1$s,%2$s,%3$s,%4$s;", key, currentScore, systemScore);
+                gameDetailScore += String.format("%1$s,%2$s,%3$s;", key, currentScore, systemScore);
             }
             gameDetailScore = gameDetailScore.replaceFirst(";$", "");
         }
