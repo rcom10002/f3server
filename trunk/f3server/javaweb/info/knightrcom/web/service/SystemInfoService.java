@@ -67,7 +67,7 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
 				PlayerScore.class).add(
                         Restrictions.eq("profileId", request.getParameter("CURRENT_PROFILE_ID"))).add(
                         Restrictions.eq("gameId", request.getParameter("GAME_ID"))).add(
-                        Restrictions.eq("status", "PLAYVEDIO")).list();
+                        Restrictions.like("status", "PLAYVEDIO~%")).list();
     	// 查看录像是否扣底分
     	if (playerScores == null || playerScores.size() == 0) {
     		// 在用户信息中保存总积分
@@ -84,7 +84,23 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
             playerScore.setSysScore(2 * gameRecord.getScore()); // 系统当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore() + 2 * gameRecord.getScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
-    		playerScore.setStatus("PLAYVEDIO");
+    		playerScore.setStatus("PLAYVEDIO~1");
+    		HibernateSessionFactory.getSession().save(playerScore);
+    	} else {
+    		// 每个游戏最多三次免费观看，超过三次还得收费
+    		PlayerScore playerScore = playerScores.get(0);
+    		String[] viewStatus = playerScore.getStatus().split("~");
+    		int viewTimes = Integer.parseInt(viewStatus[1]);
+    		if (viewTimes >= 3) {
+    			// 在用户信息中保存总积分
+        		playerProfile.setCurrentScore(playerProfile.getCurrentScore() - 2 * gameRecord.getScore());
+        		HibernateSessionFactory.getSession().save(playerProfile);
+        		playerScore.setOrgScores(playerProfile.getCurrentScore() + 2 * gameRecord.getScore()); // 玩家原始总积分
+                playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
+        		playerScore.setStatus("PLAYVEDIO~1");
+    		} else {
+    			playerScore.setStatus(viewStatus[0] + "~" + (++viewTimes));
+    		}
     		HibernateSessionFactory.getSession().save(playerScore);
     	}
         EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
@@ -150,10 +166,18 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
 				PlayerScore.class).add(
                         Restrictions.eq("profileId", request.getParameter("CURRENT_PROFILE_ID"))).add(
                         Restrictions.eq("gameId", request.getParameter("GAME_ID"))).add(
-                        Restrictions.eq("status", "PLAYVEDIO")).list();
+                        Restrictions.like("status", "PLAYVEDIO~%")).list();
 		EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();
 		if (playerScores != null && playerScores.size() > 0) {
-			info.setResult(F3SWebServiceResult.SUCCESS);
+			// 每个游戏最多三次免费观看，超过三次还得收费
+    		PlayerScore playerScore = playerScores.get(0);
+    		String[] viewStatus = playerScore.getStatus().split("~");
+    		int viewTimes = Integer.parseInt(viewStatus[1]);
+    		if (viewTimes >= 3) {
+    			info.setResult(F3SWebServiceResult.WARNING);
+    		} else {
+    			info.setResult(F3SWebServiceResult.SUCCESS);
+    		}
 		} else {
 			info.setResult(F3SWebServiceResult.WARNING);
 		}
