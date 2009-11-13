@@ -72,6 +72,9 @@ public class HibernateSessionFactory {
      */
     public static void rebuildSessionFactory() {
         try {
+            if (sessionFactory != null) {
+                sessionFactory.close();
+            }
             configuration.configure(configFile);
             sessionFactory = configuration.buildSessionFactory();
         } catch (Exception e) {
