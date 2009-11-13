@@ -112,11 +112,15 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         // 为房间内每个玩家提供当前房间内所有的玩家信息
         Set<IoSession> sessions = ModelUtil.getSessions();
         synchronized (sessions) {
+            if (true) {
+                // FIXME THIS FUNCTION CAN BE ENABLE BY SETTING SYSTEM PARAMETER, DEFAULT IS DISABLE
+                return;
+            }
             Player player = null;
             Iterator<IoSession> itr = sessions.iterator();
-            String infoForEntry = "玩家[%1$s]已经进入房间[%2$s]，当前房间玩家数共计%3$s人，游戏中有%4$s人，等待队列中有%5$s人。";
-            infoForEntry = String.format(infoForEntry, currentPlayer.getName(), currentRoom.getName(), 
-                    currentRoom.getChildSize(), currentRoom.getGameStatusNumber(GameStatus.PLAYING), currentRoom.getGameStatusNumber(GameStatus.MATCHING));
+            String infoForEntry = "有玩家进入房间[%1$s]，当前房间玩家数共计%2$s人，游戏中有%3$s人，等待队列中有%4$s人。";
+            infoForEntry = String.format(infoForEntry, currentRoom.getName(), currentRoom.getChildSize(), 
+                    currentRoom.getGameStatusNumber(GameStatus.PLAYING), currentRoom.getGameStatusNumber(GameStatus.MATCHING));
             while (itr.hasNext()) {
                 // 向同房间内的玩家发生消息
                 session = itr.next();
@@ -133,6 +137,10 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
 
     public static final String LOBBY_LEAVE_ROOM = "LOBBY_LEAVE_ROOM";
     public void LOBBY_LEAVE_ROOM(IoSession session, PlayerMessage message, EchoMessage echoMessage) {
+        if (true) {
+            // FIXME THIS FUNCTION CAN BE ENABLE BY SETTING SYSTEM PARAMETER, DEFAULT IS DISABLE
+            return;
+        }
         // 房间内广播提示玩家加入了房间
         Player currentPlayer = ModelUtil.getPlayer(session);
         Room currentRoom = currentPlayer.getParent();
@@ -145,9 +153,9 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         synchronized (sessions) {
             Player player = null;
             Iterator<IoSession> itr = sessions.iterator();
-            String infoForEntry = "玩家[%1$s]已经退出房间[%2$s]，当前房间玩家数共计%3$s人，游戏中有%4$s人，等待队列中有%5$s人。";
-            infoForEntry = String.format(infoForEntry, currentPlayer.getName(), currentRoom.getName(), 
-                    currentRoom.getChildSize(), currentRoom.getGameStatusNumber(GameStatus.PLAYING), currentRoom.getGameStatusNumber(GameStatus.MATCHING));
+            String infoForEntry = "有玩家退出房间[%1$s]，当前房间玩家数共计%2$s人，游戏中有%3$s人，等待队列中有%4$s人。";
+            infoForEntry = String.format(infoForEntry, currentRoom.getName(), currentRoom.getChildSize(), 
+                    currentRoom.getGameStatusNumber(GameStatus.PLAYING), currentRoom.getGameStatusNumber(GameStatus.MATCHING));
             while (itr.hasNext()) {
                 player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
                 if (player != null) {

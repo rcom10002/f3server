@@ -22,9 +22,11 @@ import info.knightrcom.util.ModelUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
 
@@ -74,7 +76,16 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         synchronized (playersInRoom) {
             // 取得当前房间内的等待队列中的玩家
             List<Player> playersInQueue = new ArrayList<Player>();
+            Set<String> tempPool4IP = new HashSet<String>();
+            // FIXME This line should rewrite when IP excluded parameter is added!
+            boolean sameIPexcluded = ModelUtil.getSystemParameters("") != null ? Boolean.getBoolean(ModelUtil.getSystemParameters("").toLowerCase()) : false;
             for (Player eachPlayer : playersInRoom.values()) {
+                if (sameIPexcluded && tempPool4IP.contains(eachPlayer.getIosession().getRemoteAddress().toString())) {
+                    // 过滤IP相同的玩家
+                    continue;
+                } else if (sameIPexcluded) {
+                    tempPool4IP.add(eachPlayer.getIosession().getRemoteAddress().toString());
+                }
                 if (GameStatus.MATCHING.equals(eachPlayer.getCurrentStatus())) {
                     playersInQueue.add(eachPlayer);
                 }
@@ -92,7 +103,14 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             });
             // 按照系统设置的最大游戏开始人数进行人数截取
             int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+            if (playersInQueue.size() < Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) {
+                groupQuantity = playersInQueue.size() / Red5Game.PLAYER_COGAME_NUMBER;
+                if (groupQuantity == 0) {
+                    return;
+                }
+            }
             playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER * groupQuantity);
+
             if ("true".equals(ModelUtil.getSystemParameters("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
                 // 将玩家再次随机调整顺序
                 Collections.shuffle(playersInQueue);
@@ -107,7 +125,6 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 String gameId = GamePool.prepareRed5Game(playersInGroup);
                 for (Player eachPlayer : playersInGroup) {
                     // 向客户端发送游戏id，玩家编号以及游戏所需要的玩家人数
-                    eachPlayer.setCurrentStatus(GameStatus.PLAYING);
                     echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                     echoMessage.setResult(GAME_CREATE);
                     echoMessage.setContent(
@@ -150,7 +167,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     game.appendGameRecord(echoMessage.getContent());
                     if (!isFirstOut && builder.indexOf(Red5Game.START_POKER.getValue()) > -1) {
                         // 如果当前尚未设置过首次发牌的玩家，并且在当前牌序中发现红桃十，则确定为首次发牌的玩家
-                    	firstPlayerNumber = playersInGame.get(m).getCurrentNumber();
+                        firstPlayerNumber = playersInGame.get(m).getCurrentNumber();
                         isFirstOut = true;
                     }
                 }
@@ -160,6 +177,10 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     echoMessage.setContent(firstPlayerNumber + "~" + game.getGameRecord());
                     echoMessage.setResult(GAME_FIRST_PLAY);
                     sessionWrite(eachPlayer.getIosession(), echoMessage);
+                }
+                for (Player eachPlayer : playersInGroup) {
+                    // 更改玩家状态
+                    eachPlayer.setCurrentStatus(GameStatus.PLAYING);
                 }
                 playersInGroup.clear();
             }
@@ -333,16 +354,12 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             // 显示游戏积分
             Iterator<Player> itr = players.iterator();
             // 构造积分显示信息
-            // FIXME 为当前玩家提供个人的积分显示板
-//            message.setContent(message.getContent() + "~" + game.getGameDetailScore());
             String content = message.getContent();
             while (itr.hasNext()) {
                 Player player = itr.next();
                 player.setCurrentStatus(GameStatus.IDLE);
                 echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                 echoMessage.setResult(GAME_OVER);
-//                echoMessage.setContent(message.getContent());
-             // FIXME 为当前玩家提供个人的积分显示板
                 echoMessage.setContent(content + "~" + game.getGameDetailScore(player.getCurrentNumber()));
                 sessionWrite(player.getIosession(), echoMessage);
             }

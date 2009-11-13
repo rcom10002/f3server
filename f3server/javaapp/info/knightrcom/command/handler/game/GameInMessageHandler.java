@@ -37,7 +37,17 @@ public abstract class GameInMessageHandler<T> extends F3ServerInMessageHandler {
     public abstract void GAME_WIN_AND_END(IoSession session, T message, EchoMessage echoMessage) throws Exception;
 
     public static final String GAME_PLAYER_LOST_CONNECTION = "GAME_PLAYER_LOST_CONNECTION";
-    /** 玩家掉线 */
+    /**
+     * 玩家掉线事件句柄
+     * 
+     * @deprecated
+     * 
+     * @param session
+     * @param message
+     * @param echoMessage
+     * @throws Exception
+     * 
+     */
     public abstract void GAME_PLAYER_LOST_CONNECTION(IoSession session, T message, EchoMessage echoMessage) throws Exception;
 
 //    /** 游戏开始 */
