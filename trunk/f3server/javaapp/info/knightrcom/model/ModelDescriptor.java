@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -17,6 +19,13 @@ public class ModelDescriptor {
     private String room;
 
     private String maxPlayerNumber;
+
+    /**
+     * Message Pool is used to hold messages used in handler
+     * 
+     * TODO Refractor all message output
+     */
+    private static Map<String, String> messagePool = new HashMap<String, String>();
 
     /**
      * @return the platform
@@ -78,6 +87,27 @@ public class ModelDescriptor {
         this.maxPlayerNumber = maxPlayerNumber;
     }
 
+    /**
+     * 消息格式：消息正文 + 消息参数，参数用#0, #1, #2 ... 等表示
+     * TODO load message when application server is started or restarted
+     * 
+     * @param key
+     * @param params
+     * @return
+     */
+    public static String getMessage(String key, Object ... params) {
+        String message = messagePool.get(key);
+        for (int i = 0; i < params.length; i++) {
+            String holder = "#" + i;
+            message = message.replaceAll(holder, params[i] == null ? "" : params[i].toString());
+        }
+        return message;
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
     public static ModelDescriptor loadConfigInfo() throws IOException {
         XStream s = new XStream(new DomDriver());
         s.setMode(XStream.NO_REFERENCES);
