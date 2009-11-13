@@ -71,37 +71,41 @@ public class ModelUtil {
      * @throws IOException
      */
     private static void load() {
-        // 获取匹配信息
-        // MOD 2009/07/02 BEGIN
-//        ResourceBundle bundle = ResourceBundle.getBundle(ModelUtil.class.getPackage().getName() + ".model_defination");
-//        String platformConfig = (String) bundle.getString("PLATFORM");
-//        String[] lobbyConfigArray = ((String) bundle.getString("LOBBY")).split(";");
-//        String[] roomConfigArray = ((String) bundle.getString("ROOM")).split(";");
-//        int maxPlayerNumber = Integer.parseInt((String) bundle.getString("MAX_PLAYER_NUMBER"));
-
+        // 获取配置信息
         Properties config = readProperties();
         String platformConfig = config.getProperty("PLATFORM");
         String[] lobbyConfigArray = config.getProperty("LOBBY").split(";");
         String[] roomConfigArray = config.getProperty("ROOM").split(";");
         int maxPlayerNumber = Integer.parseInt(config.getProperty("MAX_PLAYER_NUMBER"));
-        // MOD 2009/07/02 END
 
         // 创建模型
         platform = ModelUtil.createFromConfigString(Platform.class, platformConfig);
         for (String lobbyConfig : lobbyConfigArray) {
             Lobby lobby = ModelUtil.createFromConfigString(Lobby.class, lobbyConfig);
-            lobby.setParentId(platform.getId());
-            lobby.setParent(platform);
-            platform.addChild(lobby.getId(), lobby);
+            if (lobby.getDisabled() != null && "false".equals(lobby.getDisabled().toLowerCase())) {
+                lobby.setParentId(platform.getId());
+                lobby.setParent(platform);
+                platform.addChild(lobby.getId(), lobby);
+            } else {
+                continue;
+            }
             lobbys.put(lobby.getId(), lobby);
         }
         for (String roomConfig : roomConfigArray) {
             Room room = ModelUtil.createFromConfigString(Room.class, roomConfig, "parent");
-            String parentId = roomConfig.replaceAll("parent=([^,]+).*", "$1");
-            room.setParentId(parentId);
-            room.setParent(platform.getChild(parentId));
-            room.setChildLimit(maxPlayerNumber);
-            platform.getChild(parentId).addChild(room.getId(), room);
+            if (room != null && "false".equals(room.getDisabled().toLowerCase())) {
+                String parentId = roomConfig.replaceAll("parent=([^,]+).*", "$1");
+                if (lobbys.get(parentId) == null) {
+                    // 大厅被禁用时
+                    continue;
+                }
+                room.setParentId(parentId);
+                room.setParent(platform.getChild(parentId));
+                room.setChildLimit(maxPlayerNumber);
+                platform.getChild(parentId).addChild(room.getId(), room);
+            } else {
+                continue;
+            }
             rooms.put(room.getId(), room);
         }
 
