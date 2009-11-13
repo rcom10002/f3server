@@ -7,17 +7,17 @@ public class RechargeHistoryInfo {
 
     private String fromPlayer;
 
-    private Integer fromOrgScore;
+    private String fromOrgScore;
 
-    private Integer fromCurScore;
+    private String fromCurScore;
 
-    private Integer score;
+    private String score;
 
     private String toPlayer;
 
-    private Integer toOrgScore;
+    private String toOrgScore;
 
-    private Integer toCurScore;
+    private String toCurScore;
 
     private String createTime;
 
@@ -52,42 +52,42 @@ public class RechargeHistoryInfo {
 	/**
 	 * @return the fromOrgScore
 	 */
-	public Integer getFromOrgScore() {
+	public String getFromOrgScore() {
 		return fromOrgScore;
 	}
 
 	/**
 	 * @param fromOrgScore the fromOrgScore to set
 	 */
-	public void setFromOrgScore(Integer fromOrgScore) {
+	public void setFromOrgScore(String fromOrgScore) {
 		this.fromOrgScore = fromOrgScore;
 	}
 
 	/**
 	 * @return the fromCurScore
 	 */
-	public Integer getFromCurScore() {
+	public String getFromCurScore() {
 		return fromCurScore;
 	}
 
 	/**
 	 * @param fromCurScore the fromCurScore to set
 	 */
-	public void setFromCurScore(Integer fromCurScore) {
+	public void setFromCurScore(String fromCurScore) {
 		this.fromCurScore = fromCurScore;
 	}
 
 	/**
 	 * @return the score
 	 */
-	public Integer getScore() {
+	public String getScore() {
 		return score;
 	}
 
 	/**
 	 * @param score the score to set
 	 */
-	public void setScore(Integer score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 
@@ -108,28 +108,28 @@ public class RechargeHistoryInfo {
 	/**
 	 * @return the toOrgScore
 	 */
-	public Integer getToOrgScore() {
+	public String getToOrgScore() {
 		return toOrgScore;
 	}
 
 	/**
 	 * @param toOrgScore the toOrgScore to set
 	 */
-	public void setToOrgScore(Integer toOrgScore) {
+	public void setToOrgScore(String toOrgScore) {
 		this.toOrgScore = toOrgScore;
 	}
 
 	/**
 	 * @return the toCurScore
 	 */
-	public Integer getToCurScore() {
+	public String getToCurScore() {
 		return toCurScore;
 	}
 
 	/**
 	 * @param toCurScore the toCurScore to set
 	 */
-	public void setToCurScore(Integer toCurScore) {
+	public void setToCurScore(String toCurScore) {
 		this.toCurScore = toCurScore;
 	}
 

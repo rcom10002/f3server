@@ -11,14 +11,14 @@ public class ReportScoreInfo {
 	private String startDate;
 	private String endDate;
 	private Integer winTimes;
-	private Integer winScores;
+	private String winScores;
 	private Integer loseTimes;
-	private Integer loseScores;
+	private String loseScores;
 	private Integer drawTimes;
-	private Integer drawScores;
+	private String drawScores;
 	private Integer totalTimes;
-	private Integer totalScores;
-	private Integer totalSystemScore;
+	private String totalScores;
+	private String totalSystemScore;
 	private Short status;
 	private Date createTime;
 	private String createBy;
@@ -126,13 +126,13 @@ public class ReportScoreInfo {
 	/**
 	 * @return the winScores
 	 */
-	public Integer getWinScores() {
+	public String getWinScores() {
 		return winScores;
 	}
 	/**
 	 * @param winScores the winScores to set
 	 */
-	public void setWinScores(Integer winScores) {
+	public void setWinScores(String winScores) {
 		this.winScores = winScores;
 	}
 	/**
@@ -150,13 +150,13 @@ public class ReportScoreInfo {
 	/**
 	 * @return the loseScores
 	 */
-	public Integer getLoseScores() {
+	public String getLoseScores() {
 		return loseScores;
 	}
 	/**
 	 * @param loseScores the loseScores to set
 	 */
-	public void setLoseScores(Integer loseScores) {
+	public void setLoseScores(String loseScores) {
 		this.loseScores = loseScores;
 	}
 	/**
@@ -174,13 +174,13 @@ public class ReportScoreInfo {
 	/**
 	 * @return the drawScores
 	 */
-	public Integer getDrawScores() {
+	public String getDrawScores() {
 		return drawScores;
 	}
 	/**
 	 * @param drawScores the drawScores to set
 	 */
-	public void setDrawScores(Integer drawScores) {
+	public void setDrawScores(String drawScores) {
 		this.drawScores = drawScores;
 	}
 	/**
@@ -198,25 +198,25 @@ public class ReportScoreInfo {
 	/**
 	 * @return the totalScores
 	 */
-	public Integer getTotalScores() {
+	public String getTotalScores() {
 		return totalScores;
 	}
 	/**
 	 * @param totalScores the totalScores to set
 	 */
-	public void setTotalScores(Integer totalScores) {
+	public void setTotalScores(String totalScores) {
 		this.totalScores = totalScores;
 	}
 	/**
 	 * @return the totalSystemScore
 	 */
-	public Integer getTotalSystemScore() {
+	public String getTotalSystemScore() {
 		return totalSystemScore;
 	}
 	/**
 	 * @param totalSystemScore the totalSystemScore to set
 	 */
-	public void setTotalSystemScore(Integer totalSystemScore) {
+	public void setTotalSystemScore(String totalSystemScore) {
 		this.totalSystemScore = totalSystemScore;
 	}
 	/**
