@@ -7,18 +7,28 @@
 SELECT 
 		player_profile.user_id userId,
 		CASE 
-         WHEN player_score.cur_score > 0
+         WHEN player_score.cur_score > 0.00
          THEN "胜利"
-         WHEN player_score.cur_score < 0
+         WHEN player_score.cur_score < 0.00
          THEN "失败"
-         WHEN player_score.cur_score = 0
+         WHEN player_score.cur_score = 0.00
          THEN "平局"
          ELSE "未知"
        END AS winandlose,
        player_score.cur_score        AS score,
        player_score.sys_score AS systemscore,
        game_record.game_id       AS gameId,
-       game_record.game_type       AS gameType,
+       CASE 
+         WHEN game_record.game_type = 'FightLandlordGame'
+         THEN "斗地主"
+         WHEN game_record.game_type = 'Red5Game'
+         THEN "大连红五"
+         WHEN game_record.game_type = 'PushdownWinGame'
+         THEN "推倒胡"
+         WHEN game_record.game_type = 'QiongWinGame'
+         THEN "穷胡"
+         ELSE "未知"
+       END AS gameType,
        DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime,
        DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS startTime,
        DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS endTime

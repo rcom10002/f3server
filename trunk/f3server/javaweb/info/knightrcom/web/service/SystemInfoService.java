@@ -184,4 +184,17 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
         return toXML(info, GameRecord.class);
     }
     
+    /**
+     * 验证游戏ID是否有效
+     * @param request
+     * @param response
+     * @return
+     */
+    public String GAME_ID_VALIDATE(HttpServletRequest request, HttpServletResponse response) {
+    	if (new GameRecordDAO().findById(request.getParameter("GAME_ID")) == null) {
+    		return toXML(createEntityInfo(null, F3SWebServiceResult.WARNING), getAliasTypes());
+    	}
+    	return toXML(createEntityInfo(null, F3SWebServiceResult.SUCCESS), getAliasTypes()); 
+    }
+    
 }

@@ -1,6 +1,5 @@
 package info.knightrcom.web.model.entity;
 
-import java.math.BigInteger;
 
 public class BizMatrixInfo {
 	private String userId;
@@ -11,7 +10,7 @@ public class BizMatrixInfo {
 	
 	private String totalSysScore;
 	
-	private BigInteger currentScore;
+	private String currentScore;
 
 	/**
 	 * @return the userId
@@ -72,14 +71,14 @@ public class BizMatrixInfo {
 	/**
 	 * @return the currentScore
 	 */
-	public BigInteger getCurrentScore() {
+	public String getCurrentScore() {
 		return currentScore;
 	}
 
 	/**
 	 * @param currentScore the currentScore to set
 	 */
-	public void setCurrentScore(BigInteger currentScore) {
+	public void setCurrentScore(String currentScore) {
 		this.currentScore = currentScore;
 	}
 	

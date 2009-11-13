@@ -7,7 +7,17 @@
 		SELECT 
 			   `GAME_FEEDBACK`.`FEEDBACK_ID` feedbackId,
 			   `GAME_FEEDBACK`.`GAME_ID` gameId,
-		       `GAME_RECORD`.`GAME_TYPE` gameType,
+			   CASE 
+		         	 WHEN `GAME_RECORD`.`GAME_TYPE` = 'FightLandlordGame'
+			         THEN "斗地主"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'Red5Game'
+			         THEN "大连红五"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'PushdownWinGame'
+			         THEN "推倒胡"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'QiongWinGame'
+			         THEN "穷胡"
+			         ELSE "未知"
+			   END AS gameType,
 		       `GAME_FEEDBACK`.`TITLE` title,
 		       CASE
 	            WHEN `GAME_FEEDBACK`.`STATUS` ='NEW_ARRIVAL' THEN '未处理'
@@ -42,7 +52,17 @@
     <sql-query name="RETRIEVE_FEEDBACK_HISTORY">
     <![CDATA[
         SELECT `GAME_FEEDBACK`.`GAME_ID`,
-               `GAME_RECORD`.`GAME_TYPE`,
+        	   CASE 
+		         	 WHEN `GAME_RECORD`.`GAME_TYPE` = 'FightLandlordGame'
+			         THEN "斗地主"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'Red5Game'
+			         THEN "大连红五"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'PushdownWinGame'
+			         THEN "推倒胡"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'QiongWinGame'
+			         THEN "穷胡"
+			         ELSE "未知"
+			   END AS  GAME_TYPE,
                `TITLE`,
                CASE
 	            WHEN `GAME_FEEDBACK`.`STATUS` ='NEW_ARRIVAL' THEN '未处理'
