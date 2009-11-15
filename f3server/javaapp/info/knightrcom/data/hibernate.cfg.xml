@@ -42,6 +42,7 @@
 	<mapping class="info.knightrcom.data.metadata.PlayerScore" />
 	<mapping class="info.knightrcom.data.metadata.LogInfo" />
 	<mapping class="info.knightrcom.data.metadata.RechargeRecord" />
+	<mapping class="info.knightrcom.data.metadata.PeriodlySumExt" />
 
 	<!-- SQL脚本配置 -->
 	<mapping resource="info/knightrcom/web/data/GameFeedbackService.hbm.xml" />
