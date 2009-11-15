@@ -1,7 +1,10 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy;
+import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
+import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
@@ -123,6 +126,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        String lobbyName = request.getParameter("LOBBY_NAME");
 	        String lobbyDisplayIndex = request.getParameter("LOBBY_DISPLAYINDEX");
 	        String lobbyDisabled = request.getParameter("DISABLED");
+	        // 日志消息
+	        StringBuffer msg = new StringBuffer();
 	        // 根据LOBBY—ID读取数据源
 	        Properties config = getModelProperties();
 	        
@@ -148,6 +153,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        		lobby.remove(GameConfigureConstant.LOBBY_DISABLED);
 		        		lobby.put(GameConfigureConstant.LOBBY_DISABLED, lobbyDisabled);
 	        		}
+	        		// 存参数信息
+			        for (Object key : lobby.keySet()){
+			        	msg.append(key);
+			        	msg.append(":");
+			        	msg.append(lobby.get(key));
+			        	msg.append("\n");
+			        }
 	        	} 
 	        	lobbyList.add(lobby);
 	        }
@@ -167,6 +179,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 			globalConfig.setValue(outStream.toString("utf-8"));
 			globalConfig.setUpdateTime(new Date());
 			HibernateSessionFactory.getSession().save(globalConfig);
+			// 保存日志
+			LogInfo logInfo = F3ServerProxy.createLogInfo("更新游戏大厅的参数设置", msg.toString(), null, LogType.SYSTEM_LOG);
+			HibernateSessionFactory.getSession().save(logInfo);
 			info.setResult(F3SWebServiceResult.SUCCESS);
         } catch (Exception e) {
         	e.printStackTrace();
@@ -183,6 +198,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	 */
 	public String DELETE_GAME_CONFIGURE(HttpServletRequest request, HttpServletResponse response) {
         String lobbyId = request.getParameter("LOBBY_ID");
+        // 日志消息
+        StringBuffer msg = new StringBuffer();
         // 根据LOBBY—ID读取数据源
         Properties config = getModelProperties();
         
@@ -199,6 +216,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         	if (lobby.get(GameConfigureConstant.LOBBY_ID).equals(lobbyId)) {
         		continue;
         	} 
+        	// 存参数信息
+	        for (Object key : lobby.keySet()){
+	        	msg.append(key);
+	        	msg.append(":");
+	        	msg.append(lobby.get(key));
+	        	msg.append("\n");
+	        }
         	lobbyList.add(lobby);
         }
         // 更新后的新值重构成configString
@@ -218,6 +242,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
     		globalConfig.setValue(outStream.toString("utf-8"));
     		globalConfig.setUpdateTime(new Date());
 			HibernateSessionFactory.getSession().save(globalConfig);
+			// 保存日志
+			LogInfo logInfo = F3ServerProxy.createLogInfo("删除游戏大厅的参数设置", msg.toString(), null, LogType.SYSTEM_LOG);
+			HibernateSessionFactory.getSession().save(logInfo);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -457,6 +484,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
      */
     private void deleteGameRoomConfigure(String lobbyId, HttpServletRequest request) {
 		String gameId = request.getParameter("GAME_ID");
+		// 日志消息
+        StringBuffer msg = new StringBuffer();
 		// 根据LOBBY—ID读取数据源
         Properties config = getModelProperties();
         // 重构Property
@@ -472,6 +501,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         			&& gameId.equals(room.get(GameConfigureConstant.ROOM_ID))) {
 	        	continue;
 			}
+			// 存参数信息
+	        for (Object key : room.keySet()){
+	        	msg.append(key);
+	        	msg.append(":");
+	        	msg.append(room.get(key));
+	        	msg.append("\n");
+	        }
 			roomList.add(room);
         }
         // 更新后的新值重构成configString
@@ -491,6 +527,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 			globalconfig.setValue(outStream.toString("utf-8"));
 			globalconfig.setUpdateTime(new Date());
 			HibernateSessionFactory.getSession().save(globalconfig);
+			// 保存日志
+			LogInfo logInfo = F3ServerProxy.createLogInfo("删除游戏房间的参数设置", msg.toString(), null, LogType.SYSTEM_LOG);
+			HibernateSessionFactory.getSession().save(logInfo);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -513,6 +552,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String pointMark = request.getParameter("POINT_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         String disabled = request.getParameter("DISABLED");
+        // 日志消息
+        StringBuffer msg = new StringBuffer();
         // 根据LOBBY—ID读取数据源
         Properties config = getModelProperties();
         
@@ -569,6 +610,14 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 	        		room.remove(GameConfigureConstant.ROOM_DISABLED);
 	        		room.put(GameConfigureConstant.ROOM_DISABLED, disabled);
         		}
+        		
+        		// 存参数信息
+		        for (Object key : room.keySet()){
+		        	msg.append(key);
+		        	msg.append(":");
+		        	msg.append(room.get(key));
+		        	msg.append("\n");
+		        }
         	}
         	roomList.add(room);
         }
@@ -589,6 +638,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 			globalconfig.setValue(outStream.toString("utf-8"));
 			globalconfig.setUpdateTime(new Date());
 			HibernateSessionFactory.getSession().save(globalconfig);
+			// 保存日志
+			LogInfo logInfo = F3ServerProxy.createLogInfo("更新游戏房间的参数设置", msg.toString(), null, LogType.SYSTEM_LOG);
+			HibernateSessionFactory.getSession().save(logInfo);
         } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -611,6 +663,8 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
         String highLevelMark = request.getParameter("HIGH_LEVEL_MARK");
         String minMarks = request.getParameter("MIN_MARKS");
         String disabled = request.getParameter("DISABLED");
+        // 日志消息
+        StringBuffer msg = new StringBuffer();
         // add flag
         boolean bool = true;
         // 根据LOBBY—ID读取数据源
@@ -654,6 +708,13 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		        newRoom.put(GameConfigureConstant.ROOM_DISABLED, disabled);
 		        roomList.add(newRoom);
 		        bool = !bool;
+		        // 存参数信息
+		        for (Object key : newRoom.keySet()){
+		        	msg.append(key);
+		        	msg.append(":");
+		        	msg.append(newRoom.get(key));
+		        	msg.append("\n");
+		        }
 			}
         	roomList.add(room);
         }
@@ -674,6 +735,9 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		globalconfig.setValue(outStream.toString("utf-8"));
 		globalconfig.setUpdateTime(new Date());
 		HibernateSessionFactory.getSession().save(globalconfig);
+		// 保存日志
+		LogInfo logInfo = F3ServerProxy.createLogInfo("创建游戏房间的参数设置", msg.toString(), null, LogType.SYSTEM_LOG);
+		HibernateSessionFactory.getSession().save(logInfo);
     }
     
     
@@ -804,5 +868,20 @@ public class GameConfigureService extends F3SWebService<List<Map>> {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * 大厅、房间信息修改前
+	 * 判断服务是否是关闭状态
+	 * @return
+	 */
+	public String IS_SERVER_CLOSE_STATUS(HttpServletRequest request, HttpServletResponse response) {
+		EntityInfo<List<Map>> info = new EntityInfo<List<Map>>();
+		if (F3ServerProxy.isServerRunning()) {
+	        info.setResult(F3SWebServiceResult.WARNING);
+		} else {
+			info.setResult(F3SWebServiceResult.SUCCESS);
+		}
+        return toXML(info, getAliasTypes());
 	}
 }
