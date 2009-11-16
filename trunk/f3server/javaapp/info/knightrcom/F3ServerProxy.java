@@ -11,8 +11,12 @@ import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.HandlerDispatcher;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.SystemLogger;
+import info.knightrcom.web.model.EntityInfo;
+import info.knightrcom.web.service.F3SWebServiceResult;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +24,7 @@ import java.util.Map.Entry;
 
 import org.apache.mina.core.session.IoSession;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 
 /**
  * 该类作为Web访问应用服务器的代理，具体的应用操作内容由代理完成
@@ -165,5 +170,72 @@ public class F3ServerProxy {
 	 */
 	public static LogInfo createLogInfo(String caption, String message, String info, LogType type) {
 	    return SystemLogger.createLog(caption, message, info, type);
+	}
+
+	/**
+	 * 备份数据库
+	 * <ol>
+	 * <li>备份生产数据库</li>
+	 * <li>清空生产数据库中所有业务数据</li>
+	 * <li>将生产数据库中的MASTER表中的数据全部初始化</li>
+	 * </ol>
+	 * @param yyyyMM 起始日期的年月，用六位表
+	 * @param fromDay 起始时间的日，用两位数表示
+	 * @param toDay 结束时间的日，用两位数表示
+	 * @return 成功或失败，失败时会在Tag中记录失败原因
+	 */
+	public static EntityInfo<Object> backupDatabase(String yyyyMM, String fromDay, String toDay) {
+	    Transaction trans = null;
+        // 生成数据库标识
+        String dbMark1 = yyyyMM;
+        String dbMark2 = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String databaseName = String.format("f3s_%1$s_F%2$s_T%3$s_%4$s", dbMark1, fromDay, toDay, dbMark2);
+	    try {
+	        // 创建数据库
+	        HibernateSessionFactory.getSession().createSQLQuery("create database " + databaseName + " CHARACTER SET utf8 COLLATE utf8_general_ci").executeUpdate();
+	        // 获取全部的表
+	        List<?> resultList = HibernateSessionFactory.getSession().createSQLQuery("show tables").list();
+	        // 创建表结构
+            for (Object eachResult : resultList) {
+                String sql4CreateTable = String.format("create table %1$s.%2$s like f3s.%2$s", databaseName, eachResult.toString());
+                HibernateSessionFactory.getSession().createSQLQuery(sql4CreateTable).executeUpdate();
+            }
+            // 开启事务
+            trans = HibernateSessionFactory.getSession().beginTransaction();
+	        // 向备份数据库中导入全部数据
+            for (Object eachResult : resultList) {
+                String sql4ImportTable = String.format("insert into %1$s.%2$s select * from f3s.%2$s", databaseName, eachResult.toString());
+                HibernateSessionFactory.getSession().createSQLQuery(sql4ImportTable).executeUpdate();
+            }
+	        // 删除生产数据库中的业务数据
+            for (String eachResult : new String[] {"recharge_record", "player_score", "periodly_sum", "log_info", "game_record", "game_feedback"}) {
+                String sql4DeleteTable = String.format("delete from %1$s", eachResult);
+                HibernateSessionFactory.getSession().createSQLQuery(sql4DeleteTable).executeUpdate();
+            }
+            // 重新初始化MASTER表中的数据
+            HibernateSessionFactory.getSession().createSQLQuery("update player_profile set current_score = init_limit").executeUpdate();
+            // 创建空表SUCCESS代表数据备份成功
+            HibernateSessionFactory.getSession().createSQLQuery("create table " + databaseName + ".success (success int)").executeUpdate();
+            // 提交事务
+            trans.commit();
+            // 返回结果
+	        EntityInfo<Object> info = new EntityInfo<Object>();
+	        info.setResult(F3SWebServiceResult.SUCCESS);
+            return info;
+        } catch (Exception e) {
+            // 回滚事务
+            if (trans != null && trans.isActive()) {
+                trans.rollback();
+            }
+            trans.rollback();
+            // 异常发生时删除数据库
+            HibernateSessionFactory.getSession().createSQLQuery("drop database " + databaseName).executeUpdate();
+            EntityInfo<Object> info = new EntityInfo<Object>();
+            info.setResult(F3SWebServiceResult.FAIL);
+            info.setTag(e.getMessage());
+            return info;
+        } finally {
+            HibernateSessionFactory.closeSession();
+        }
 	}
 }
