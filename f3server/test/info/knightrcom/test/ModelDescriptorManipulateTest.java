@@ -72,6 +72,7 @@ public class ModelDescriptorManipulateTest extends TestCase {
         allConfigParameters.put("IP_CONFLICT_ENABLED", "false");
         allConfigParameters.put("SYSTEM_SCORE_RATE", "5");
         allConfigParameters.put("PAGE_SIZE", "15");
+        allConfigParameters.put("SEARCH_PERIOD", "1");
         allConfigParameters.put("WAITING_QUEUE_RANDOM_ENABLE", "false");
         allConfigParameters.put("WAITING_QUEUE_GROUP_QUANTITY", "1");
 	    for (String key : allConfigParameters.keySet()) {
