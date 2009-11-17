@@ -213,9 +213,9 @@ public class F3ServerProxy {
                 HibernateSessionFactory.getSession().createSQLQuery(sql4DeleteTable).executeUpdate();
             }
             // 重新初始化MASTER表中的数据
-            HibernateSessionFactory.getSession().createSQLQuery("update f3s.player_profile set current_score = init_limit").executeUpdate();
+            HibernateSessionFactory.getSession().createSQLQuery("update player_profile set current_score = init_limit").executeUpdate();
             // 创建空表SUCCESS代表数据备份成功
-            HibernateSessionFactory.getSession().createSQLQuery("create table f3s." + databaseName + "_success (success int)").executeUpdate();
+            HibernateSessionFactory.getSession().createSQLQuery("create table " + databaseName + ".success (success int)").executeUpdate();
             // 提交事务
             trans.commit();
             // 返回结果
