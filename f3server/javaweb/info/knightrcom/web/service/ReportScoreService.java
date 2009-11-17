@@ -12,6 +12,8 @@ import info.knightrcom.web.model.entity.ReportScoreInfo;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,7 +174,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     }
 	
 	/**
-	 * 获取查询期间
+	 * 获取查询期间起始[周X]
 	 * @param request
 	 * @param response
 	 * @return
@@ -182,12 +184,18 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 		final GlobalConfig globalconfig = (GlobalConfig)HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class).add(
                 Restrictions.and(Property.forName("type").eq(GameConfigureConstant.SERVER_PARAM_NAME), 
                         Property.forName("name").eq("SEARCH_PERIOD"))).uniqueResult();
-		// 默认查询期间为2星期
-		int period = 2;
+		Calendar calendar = Calendar.getInstance();
+		// 默认查询期间为1星期
+		int period = 1;
 		if (globalconfig != null) {
-			period = Integer.valueOf(globalconfig.getValue());
+			int startWeek = Integer.valueOf(globalconfig.getValue());
+			int distanceDay = startWeek - (calendar.get(Calendar.DAY_OF_WEEK) - 1);
+			calendar.add(Calendar.DATE, distanceDay);
 		}
-		info.setTag(period);
+		String startDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+		calendar.add(Calendar.WEEK_OF_MONTH, period);
+		String endDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+		info.setTag(startDate + "~" + endDate);
 		info.setResult(F3SWebServiceResult.SUCCESS);
 		return toXML(info, new Class[] {PeriodlySum.class});
 	}
