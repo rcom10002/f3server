@@ -57,41 +57,38 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 	 * @param request
 	 */
 	private void processInsertSetting(Query query, HttpServletRequest request) {
-		query.setTimestamp(0, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(1, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-		query.setTimestamp(2, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(3, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-        query.setTimestamp(4, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(5, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-        query.setTimestamp(6, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(7, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-        query.setTimestamp(8, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(9, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
-        query.setTimestamp(10, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
-        query.setTimestamp(11, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+		for (int i = 0; i < 14; i++) {
+			if (i%2 == 0){
+				query.setTimestamp(i, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
+			} else {
+				query.setTimestamp(i, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
+			}
+		}
 		
         String userId = StringHelper.escapeSQL(request.getParameter("USER_ID")) == null ? "" : StringHelper.escapeSQL(request.getParameter("USER_ID"));
-        query.setString(12, "%" + userId + "%");
+        query.setString(14, "%" + userId + "%");
         final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
                 PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("CURRENT_USER_ID"))).uniqueResult();
         if ("GroupUser".equals(profile.getRole())) {
-        	query.setString(13, profile.getUserId());
+        	query.setString(15, profile.getUserId());
         } else {
-        	query.setString(13, null);
+        	query.setString(15, null);
         }
-        query.setString(14, profile.getUserId() + "%");
+        query.setString(16, profile.getUserId() + "%");
 	}
 	
     @Override
     public String getNamedQuery() {
 //        return "REPORT_SCORE_INFO";
-    	return "SELECT_PERIODLY_SUM";
+//    	return "SELECT_PERIODLY_SUM";
+    	return "SELECT_PERIODLY_SUM_EXT";
     }
 
     @Override
     public String getNamedQueryForCount() {
 //        return "REPORT_SCORE_INFO_COUNT";
-    	return "SELECT_PERIODLY_SUM_COUNT";
+//    	return "SELECT_PERIODLY_SUM_COUNT";
+    	return "SELECT_PERIODLY_SUM_EXT_COUNT";
     }
 
     @Override
@@ -116,7 +113,8 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
         // 未查询过时进行积分统计
         if (recordCount == 0) {
         	// 将统计出的结果手插入到periodly_sum表 [防止重复查询]
-        	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
+//        	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
+        	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM_EXT");
         	processInsertSetting(query, request);
     		query.executeUpdate();
         }
