@@ -20,6 +20,10 @@ public class ReportScoreInfo {
 	private String totalScores;
 	private String totalSystemScore;
 	private Short status;
+	private String currentScore;
+	private String playerLimitScore;
+	private String rechargeSum;
+	private String resultScore;
 	private Date createTime;
 	private String createBy;
 	private Date updateTime;
@@ -278,6 +282,54 @@ public class ReportScoreInfo {
 	 */
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
+	}
+	/**
+	 * @return the currentScore
+	 */
+	public String getCurrentScore() {
+		return currentScore;
+	}
+	/**
+	 * @param currentScore the currentScore to set
+	 */
+	public void setCurrentScore(String currentScore) {
+		this.currentScore = currentScore;
+	}
+	/**
+	 * @return the playerLimitScore
+	 */
+	public String getPlayerLimitScore() {
+		return playerLimitScore;
+	}
+	/**
+	 * @param playerLimitScore the playerLimitScore to set
+	 */
+	public void setPlayerLimitScore(String playerLimitScore) {
+		this.playerLimitScore = playerLimitScore;
+	}
+	/**
+	 * @return the rechargeSum
+	 */
+	public String getRechargeSum() {
+		return rechargeSum;
+	}
+	/**
+	 * @param rechargeSum the rechargeSum to set
+	 */
+	public void setRechargeSum(String rechargeSum) {
+		this.rechargeSum = rechargeSum;
+	}
+	/**
+	 * @return the resultScore
+	 */
+	public String getResultScore() {
+		return resultScore;
+	}
+	/**
+	 * @param resultScore the resultScore to set
+	 */
+	public void setResultScore(String resultScore) {
+		this.resultScore = resultScore;
 	}
 
 	
