@@ -141,25 +141,17 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     	ICsvMapWriter writer = new CsvMapWriter(new FileWriter(url + GameConfigureConstant.DOWNLOAD_PATH + filename),
 				CsvPreference.EXCEL_PREFERENCE);
     	try {
-			final String[] header = new String[] { "用户ID", "总次数", "总积分", "获胜次数", "获胜积分", "失败次数", "失败积分", "平局次数" , "平局积分", "总系统分", "开始统计时间", "结束统计时间"};
+			final String[] header = { "用户ID", "总次数", "总积分", "获胜次数", "获胜积分", "失败次数", "失败积分", "平局次数" , "平局积分", "总系统分", "玩家当前分", "玩家初始分", "总充值分", "净收益分", "开始统计时间", "结束统计时间"};
+			final String[] mapKeys = {"userId", "totalTimes", "totalScores", "winTimes", "winScores", "loseTimes", "loseScores",
+					"drawTimes", "drawScores", "totalSystemScore", "currentScore", "playerLimitScore", "rechargeSum", "resultScore", "startDate", "endDate"};
 			// the actual writing
 			writer.writeHeader(header);
 			for (Map map : list) {
 				// set up some data to write
 				final HashMap<String, ? super Object> data = new HashMap<String, Object>();
-				data.put(header[0], map.get("userId"));
-				data.put(header[1], map.get("totalTimes"));
-				data.put(header[2], map.get("totalScores"));
-				data.put(header[3], map.get("winTimes"));
-				data.put(header[4], map.get("winScores"));
-				data.put(header[5], map.get("loseTimes"));
-				data.put(header[6], map.get("loseScores"));
-				data.put(header[7], map.get("drawTimes"));
-				data.put(header[8], map.get("drawScores"));
-				data.put(header[9], map.get("totalSystemScore"));
-				data.put(header[10], map.get("startDate"));
-				data.put(header[11], map.get("endDate"));
-				
+				for (int i = 0; i < mapKeys.length; i++) {
+					data.put(header[i], map.get(mapKeys[i]));
+				}
 				writer.write(data, header);
 			}
 			info.setTag(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + request.getContextPath() + "/" + GameConfigureConstant.DOWNLOAD_PATH + filename);
