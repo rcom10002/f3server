@@ -4,6 +4,10 @@ import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.PeriodlySum;
 import info.knightrcom.data.metadata.PlayerProfile;
+import info.knightrcom.data.metadata.PlayerScore;
+import info.knightrcom.data.metadata.PlayerScoreDAO;
+import info.knightrcom.data.metadata.RechargeRecord;
+import info.knightrcom.data.metadata.RechargeRecordDAO;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
@@ -12,6 +16,7 @@ import info.knightrcom.web.model.entity.ReportScoreInfo;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -21,7 +26,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
@@ -56,7 +63,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 	 * @param query
 	 * @param request
 	 */
-	private void processInsertSetting(Query query, HttpServletRequest request) {
+	private void processInsertSetting(Query query, HttpServletRequest request, List users) {
 		for (int i = 0; i < 14; i++) {
 			if (i%2 == 0){
 				query.setTimestamp(i, StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd"));
@@ -64,17 +71,17 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 				query.setTimestamp(i, StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd"));
 			}
 		}
-		
-        String userId = StringHelper.escapeSQL(request.getParameter("USER_ID")) == null ? "" : StringHelper.escapeSQL(request.getParameter("USER_ID"));
-        query.setString(14, "%" + userId + "%");
-        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
-                PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("CURRENT_USER_ID"))).uniqueResult();
-        if ("GroupUser".equals(profile.getRole())) {
-        	query.setString(15, profile.getUserId());
-        } else {
-        	query.setString(15, null);
-        }
-        query.setString(16, profile.getUserId() + "%");
+		query.setParameterList("USERLIST", users);
+//        String userId = StringHelper.escapeSQL(request.getParameter("USER_ID")) == null ? "" : StringHelper.escapeSQL(request.getParameter("USER_ID"));
+//        query.setString(14, "%" + userId + "%");
+//        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+//                PlayerProfile.class).add(Restrictions.eq("userId", request.getParameter("CURRENT_USER_ID"))).uniqueResult();
+//        if ("GroupUser".equals(profile.getRole())) {
+//        	query.setString(15, profile.getUserId());
+//        } else {
+//        	query.setString(15, null);
+//        }
+//        query.setString(16, profile.getUserId() + "%");
 	}
 	
     @Override
@@ -105,17 +112,36 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     }
     
     @SuppressWarnings("unchecked")
-	public String READ_PERIODLY_SUM(HttpServletRequest request, HttpServletResponse response) {
+	public String READ_PERIODLY_SUM(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	EntityInfo<PeriodlySum> info = new EntityInfo<PeriodlySum>();
+    
     	// 查看是否曾经查询过
     	Query query = HibernateSessionFactory.getSession().getNamedQuery(getNamedQueryForCount());
         this.processQuerySetting(query, request);
         int recordCount = ((Map<String, BigInteger>)query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).uniqueResult()).get("RECORD_COUNT").intValue();
         // 未查询过时进行积分统计
         if (recordCount == 0) {
+        	// 查询范围是否将所有数据筛选出来
+        	// 读取顶级用户
+        	List<String> users = getUserRelationsShip(request.getParameter("CURRENT_USER_ID"));
+//        	StringBuffer strBuf = new StringBuffer();
+//    		for (Object user : users) {
+//    			strBuf.append(user);
+//    			strBuf.append(",");
+//    		}
+//    		String userIds = strBuf.toString().replaceAll(",$", "");
+        	java.sql.Timestamp fromDate = StringHelper.toTimeStamp(request.getParameter("FROM_DATE"), "yyyyMMdd");
+        	java.sql.Timestamp toDate = StringHelper.toTimeStamp(request.getParameter("TO_DATE"), "yyyyMMdd");
+        	// 判断数据是否全部包含
+        	boolean bool = isFullResultSet(fromDate, toDate, users);
+        	if (!bool) {
+        		info.setResult(F3SWebServiceResult.WARNING);
+        		return toXML(info, new Class[] {PeriodlySum.class});
+        	}
         	// 将统计出的结果手插入到periodly_sum表 [防止重复查询]
 //        	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM");
         	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM_EXT");
-        	processInsertSetting(query, request);
+        	processInsertSetting(query, request, users);
     		query.executeUpdate();
         }
     	return serializeResponseStream(request, response);
@@ -131,7 +157,6 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 	@SuppressWarnings("unchecked")
 	public String CSV_EXPORT(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		EntityInfo<PeriodlySum> info = new EntityInfo<PeriodlySum>();
-		
     	Query query = HibernateSessionFactory.getSession().getNamedQuery(getNamedQuery());
     	processQuerySetting(query, request);
     	query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -188,5 +213,62 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 		info.setTag(startDate + "~" + endDate);
 		info.setResult(F3SWebServiceResult.SUCCESS);
 		return toXML(info, new Class[] {PeriodlySum.class});
+	}
+	
+	/**
+	 * 获取当前用户的下一级组的所有用户
+	 * @param userId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> getUserRelationsShip(String userId) {
+		Query query = HibernateSessionFactory.getSession().getNamedQuery("USER_RELATIONS_SHIP");
+		final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+                PlayerProfile.class).add(Restrictions.eq("userId", userId)).uniqueResult();
+		if (profile != null) {
+	        if ("Administrator".equals(profile.getRlsPath())) {
+				query.setString(0, "null");
+				query.setString(1, "null");
+				
+			} else {
+				query.setString(0, profile.getUserId());
+				query.setString(1, profile.getUserId());
+			}
+		} else {
+			query.setString(0, "null");
+			query.setString(1, "null");
+		}
+		List<String> resultList = (List<String>)query.list();
+		return resultList;
+	}
+	
+	/**
+	 * 查询范围是否将所有数据筛选出来
+	 * @param fromDate
+	 * @param toDate
+	 * @param userIds
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean isFullResultSet(Timestamp fromDate, Timestamp toDate, List users) {
+		Query query = HibernateSessionFactory.getSession().getNamedQuery("PLAYER_SCORE_RESULT_COUNT");
+		int j = 0;
+		for (int i = 0; i < 4; i++) {
+			if (i%2 == 0) {
+				query.setTimestamp(j++, fromDate);
+				query.setTimestamp(j++, toDate);
+			}
+			query.setParameterList("USERLIST", users);
+		}
+		List<Object> result = query.list();
+		int var[] = new int[4];
+		j = 0;
+		for (Object obj : result) {
+			var[j++] = ((BigInteger) ((Object[])obj)[1]).intValue(); 
+		}
+		if (var[0] == 0 || var[0] != var[1] || var[2] != var[3]) {
+			return false;
+		}
+    	return true;
 	}
 }
