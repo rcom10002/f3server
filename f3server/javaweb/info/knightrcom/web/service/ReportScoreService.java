@@ -233,7 +233,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 		for (Object obj : result) {
 			var[j++] = ((BigInteger) ((Object[])obj)[1]).intValue(); 
 		}
-		if (var[0] == 0 || var[0] != var[1]){
+		if (var[0] < var[1]){
 			return false;
 		}
 		// 玩家充值积分
@@ -246,7 +246,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
 		for (Object obj : result) {
 			var[j++] = ((BigInteger) ((Object[])obj)[1]).intValue(); 
 		}
-		if (var[0] == 0 || var[0] != var[1]){
+		if (var[0] < var[1]){
 			return false;
 		}
     	return true;
