@@ -1,5 +1,6 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.PeriodlySum;
@@ -89,7 +90,7 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
     	return new Class<?>[] {PeriodlySum.class, ReportScoreInfo.class};
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
 	public String READ_PERIODLY_SUM(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	EntityInfo<PeriodlySum> info = new EntityInfo<PeriodlySum>();
     
@@ -114,6 +115,9 @@ public class ReportScoreService extends F3SWebService<PeriodlySum> {
         	query = HibernateSessionFactory.getSession().getNamedQuery("INSERT_PERIODLY_SUM_EXT");
         	processInsertSetting(query, request, users);
     		query.executeUpdate();
+    		// DB备份，业务数据删除，用户账户回归
+    		SimpleDateFormat df = new SimpleDateFormat("yyyyMM");
+    		F3ServerProxy.backupDatabase(df.format(fromDate), String.valueOf(fromDate.getDate()), String.valueOf(toDate.getDate()));
         }
     	return serializeResponseStream(request, response);
     }
