@@ -266,7 +266,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 		List<Player> players = game.getPlayers();
         synchronized (players) {
             for (Player eachPlayer : players) {
-                echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                echoMessage = F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
                 echoMessage.setResult(GAME_SETTING_OVER);
                 echoMessage.setContent(playerNumber + "~" + settingValue);
                 sessionWrite(eachPlayer.getIosession(), echoMessage);
