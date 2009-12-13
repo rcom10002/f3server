@@ -9,158 +9,284 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * GlobalConfig entity. @author MyEclipse Persistence Tools
+ * GlobalConfig entity.
+ * 
+ * @author MyEclipse Persistence Tools
  */
 @Entity
 @Table(name = "global_config")
 public class GlobalConfig extends info.knightrcom.data.SimplePojoImpl implements java.io.Serializable {
 
-    // Fields
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 7599501822071353104L;
-
+	// Fields
+	private static final long serialVersionUID = -5491682659448268349L;
+	
 	private String globalConfigId;
+	private String number;
+	private String name;
+	private String displayName;
+	private String value;
+	private String desc0;
+	private String desc1;
+	private String desc2;
+	private String desc3;
+	private String desc4;
+	private String desc5;
+	private String desc6;
+	private String desc7;
+	private String desc8;
+	private String desc9;
+	private Integer displayIndex;
+	private String type;
+	private String status;
+	private Date createTime;
+	private String createBy;
+	private Date updateTime;
+	private String updateBy;
 
-    private String number;
+	// Constructors
 
-    private String name;
+	/** default constructor */
+	public GlobalConfig() {
+	}
 
-    private String value;
+	/** minimal constructor */
+	public GlobalConfig(String globalConfigId, String name, String value) {
+		this.globalConfigId = globalConfigId;
+		this.name = name;
+		this.value = value;
+	}
 
-    private String type;
+	/** full constructor */
+	public GlobalConfig(String globalConfigId, String number, String name,
+			String displayName, String value, String desc0, String desc1,
+			String desc2, String desc3, String desc4, String desc5,
+			String desc6, String desc7, String desc8, String desc9,
+			Integer displayIndex, String type, String status, Date createTime,
+			String createBy, Date updateTime, String updateBy) {
+		this.globalConfigId = globalConfigId;
+		this.number = number;
+		this.name = name;
+		this.displayName = displayName;
+		this.value = value;
+		this.desc0 = desc0;
+		this.desc1 = desc1;
+		this.desc2 = desc2;
+		this.desc3 = desc3;
+		this.desc4 = desc4;
+		this.desc5 = desc5;
+		this.desc6 = desc6;
+		this.desc7 = desc7;
+		this.desc8 = desc8;
+		this.desc9 = desc9;
+		this.displayIndex = displayIndex;
+		this.type = type;
+		this.status = status;
+		this.createTime = createTime;
+		this.createBy = createBy;
+		this.updateTime = updateTime;
+		this.updateBy = updateBy;
+	}
 
-    private String status;
+	// Property accessors
+	@Id
+	@Column(name = "GLOBAL_CONFIG_ID", unique = true, nullable = false, insertable = true, updatable = true, length = 100)
+	public String getGlobalConfigId() {
+		return this.globalConfigId;
+	}
 
-    private Date createTime;
+	public void setGlobalConfigId(String globalConfigId) {
+		this.globalConfigId = globalConfigId;
+	}
 
-    private String createBy;
+	@Column(name = "NUMBER", length = 100)
+	public String getNumber() {
+		return this.number;
+	}
 
-    private Date updateTime;
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    private String updateBy;
+	@Column(name = "NAME", unique = false, nullable = false, insertable = true, updatable = true, length = 100)
+	public String getName() {
+		return this.name;
+	}
 
-    // Constructors
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /** default constructor */
-    public GlobalConfig() {
-    }
+	@Column(name = "DISPLAY_NAME", length = 100)
+	public String getDisplayName() {
+		return this.displayName;
+	}
 
-    /** minimal constructor */
-    public GlobalConfig(String globalConfigId, String name, String value) {
-        this.globalConfigId = globalConfigId;
-        this.name = name;
-        this.value = value;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
-    /** full constructor */
-    public GlobalConfig(String globalConfigId, String number, String name, String value, String type, String status, Date createTime, String createBy, Date updateTime, String updateBy) {
-        this.globalConfigId = globalConfigId;
-        this.number = number;
-        this.name = name;
-        this.value = value;
-        this.type = type;
-        this.status = status;
-        this.createTime = createTime;
-        this.createBy = createBy;
-        this.updateTime = updateTime;
-        this.updateBy = updateBy;
-    }
+	@Column(name = "VALUE", unique = false, nullable = false, insertable = true, updatable = true, length = 65535)
+	public String getValue() {
+		return this.value;
+	}
 
-    // Property accessors
-    @Id
-    @Column(name = "GLOBAL_CONFIG_ID", unique = true, nullable = false, length = 100)
-    public String getGlobalConfigId() {
-        return this.globalConfigId;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public void setGlobalConfigId(String globalConfigId) {
-        this.globalConfigId = globalConfigId;
-    }
+	@Column(name = "DESC0", length = 100)
+	public String getDesc0() {
+		return this.desc0;
+	}
 
-    @Column(name = "NUMBER", length = 100)
-    public String getNumber() {
-        return this.number;
-    }
+	public void setDesc0(String desc0) {
+		this.desc0 = desc0;
+	}
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+	@Column(name = "DESC1", length = 100)
+	public String getDesc1() {
+		return this.desc1;
+	}
 
-    @Column(name = "NAME", nullable = false, length = 100)
-    public String getName() {
-        return this.name;
-    }
+	public void setDesc1(String desc1) {
+		this.desc1 = desc1;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Column(name = "DESC2", length = 100)
+	public String getDesc2() {
+		return this.desc2;
+	}
 
-    @Column(name = "VALUE", nullable = false, length = 65535)
-    public String getValue() {
-        return this.value;
-    }
+	public void setDesc2(String desc2) {
+		this.desc2 = desc2;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	@Column(name = "DESC3", length = 100)
+	public String getDesc3() {
+		return this.desc3;
+	}
 
-    @Column(name = "TYPE", length = 100)
-    public String getType() {
-        return this.type;
-    }
+	public void setDesc3(String desc3) {
+		this.desc3 = desc3;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	@Column(name = "DESC4", length = 100)
+	public String getDesc4() {
+		return this.desc4;
+	}
 
-    @Column(name = "STATUS", length = 100)
-    public String getStatus() {
-        return this.status;
-    }
+	public void setDesc4(String desc4) {
+		this.desc4 = desc4;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	@Column(name = "DESC5", length = 100)
+	public String getDesc5() {
+		return this.desc5;
+	}
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATE_TIME", length = 19)
-    public Date getCreateTime() {
-        return this.createTime;
-    }
+	public void setDesc5(String desc5) {
+		this.desc5 = desc5;
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	@Column(name = "DESC6", length = 100)
+	public String getDesc6() {
+		return this.desc6;
+	}
 
-    @Column(name = "CREATE_BY", length = 100)
-    public String getCreateBy() {
-        return this.createBy;
-    }
+	public void setDesc6(String desc6) {
+		this.desc6 = desc6;
+	}
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
+	@Column(name = "DESC7", length = 100)
+	public String getDesc7() {
+		return this.desc7;
+	}
 
-    @Temporal(TemporalType.TIMESTAMP)
+	public void setDesc7(String desc7) {
+		this.desc7 = desc7;
+	}
+
+	@Column(name = "DESC8", length = 100)
+	public String getDesc8() {
+		return this.desc8;
+	}
+
+	public void setDesc8(String desc8) {
+		this.desc8 = desc8;
+	}
+
+	@Column(name = "DESC9", length = 100)
+	public String getDesc9() {
+		return this.desc9;
+	}
+
+	public void setDesc9(String desc9) {
+		this.desc9 = desc9;
+	}
+
+	@Column(name = "DISPLAY_INDEX", unique = false, nullable = true, insertable = true, updatable = true)
+	public Integer getDisplayIndex() {
+		return this.displayIndex;
+	}
+
+	public void setDisplayIndex(Integer displayIndex) {
+		this.displayIndex = displayIndex;
+	}
+
+	@Column(name = "TYPE", length = 100)
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Column(name = "STATUS", length = 100)
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_TIME", length = 19)
+	public Date getCreateTime() {
+		return this.createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	@Column(name = "CREATE_BY", length = 100)
+	public String getCreateBy() {
+		return this.createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UPDATE_TIME", length = 19)
     public Date getUpdateTime() {
         return this.updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 
-    @Column(name = "UPDATE_BY", length = 100)
+	@Column(name = "UPDATE_BY", length = 100)
     public String getUpdateBy() {
         return this.updateBy;
     }
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
+	}
 
 }
