@@ -27,7 +27,31 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
 
     public static final String NAME = "name";
 
+	public static final String DISPLAY_NAME = "displayName";
+	
     public static final String VALUE = "value";
+    
+	public static final String DESC0 = "desc0";
+	
+	public static final String DESC1 = "desc1";
+	
+	public static final String DESC2 = "desc2";
+	
+	public static final String DESC3 = "desc3";
+	
+	public static final String DESC4 = "desc4";
+	
+	public static final String DESC5 = "desc5";
+	
+	public static final String DESC6 = "desc6";
+	
+	public static final String DESC7 = "desc7";
+	
+	public static final String DESC8 = "desc8";
+	
+	public static final String DESC9 = "desc9";
+	
+	public static final String DISPLAY_INDEX = "displayIndex";
 
     public static final String TYPE = "type";
 
@@ -105,9 +129,57 @@ public class GlobalConfigDAO extends BaseHibernateDAO {
         return findByProperty(NAME, name);
     }
 
+	public List<GlobalConfig> findByDisplayName(Object displayName) {
+		return findByProperty(DISPLAY_NAME, displayName);
+	}
+
     public List<GlobalConfig> findByValue(Object value) {
         return findByProperty(VALUE, value);
     }
+
+	public List<GlobalConfig> findByDesc0(Object desc0) {
+		return findByProperty(DESC0, desc0);
+	}
+
+	public List<GlobalConfig> findByDesc1(Object desc1) {
+		return findByProperty(DESC1, desc1);
+	}
+
+	public List<GlobalConfig> findByDesc2(Object desc2) {
+		return findByProperty(DESC2, desc2);
+	}
+
+	public List<GlobalConfig> findByDesc3(Object desc3) {
+		return findByProperty(DESC3, desc3);
+	}
+
+	public List<GlobalConfig> findByDesc4(Object desc4) {
+		return findByProperty(DESC4, desc4);
+	}
+
+	public List<GlobalConfig> findByDesc5(Object desc5) {
+		return findByProperty(DESC5, desc5);
+	}
+
+	public List<GlobalConfig> findByDesc6(Object desc6) {
+		return findByProperty(DESC6, desc6);
+	}
+
+	public List<GlobalConfig> findByDesc7(Object desc7) {
+		return findByProperty(DESC7, desc7);
+	}
+
+	public List<GlobalConfig> findByDesc8(Object desc8) {
+		return findByProperty(DESC8, desc8);
+	}
+
+	public List<GlobalConfig> findByDesc9(Object desc9) {
+		return findByProperty(DESC9, desc9);
+	}
+
+	public List<GlobalConfig> findByDisplayIndex(Object displayIndex) {
+		return findByProperty(DISPLAY_INDEX, displayIndex);
+	}
 
     public List<GlobalConfig> findByType(Object type) {
         return findByProperty(TYPE, type);
