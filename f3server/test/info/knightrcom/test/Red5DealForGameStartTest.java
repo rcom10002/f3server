@@ -9,7 +9,7 @@ public class Red5DealForGameStartTest extends TestCase {
      * @throws Exception
      */
     public void testMahjongsAtGameStart() throws Exception {
-        Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
+        Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle(false);
         // 取得合作玩家手中所持有的牌数
         String pokerNumberOfEachPlayer = "";
         for (int i = 0; i < eachShuffledPokers.length; i++) {
