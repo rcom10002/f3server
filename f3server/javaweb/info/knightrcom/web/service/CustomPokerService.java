@@ -55,7 +55,7 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     	EntityInfo<GlobalConfig> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
     	String method = request.getParameter("METHOD");
     	if (method != null && method.length() > 0) {
-    		Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
+    		Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle(false);
 	        StringBuilder builder = new StringBuilder();
 	    	for (int m = 0; m < eachShuffledPokers.length; m++) {
 	            for (int n = 0; n < eachShuffledPokers[m].length; n++) {
