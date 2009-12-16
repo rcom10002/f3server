@@ -13,11 +13,15 @@ import info.knightrcom.web.constant.GameConfigureConstant;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.mina.core.session.IoSession;
@@ -33,6 +37,7 @@ public class ModelUtil {
     private static Map<String, Lobby> lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     private static Map<String, Room> rooms = Collections.synchronizedMap(new HashMap<String, Room>());
     private static Map<String, String> systemParameters = new HashMap<String, String>();
+    private static Map<String, String> customPokersParameters = new HashMap<String, String>(); // TODO This variable should be moved to another TBD place!!!
 
     /**
      * 
@@ -44,6 +49,7 @@ public class ModelUtil {
     	lobbys = Collections.synchronizedMap(new HashMap<String, Lobby>());
     	rooms = Collections.synchronizedMap(new HashMap<String, Room>());
     	systemParameters = new HashMap<String, String>();
+    	customPokersParameters = new HashMap<String, String>();
         load();
     }
 
@@ -121,6 +127,11 @@ public class ModelUtil {
         for (GlobalConfig eachParameter : new GlobalConfigDAO().findByType(GameConfigureConstant.SERVER_PARAM_NAME)) {
             systemParameters.put(eachParameter.getName(), eachParameter.getValue());
         }
+
+        // 初始化系统参数
+        for (GlobalConfig eachParameter : new GlobalConfigDAO().findByType("CUSTOM_POKER")) {
+            customPokersParameters.put(eachParameter.getName(), eachParameter.getValue());
+        }
     }
 
     public static final String getModelDesc() {
@@ -128,10 +139,37 @@ public class ModelUtil {
     }
 
     /**
+     * @param key
+     * @param defaultValue
+     * 
      * @return the systemParameters
      */
-    public static String getSystemParameters(String key) {
+    public static String getSystemParameter(String key, Object defaultValue) {
+        return getSystemParameter(key) == null ? defaultValue.toString() : getSystemParameter(key);
+    }
+
+    /**
+     * @param key
+     * 
+     * @return the systemParameters
+     */
+    public static String getSystemParameter(String key) {
         return systemParameters.get(key);
+    }
+
+    /**
+     * @param prefix
+     * 
+     * @return the systemParameters
+     */
+    public static List<String> getSystemParameters(String prefix) {
+        List<String> results = new ArrayList<String>();
+        for (Entry<String, String> entry : customPokersParameters.entrySet()) {
+            if (entry.getKey().indexOf(prefix) == 0) {
+                results.add(entry.getValue());
+            }
+        }
+        return results;
     }
 
     /**
@@ -227,4 +265,38 @@ public class ModelUtil {
             return null;
         }
     }
+
+    /**
+     * TODO This class my be used in the future
+     *
+     */
+    public static class PuppetPool {
+
+        private static final Map<String, Player> puppets = Collections.synchronizedSortedMap(new TreeMap<String, Player>());
+
+        /**
+         * @param puppetId
+         * @return
+         */
+        public static Player getPuppet(String puppetId) {
+            return puppets.get(puppetId);
+        }
+
+        /**
+         * @param playerId
+         * @param puppet
+         */
+        public static void addPuppet(String playerId, Player puppet) {
+            puppets.put(playerId, puppet);
+        }
+
+        /**
+         * @param playerId
+         */
+        public static void removePuppet(String playerId) {
+            puppets.remove(playerId);
+        }
+
+    }
+
 }

@@ -39,6 +39,12 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
     public void GAME_JOIN_MATCHING_QUEUE(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
         // 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
+
+        if (GameStatus.PLAYING.equals(ModelUtil.getPlayer(session).getCurrentStatus())) {
+            // 游戏状态判断
+            return;
+        }
+
         Room currentRoom = currentPlayer.getCurrentRoom();
         HibernateSessionFactory.getSession().clear();
         PlayerProfile currentPlayerProfile = new PlayerProfileDAO().findByUserId(currentPlayer.getId()).get(0);
@@ -55,13 +61,25 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         ModelUtil.getPlayer(session).setCurrentStatus(GameStatus.MATCHING);
 
         // 判断当前房间内等候的玩家个数是否足够以开始游戏
-        int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+        int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"));
         if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) {
-            String content = "当前房间等候的玩家数(" + currentRoom.getGameStatusNumber(GameStatus.MATCHING) + 
-                ")不足以开始新的游戏，请稍候。";
+            int numPlayers = currentRoom.getGameStatusNumber(GameStatus.MATCHING);
+            numPlayers += Math.ceil(numPlayers / (Red5Game.PLAYER_COGAME_NUMBER - 1));
+            int matchingRate = (int)Math.round((double)numPlayers / (Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) * 100);
+            String content = "当前房间等候的玩家数不足以开始新的游戏，系统配对比率为【" + matchingRate + "%】，请稍候。";
             echoMessage.setResult(GAME_WAIT);
             echoMessage.setContent(content);
-            sessionWrite(session, echoMessage);
+            Set<IoSession> sessions = ModelUtil.getSessions();
+            synchronized (sessions) {
+                Iterator<IoSession> itr = sessions.iterator();
+                while (itr.hasNext()) {
+                    // 向同房间内的玩家发生消息
+                    session = itr.next();
+                    if (GameStatus.MATCHING.equals(ModelUtil.getPlayer(session).getCurrentStatus())) {
+                        sessionWrite(session, echoMessage);
+                    }
+                }
+            }
             return;
         }
 
@@ -77,13 +95,12 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             // 取得当前房间内的等待队列中的玩家
             List<Player> playersInQueue = new ArrayList<Player>();
             Set<String> tempPool4IP = new HashSet<String>();
-            // FIXME This line should rewrite when IP excluded parameter is added!
-            boolean sameIPexcluded = ModelUtil.getSystemParameters("") != null ? Boolean.getBoolean(ModelUtil.getSystemParameters("").toLowerCase()) : false;
+            boolean deskmateCrossIPEnable = Boolean.getBoolean(ModelUtil.getSystemParameter("DESKMATE_WITH_DIFFERENT_IP", false));
             for (Player eachPlayer : playersInRoom.values()) {
-                if (sameIPexcluded && tempPool4IP.contains(eachPlayer.getIosession().getRemoteAddress().toString())) {
-                    // 过滤IP相同的玩家
+                if (deskmateCrossIPEnable && !eachPlayer.isPuppet() && tempPool4IP.contains(eachPlayer.getIosession().getRemoteAddress().toString())) {
+                    // 过滤IP相同的玩家，PUPPET除外
                     continue;
-                } else if (sameIPexcluded) {
+                } else if (deskmateCrossIPEnable && !eachPlayer.isPuppet()) {
                     tempPool4IP.add(eachPlayer.getIosession().getRemoteAddress().toString());
                 }
                 if (GameStatus.MATCHING.equals(eachPlayer.getCurrentStatus())) {
@@ -93,6 +110,13 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             // 按照等候的优先顺序进行排序，使先进入等待队列的玩家排在前面
             Collections.sort(playersInQueue, new Comparator<Player>() {
                 public int compare(Player p1, Player p2) {
+                    // 将PUPPET放置队列末端
+                    if (p1.isPuppet() && !p2.isPuppet()) {
+                        return -1;
+                    } else if (!p1.isPuppet() && p2.isPuppet()) {
+                        return 1;
+                    }
+                    // 按最后的游戏时间排序
                     if (p1.getLastPlayTime() < p2.getLastPlayTime()) {
                         return 1;
                     } else if (p1.getLastPlayTime() > p2.getLastPlayTime()) {
@@ -101,25 +125,58 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     return 0;
                 }
             });
-            // 按照系统设置的最大游戏开始人数进行人数截取
-            int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+            // 根据房间中等候游戏开始的玩家人数来计算组数
+            int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY", 1));
             if (playersInQueue.size() < Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) {
                 groupQuantity = playersInQueue.size() / Red5Game.PLAYER_COGAME_NUMBER;
                 if (groupQuantity == 0) {
                     return;
                 }
             }
+            // 调整PUPPET位置，进行插队操作
+            for (int i = 0; i < groupQuantity; i++) {
+                Collections.swap(playersInQueue, groupQuantity * i, playersInQueue.size() - 1 - i);
+            }
+            // 按照系统设置的最大游戏开始人数进行人数截取
             playersInQueue = playersInQueue.subList(0, Red5Game.PLAYER_COGAME_NUMBER * groupQuantity);
 
-            if ("true".equals(ModelUtil.getSystemParameters("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
+            if (Boolean.valueOf(ModelUtil.getSystemParameter("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
                 // 将玩家再次随机调整顺序
                 Collections.shuffle(playersInQueue);
             }
+            // 重新调整PUPPET位置，每组分配一个
+            Collections.sort(playersInQueue, new Comparator<Player>() {
+                public int compare(Player p1, Player p2) {
+                    // 将PUPPET放置队列末端
+                    if (p1.isPuppet() && !p2.isPuppet()) {
+                        return -1;
+                    } else if (!p1.isPuppet() && p2.isPuppet()) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+            // 调整PUPPET位置，每组分配一个
+            for (int i = 0; i < groupQuantity; i++) {
+                Collections.swap(playersInQueue, groupQuantity * i, playersInQueue.size() - 1 - i);
+            }
+
+            // 开始游戏
             List<Player> playersInGroup = new ArrayList<Player>();
             for (int i = 0; i < playersInQueue.size(); i++) {
                 playersInGroup.add(playersInQueue.get(i));
                 if ((i + 1) % Red5Game.PLAYER_COGAME_NUMBER != 0) {
                     continue;
+                } else if (Boolean.valueOf(ModelUtil.getSystemParameter("PUPPETS_HAPPY_PROHIBIT", true))) {
+                    // 禁止PUPPET自行娱乐
+                    boolean allPuppets = true;
+                    for (Player eachPlayer : playersInGroup) {
+                        allPuppets = allPuppets && eachPlayer.isPuppet();
+                    }
+                    if (allPuppets) {
+                        playersInGroup.clear();
+                        continue;
+                    }
                 }
                 // 根据玩家当前的所在的房间进来开始游戏
                 String gameId = GamePool.prepareRed5Game(playersInGroup);
@@ -138,7 +195,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 List<Player> playersInGame = game.getPlayers();
                 // 开始洗牌与发牌，排序功能与出牌规则在客户端完成
                 boolean isFirstOut = false;
-                Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle();
+                Red5Poker[][] eachShuffledPokers = Red5Poker.shuffle(playersInGroup.get(playersInGroup.size() - 1).isPuppet());
                 // 取得合作玩家手中所持有的牌数
                 String pokerNumberOfEachPlayer = "";
                 for (int index = 0; index < eachShuffledPokers.length; index++) {
@@ -184,7 +241,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 }
                 playersInGroup.clear();
             }
-            if ("true".equals(ModelUtil.getSystemParameters("XXX-123-XXX-123"))) {
+            if (Boolean.valueOf(ModelUtil.getSystemParameter("RED5_DEADLY7_EXTINCT8", false))) {
                 // 为七独八天设置积分
                 GAME_DEADLY7_EXTINCT8(session, message, echoMessage);
             }
