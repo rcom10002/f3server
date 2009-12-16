@@ -282,7 +282,7 @@ public abstract class Game<T> {
 	private BigDecimal getSystemScoreRate() {
 		if (systemScoreRate == 0) {
 			// FIXME 取得系统全局配置的参数
-			systemScoreRate = Integer.parseInt(ModelUtil.getSystemParameters("SYSTEM_SCORE_RATE"));
+			systemScoreRate = Integer.parseInt(ModelUtil.getSystemParameter("SYSTEM_SCORE_RATE"));
 		}
 		return new BigDecimal(systemScoreRate);
 	}

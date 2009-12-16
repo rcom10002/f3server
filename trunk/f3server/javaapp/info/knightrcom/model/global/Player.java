@@ -41,6 +41,10 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
 
     /** 当前游戏状态 */
     private GameStatus currentStatus = GameStatus.WANDER;
+
+    /** 是否为PUPPET */
+    private boolean puppet = false;
+
     /**
      * 
      */
@@ -187,5 +191,18 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
 		this.playerCurrentScore = playerCurrentScore;
 	}
 
-    
+    /**
+     * @return the puppet
+     */
+    public boolean isPuppet() {
+        return puppet;
+    }
+
+    /**
+     * @param puppet the puppet to set
+     */
+    public void setPuppet(boolean puppet) {
+        this.puppet = puppet;
+    }
+
 }

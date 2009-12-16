@@ -59,7 +59,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
         ModelUtil.getPlayer(session).setCurrentStatus(GameStatus.MATCHING);
 
         // 判断当前房间内等候的玩家个数是否足够以开始游戏
-        int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+        int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"));
         if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity) {
             String content = "当前房间等候的玩家数(" + currentRoom.getGameStatusNumber(GameStatus.MATCHING) + 
                 ")不足以开始新的游戏，请稍候。";
@@ -82,7 +82,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
         	List<Player> playersInQueue = new ArrayList<Player>();
             Set<String> tempPool4IP = new HashSet<String>();
             // FIXME This line should rewrite when IP excluded parameter is added!
-            boolean sameIPexcluded = ModelUtil.getSystemParameters("") != null ? Boolean.getBoolean(ModelUtil.getSystemParameters("").toLowerCase()) : false;
+            boolean sameIPexcluded = ModelUtil.getSystemParameter("") != null ? Boolean.getBoolean(ModelUtil.getSystemParameter("").toLowerCase()) : false;
             for (Player eachPlayer : playersInRoom.values()) {
                 if (sameIPexcluded && tempPool4IP.contains(eachPlayer.getIosession().getRemoteAddress().toString())) {
                     // 过滤IP相同的玩家
@@ -106,7 +106,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
                 }
             });
             // 按照系统设置的最大游戏开始人数进行人数截取
-            int groupQuantity = new Integer(ModelUtil.getSystemParameters("WAITING_QUEUE_GROUP_QUANTITY"));
+            int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"));
             if (playersInQueue.size() < FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity) {
                 groupQuantity = playersInQueue.size() / FightLandlordGame.PLAYER_COGAME_NUMBER;
                 if (groupQuantity == 0) {
@@ -116,7 +116,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
             playersInQueue = playersInQueue.subList(0, FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity);
 
             
-            if ("true".equals(ModelUtil.getSystemParameters("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
+            if ("true".equals(ModelUtil.getSystemParameter("WAITING_QUEUE_RANDOM_ENABLE").toLowerCase())) {
                 // 将玩家再次随机调整顺序
                 Collections.shuffle(playersInQueue);
             }

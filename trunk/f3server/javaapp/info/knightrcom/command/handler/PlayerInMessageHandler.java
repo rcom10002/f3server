@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -33,9 +34,9 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
     public static final String LOGIN_MAX_CONNECTION_LIMIT = "LOGIN_MAX_CONNECTION_LIMIT";
     public static final String LOGIN_IP_CONFLICT = "LOGIN_IP_CONFLICT";
     @HibernateTransactionSupport
-    public void LOGIN_SIGN_IN(IoSession session, PlayerMessage message, EchoMessage echoMessage) {
+    public synchronized void LOGIN_SIGN_IN(IoSession session, PlayerMessage message, EchoMessage echoMessage) { // FIXME This synchronized should be considered with more details.
     	Set<IoSession> sessions = ModelUtil.getSessions();
-    	if (Boolean.parseBoolean(ModelUtil.getSystemParameters("IP_CONFLICT_ENABLED"))) {
+    	if (Boolean.parseBoolean(ModelUtil.getSystemParameter("IP_CONFLICT_ENABLED"))) {
     	    // 同IP登录限制
         	synchronized (sessions) {
         		int count = 0;
@@ -61,7 +62,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
                         Restrictions.eq("userId", results[0])).add(
                         Restrictions.eq("password", EncryptionUtil.encryptSHA(results[1]))).add(
                         Restrictions.ne("role", "Administrator")).add(
-                        Restrictions.eq("status", "1")).uniqueResult();
+                        Restrictions.or(Restrictions.eq("status", "1"), Restrictions.like("status", "puppet", MatchMode.START))).uniqueResult();
         if (profile == null) {
             // 用户名或密码错误
             echoMessage.setResult(LOGIN_ERROR_USERNAME_OR_PASSWORD);
@@ -86,6 +87,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         player.setId(profile.getUserId());
         player.setName(profile.getName());
         player.setDisplayIndex(String.valueOf(new Date().getTime()));
+        player.setPuppet(String.valueOf(profile.getStatus()).indexOf("puppet") > -1);
         ModelUtil.setPlayer(session, player);
         echoMessage.setContent(profile.getProfileId());
         echoMessage.setResult(LOGIN_SUCCESS);
@@ -147,6 +149,7 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         // 将原有的房间与玩家的关系进行解除
         currentPlayer.getParent().removeChild(currentPlayer.getId());
         currentPlayer.setParent(null);
+        currentPlayer.setCurrentStatus(GameStatus.WANDER);
         // 在房间内进行当前玩家进入游戏的消息广播
         // 为房间内每个玩家提供当前房间内所有的玩家信息
         Set<IoSession> sessions = ModelUtil.getSessions();

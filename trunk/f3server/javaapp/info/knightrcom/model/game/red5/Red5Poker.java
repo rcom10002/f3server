@@ -2,11 +2,13 @@ package info.knightrcom.model.game.red5;
 
 import info.knightrcom.model.plaything.PokerColor;
 import info.knightrcom.model.plaything.PokerValue;
+import info.knightrcom.util.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 红五扑克
@@ -17,6 +19,7 @@ public class Red5Poker {
     private PokerColor colorStyle;
     private PokerValue valueStyle;
     private int priorityValue;
+
     public Red5Poker(PokerColor colorStyle, PokerValue valueStyle) {
         this.colorStyle = colorStyle;
         this.valueStyle = valueStyle;
@@ -55,11 +58,60 @@ public class Red5Poker {
     }
 
     /**
-     * 正常洗牌
+     * 自适应洗牌
+     * 
+     * @param forPuppet
+     * @return
+     */
+    public static Red5Poker[][] shuffle(boolean forPuppet) {
+        if (!forPuppet) {
+            return shuffle();
+        }
+        // 准备自定义用的扑克
+        List<String> customPokersList = null;
+        customPokersList = ModelUtil.getSystemParameters("CUSTOM_POKER_RED5");
+        String [] allPokers = customPokersList.get(new Random().nextInt(customPokersList.size())).split("~");
+        int allPokersLength = allPokers[0].split(",").length + allPokers[1].split(",").length;
+        // 计算每个玩家手中牌数
+        int eachPokerLength = 
+            (allPokersLength % Red5Game.PLAYER_COGAME_NUMBER) == 0 ? 
+                (allPokersLength / Red5Game.PLAYER_COGAME_NUMBER) : 
+                    (allPokersLength / Red5Game.PLAYER_COGAME_NUMBER) + 1;
+        // 开始发牌
+        Red5Poker[][] eachShuffledPokers = new Red5Poker[Red5Game.PLAYER_COGAME_NUMBER][eachPokerLength];
+        String[] allUncustomPokers = allPokers[1].split(",");
+        // 部分洗牌操作
+        List<String> pokersForShuffling = Arrays.asList(allUncustomPokers);
+        Collections.shuffle(pokersForShuffling);
+        allUncustomPokers = pokersForShuffling.toArray(new String[]{});
+        int currentSide = 0;
+        for (int i = 0; i < allUncustomPokers.length; i += (Red5Game.PLAYER_COGAME_NUMBER - 1)) {
+            for (int j = 0; j < eachShuffledPokers.length - 1; j++) {
+                if (i + j == allUncustomPokers.length) {
+                    break;
+                }
+                String currentPoker = allUncustomPokers[i + j];
+                PokerColor currentColor = PokerColor.values()[new Integer(String.valueOf(currentPoker.charAt(0)))];
+                PokerValue currentValue = PokerValue.valueOf(currentPoker.substring(1));
+                eachShuffledPokers[j][currentSide] = new Red5Poker(currentColor, currentValue);
+            }
+            currentSide++;
+        }
+        String[] allCustomPokers = allPokers[0].split(",");
+        for (int i = 0; i < allCustomPokers.length; i++) {
+            PokerColor currentColor = PokerColor.values()[new Integer(String.valueOf(allCustomPokers[i].charAt(0)))];
+            PokerValue currentValue = PokerValue.valueOf(allCustomPokers[i].substring(1));
+            eachShuffledPokers[Red5Game.PLAYER_COGAME_NUMBER - 1][i] = new Red5Poker(currentColor, currentValue);
+        }
+        return eachShuffledPokers;
+    }
+
+    /**
+     * 常规洗牌
      * 
      * @return
      */
-    public static Red5Poker[][] shuffle() {
+    private static Red5Poker[][] shuffle() {
         // 准备洗牌用的扑克
         List<Red5Poker> pokers = new ArrayList<Red5Poker>();
         // 10至大王的索引为7到15
@@ -99,7 +151,7 @@ public class Red5Poker {
         // 开始发牌
         Red5Poker[][] eachShuffledPokers = new Red5Poker[Red5Game.PLAYER_COGAME_NUMBER][eachPokerLength];
         int currentSide = 0;
-        for (int i = 0; i < pokers.size(); i+=Red5Game.PLAYER_COGAME_NUMBER) {
+        for (int i = 0; i < pokers.size(); i += Red5Game.PLAYER_COGAME_NUMBER) {
             for (int j = 0; j < eachShuffledPokers.length; j++) {
                 if (i + j == pokers.size()) {
                     break;
