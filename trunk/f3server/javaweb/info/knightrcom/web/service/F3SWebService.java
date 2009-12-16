@@ -78,6 +78,8 @@ public abstract class F3SWebService<T> {
      * @param entity
      * @param result
      * @return
+     * 
+     * @deprecated 两个entity，有些多余，最好改成单独entity
      */
     protected EntityInfo<Object> createGeneralEntityInfo(EntityInfo<Object> entity, F3SWebServiceResult result) {
         EntityInfo<Object> info = new EntityInfo<Object>();

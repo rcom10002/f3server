@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Pagination {
 
-    public static final int DEFAULT_PAGE_SIZE = Integer.valueOf(ModelUtil.getSystemParameters("PAGE_SIZE"));
+    public static final int DEFAULT_PAGE_SIZE = Integer.valueOf(ModelUtil.getSystemParameter("PAGE_SIZE"));
 
     private Log log = LogFactory.getLog(Pagination.class);
 
