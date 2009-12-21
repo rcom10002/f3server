@@ -66,6 +66,10 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             int numPlayers = currentRoom.getGameStatusNumber(GameStatus.MATCHING);
             numPlayers += Math.ceil(numPlayers / (Red5Game.PLAYER_COGAME_NUMBER - 1));
             int matchingRate = (int)Math.round((double)numPlayers / (Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) * 100);
+            if (matchingRate == 100) {
+                matchingRate = (int)Math.round(((double)numPlayers - new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"))) / 
+                        (Red5Game.PLAYER_COGAME_NUMBER * groupQuantity) * 100);
+            }
             String content = "当前房间等候的玩家数不足以开始新的游戏，系统配对比率为【" + matchingRate + "%】，请稍候。";
             echoMessage.setResult(GAME_WAIT);
             echoMessage.setContent(content);
@@ -167,7 +171,8 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 playersInGroup.add(playersInQueue.get(i));
                 if ((i + 1) % Red5Game.PLAYER_COGAME_NUMBER != 0) {
                     continue;
-                } else if (Boolean.valueOf(ModelUtil.getSystemParameter("PUPPETS_HAPPY_PROHIBIT", true))) {
+                }
+                if (Boolean.valueOf(ModelUtil.getSystemParameter("PUPPETS_HAPPY_PROHIBIT", true))) {
                     // 禁止PUPPET自行娱乐
                     boolean allPuppets = true;
                     for (Player eachPlayer : playersInGroup) {
@@ -177,6 +182,11 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                         playersInGroup.clear();
                         continue;
                     }
+                }
+                if (new Boolean(ModelUtil.getSystemParameter("ALLOW_ONLY_ONE_PUPPET_ENGAGE", false)) && 
+                        (playersInGroup.get(Red5Game.PLAYER_COGAME_NUMBER - 2).isPuppet() ||
+                        playersInGroup.get(Red5Game.PLAYER_COGAME_NUMBER - 3).isPuppet())) {
+                    continue;
                 }
                 // 根据玩家当前的所在的房间进来开始游戏
                 String gameId = GamePool.prepareRed5Game(playersInGroup);
