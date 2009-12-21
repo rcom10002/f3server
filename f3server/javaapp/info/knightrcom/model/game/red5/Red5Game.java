@@ -43,6 +43,10 @@ public class Red5Game extends Game<Red5GameSetting> {
     @Override
     public void persistScore() {
         log.debug("计算积分 START");
+        if (this.getSetting() == null) {
+            // FIXME http://code.google.com/p/f3server/issues/detail?id=26
+            return;
+        }
         // 取得玩家以及游戏等信息
         List<Player> players = this.getPlayers();
         String winnerNumber = getWinnerNumbers().substring(0, 1);
