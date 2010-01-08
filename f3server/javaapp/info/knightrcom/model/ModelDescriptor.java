@@ -10,6 +10,9 @@ import java.util.Map;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * FIXME This is a unused class, so it may be deleted.
+ */
 public class ModelDescriptor {
 
     private String platform;
