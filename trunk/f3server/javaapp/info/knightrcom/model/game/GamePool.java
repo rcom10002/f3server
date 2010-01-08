@@ -20,7 +20,7 @@ public class GamePool {
     private static final Map<String, Object> games = Collections.synchronizedSortedMap(new TreeMap<String, Object>());
 
     /**
-     * FIXME
+     * FIXME each special prepared method should be placed in this method.
      * 
      * @param players
      */
