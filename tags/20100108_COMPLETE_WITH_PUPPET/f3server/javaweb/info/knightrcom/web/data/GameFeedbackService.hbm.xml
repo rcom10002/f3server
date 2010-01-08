@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="GAME_FEEDBACK">
+	<![CDATA[
+		SELECT 
+			   `GAME_FEEDBACK`.`FEEDBACK_ID` feedbackId,
+			   `GAME_FEEDBACK`.`GAME_ID` gameId,
+			   CASE 
+		         	 WHEN `GAME_RECORD`.`GAME_TYPE` = 'FightLandlordGame'
+			         THEN "斗地主"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'Red5Game'
+			         THEN "大连红五"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'PushdownWinGame'
+			         THEN "推倒胡"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'QiongWinGame'
+			         THEN "穷胡"
+			         ELSE "未知"
+			   END AS gameType,
+		       `GAME_FEEDBACK`.`TITLE` title,
+		       CASE
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='NEW_ARRIVAL' THEN '未处理'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='IN_PROGRESS' THEN '处理中'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='DONE' THEN '处理毕'
+	           END status,
+	           `GAME_FEEDBACK`.`STATUS` statusIndex,
+		       HOUR(TIMEDIFF(NOW(), `GAME_FEEDBACK`.`CREATE_TIME`)) hours,
+		       DATE_FORMAT(`GAME_FEEDBACK`.`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") createTime,
+		       `PLAYER_PROFILE`.`NAME` name,
+		       CAST(`GAME_FEEDBACK`.`DESCRIPTION` AS CHAR) description
+		  FROM
+		  `GAME_FEEDBACK` LEFT JOIN `GAME_RECORD` ON `GAME_FEEDBACK`.`GAME_ID` = `GAME_RECORD`.`GAME_ID`
+		  		LEFT JOIN `PLAYER_PROFILE` ON `GAME_FEEDBACK`.`CREATE_BY` = `PLAYER_PROFILE`.`PROFILE_ID`
+		   WHERE (? = '' or `GAME_FEEDBACK`.`STATUS` = ?)
+		   AND `GAME_FEEDBACK`.`CREATE_TIME` BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		   AND UPPER(`GAME_FEEDBACK`.`TITLE`) LIKE UPPER(?)
+		 ORDER BY `GAME_FEEDBACK`.`CREATE_TIME` DESC
+    ]]>
+    </sql-query>
+	<sql-query name="GAME_FEEDBACK_COUNT">
+	<![CDATA[
+		SELECT COUNT(*) RECORD_COUNT
+		  FROM GAME_FEEDBACK GF
+			LEFT JOIN GAME_RECORD GR ON GF.GAME_ID = GR.GAME_ID
+			LEFT JOIN PLAYER_PROFILE PP ON GF.CREATE_BY = PP.PROFILE_ID
+		 WHERE (? = '' or GF.STATUS = ?)
+		   AND GF.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		   AND UPPER(GF.TITLE) LIKE UPPER(?)
+    ]]>
+    </sql-query>
+    <sql-query name="RETRIEVE_FEEDBACK_HISTORY">
+    <![CDATA[
+        SELECT `GAME_FEEDBACK`.`GAME_ID`,
+        	   CASE 
+		         	 WHEN `GAME_RECORD`.`GAME_TYPE` = 'FightLandlordGame'
+			         THEN "斗地主"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'Red5Game'
+			         THEN "大连红五"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'PushdownWinGame'
+			         THEN "推倒胡"
+			         WHEN `GAME_RECORD`.`GAME_TYPE` = 'QiongWinGame'
+			         THEN "穷胡"
+			         ELSE "未知"
+			   END AS  GAME_TYPE,
+               `TITLE`,
+               CASE
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='NEW_ARRIVAL' THEN '未处理'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='IN_PROGRESS' THEN '处理中'
+	            WHEN `GAME_FEEDBACK`.`STATUS` ='DONE' THEN '处理毕'
+	           END STATUS,
+               DATE_FORMAT(`GAME_FEEDBACK`.`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") AS `CREATE_TIME`,
+               DATE_FORMAT(`GAME_RECORD`.`CREATE_TIME`, "%Y年%m月%d日%H时%i分%S秒") AS `GAME_TIME`
+           FROM
+            `GAME_FEEDBACK` LEFT JOIN `GAME_RECORD` ON `GAME_FEEDBACK`.`GAME_ID` = `GAME_RECORD`.`GAME_ID`
+          WHERE `GAME_FEEDBACK`.`STATUS` <> ? AND `GAME_FEEDBACK`.`CREATE_BY` = ?
+          ORDER BY `CREATE_TIME` DESC
+    ]]>
+    </sql-query>
+</hibernate-mapping>

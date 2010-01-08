@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+	<hibernate-mapping>
+	<sql-query name="SELECT_PERIODLY_SUM">
+	<![CDATA[
+		select 
+			periodly_sum.PERIODLY_ID periodlyId,
+			player_profile.USER_ID userId,
+			periodly_sum.NUMBER number,
+			periodly_sum.TITLE title,
+			DATE_FORMAT(periodly_sum.START_DATE, "%Y年%m月%d日") startDate,
+			DATE_FORMAT(periodly_sum.END_DATE, "%Y年%m月%d日") endDate,
+			periodly_sum.WIN_TIMES winTimes,
+			periodly_sum.WIN_SCORES winScores,
+			periodly_sum.LOSE_TIMES loseTimes,
+			periodly_sum.LOSE_SCORES loseScores,
+			periodly_sum.DRAW_TIMES drawTimes,
+			periodly_sum.DRAW_SCORES drawScores,
+			periodly_sum.TOTAL_TIMES totalTimes,
+			periodly_sum.TOTAL_SCORES totalScores,
+			periodly_sum.TOTAL_SYSTEM_SCORE totalSystemScore,
+			periodly_sum.STATUS status,
+			periodly_sum.CREATE_TIME createTime,
+			periodly_sum.CREATE_BY createBy,
+			periodly_sum.UPDATE_TIME updateTime,
+			periodly_sum.UPDATE_BY updateBy
+		from
+			periodly_sum left outer join player_profile on periodly_sum.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
+		ORDER BY player_profile.USER_ID
+	 ]]>
+	</sql-query>
+	<sql-query name="SELECT_PERIODLY_SUM_COUNT">
+	<![CDATA[
+		select count(*) RECORD_COUNT
+		from
+			periodly_sum left outer join player_profile on periodly_sum.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum.START_DATE = ? AND periodly_sum.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
+	 ]]>
+	</sql-query>
+	<sql-query name="INSERT_PERIODLY_SUM">
+	<![CDATA[
+		INSERT INTO PERIODLY_SUM(
+		PERIODLY_ID,
+		TITLE,
+		PROFILE_ID, 
+		TOTAL_TIMES,
+		TOTAL_SCORES,
+		WIN_TIMES,
+		WIN_SCORES,
+		LOSE_TIMES,
+		LOSE_SCORES,
+		DRAW_TIMES,
+		DRAW_SCORES,
+		TOTAL_SYSTEM_SCORE,
+		START_DATE,
+		END_DATE,
+		CREATE_TIME,
+		UPDATE_TIME,
+		CREATE_BY,
+		UPDATE_BY
+		) 
+			SELECT UUID(), 
+				concat('积分统计(',
+				  concat(DATE_FORMAT(?, "%Y年%m月%d日"),
+				     concat('至',
+				        concat(DATE_FORMAT(?, "%Y年%m月%d日")
+				        ,')')
+				     )
+				  )
+				), 
+				PLAYER_PROFILE.PROFILE_ID,
+              CASE
+              WHEN TOTAL_SUM.TIMES IS NULL THEN 0
+              ELSE TOTAL_SUM.TIMES
+              END totalTimes,
+              CASE
+              WHEN TOTAL_SUM.SCORES IS NULL THEN 0
+              ELSE TOTAL_SUM.SCORES
+              END totalScores,
+			  CASE
+              WHEN WIN_SUM.TIMES IS NULL THEN 0
+              ELSE WIN_SUM.TIMES
+              END winTimes,
+              CASE
+              WHEN WIN_SUM.SCORES IS NULL THEN 0
+              ELSE WIN_SUM.SCORES
+              END winScores,
+              CASE
+              WHEN LOSE_SUM.TIMES IS NULL THEN 0
+              ELSE LOSE_SUM.TIMES
+              END loseTimes,
+              CASE
+              WHEN LOSE_SUM.SCORES IS NULL THEN 0
+              ELSE LOSE_SUM.SCORES
+              END loseScores,
+              CASE
+              WHEN DRAW_SUM.TIMES IS NULL THEN 0
+              ELSE DRAW_SUM.TIMES
+              END drawTimes,
+              CASE
+              WHEN DRAW_SUM.SCORES IS NULL THEN 0
+              ELSE DRAW_SUM.SCORES
+              END drawScores,
+              CASE
+              WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
+              ELSE TOTAL_SUM.SYS_SCORE
+              END totalSystemScore,
+              ? startDate, ? endDate,
+              CURRENT_DATE, CURRENT_DATE, 'SYSTEM', 'SYSTEM'
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES, SUM(SYS_SCORE) SYS_SCORE
+			  FROM PLAYER_SCORE
+        	WHERE PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE > 0
+       			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE < 0
+         		AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE = 0
+     			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+			AND (? is null or player_profile.rls_path like ?)
+    ]]>
+	</sql-query>
+	<sql-query name="REPORT_SCORE_INFO">
+	<![CDATA[
+			SELECT PLAYER_PROFILE.PROFILE_ID profileId,
+			  current_date ||'积分统计' title,
+              CASE
+              WHEN TOTAL_SUM.TIMES IS NULL THEN 0
+              ELSE TOTAL_SUM.TIMES
+              END totalTimes,
+              CASE
+              WHEN TOTAL_SUM.SCORES IS NULL THEN 0
+              ELSE TOTAL_SUM.SCORES
+              END totalScores,
+			  CASE
+              WHEN WIN_SUM.TIMES IS NULL THEN 0
+              ELSE WIN_SUM.TIMES
+              END winTimes,
+              CASE
+              WHEN WIN_SUM.SCORES IS NULL THEN 0
+              ELSE WIN_SUM.SCORES
+              END winScores,
+              CASE
+              WHEN LOSE_SUM.TIMES IS NULL THEN 0
+              ELSE LOSE_SUM.TIMES
+              END loseTimes,
+              CASE
+              WHEN LOSE_SUM.SCORES IS NULL THEN 0
+              ELSE LOSE_SUM.SCORES
+              END loseScores,
+              CASE
+              WHEN DRAW_SUM.TIMES IS NULL THEN 0
+              ELSE DRAW_SUM.TIMES
+              END drawTimes,
+              CASE
+              WHEN DRAW_SUM.SCORES IS NULL THEN 0
+              ELSE DRAW_SUM.SCORES
+              END drawScores,
+              CASE
+              WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
+              ELSE TOTAL_SUM.SYS_SCORE
+              END totalSystemScore,
+              ? startDate, ? endDate
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES, SUM(SYSTEM_SCORE) SYS_SCORE
+			  FROM PLAYER_SCORE
+        	WHERE PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE > 0
+       			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE < 0
+         		AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE = 0
+     			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+    ]]>
+	</sql-query>
+	<sql-query name="REPORT_SCORE_INFO_COUNT">
+	<![CDATA[
+		SELECT COUNT(*) RECORD_COUNT,
+              ? fromTime, ? toTime
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES, SUM(SYSTEM_SCORE) SYS_SCORE
+			  FROM PLAYER_SCORE
+        	WHERE PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE > 0
+       			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE < 0
+         		AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(SCORE) TIMES, SUM(SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE SCORE = 0
+     			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID
+			WHERE (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+    ]]>
+	</sql-query>
+	
+	<sql-query name="SELECT_PERIODLY_SUM_EXT">
+	<![CDATA[
+		select 
+			periodly_sum_ext.PERIODLY_ID periodlyId,
+			player_profile.USER_ID userId,
+			periodly_sum_ext.NUMBER number,
+			periodly_sum_ext.TITLE title,
+			DATE_FORMAT(periodly_sum_ext.START_DATE, "%Y年%m月%d日") startDate,
+			DATE_FORMAT(periodly_sum_ext.END_DATE, "%Y年%m月%d日") endDate,
+			periodly_sum_ext.WIN_TIMES winTimes,
+			periodly_sum_ext.WIN_SCORES winScores,
+			periodly_sum_ext.LOSE_TIMES loseTimes,
+			periodly_sum_ext.LOSE_SCORES loseScores,
+			periodly_sum_ext.DRAW_TIMES drawTimes,
+			periodly_sum_ext.DRAW_SCORES drawScores,
+			periodly_sum_ext.TOTAL_TIMES totalTimes,
+			periodly_sum_ext.TOTAL_SCORES totalScores,
+			periodly_sum_ext.TOTAL_SYSTEM_SCORE totalSystemScore,
+			periodly_sum_ext.STATUS status,
+			periodly_sum_ext.CURRENT_SCORE currentScore,
+			periodly_sum_ext.PLAYER_LIMIT_SCORE playerLimitScore,
+			periodly_sum_ext.RECHARGE_SUM rechargeSum,
+			periodly_sum_ext.RESULT_SCORE resultScore,
+			periodly_sum_ext.CREATE_TIME createTime,
+			periodly_sum_ext.CREATE_BY createBy,
+			periodly_sum_ext.UPDATE_TIME updateTime,
+			periodly_sum_ext.UPDATE_BY updateBy
+		from
+			periodly_sum_ext left outer join player_profile on periodly_sum_ext.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum_ext.START_DATE = ? AND periodly_sum_ext.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
+		ORDER BY player_profile.USER_ID
+	 ]]>
+	</sql-query>
+	<sql-query name="SELECT_PERIODLY_SUM_EXT_COUNT">
+	<![CDATA[
+		select count(*) RECORD_COUNT
+		from
+			periodly_sum_ext left outer join player_profile on periodly_sum_ext.PROFILE_ID = player_profile.PROFILE_ID
+		WHERE 
+			periodly_sum_ext.START_DATE = ? AND periodly_sum_ext.END_DATE = ?
+		AND (UPPER(PLAYER_PROFILE.USER_ID) LIKE UPPER(?))
+		AND (? is null or player_profile.rls_path like ?)
+	 ]]>
+	</sql-query>
+	<sql-query name="INSERT_PERIODLY_SUM_EXT">
+	<![CDATA[
+		INSERT INTO PERIODLY_SUM_EXT(
+		PERIODLY_ID,
+		TITLE,
+		PROFILE_ID, 
+		TOTAL_TIMES,
+		TOTAL_SCORES,
+		WIN_TIMES,
+		WIN_SCORES,
+		LOSE_TIMES,
+		LOSE_SCORES,
+		DRAW_TIMES,
+		DRAW_SCORES,
+		TOTAL_SYSTEM_SCORE,
+		START_DATE,
+		END_DATE,
+		CURRENT_SCORE,
+		PLAYER_LIMIT_SCORE,
+		RECHARGE_SUM,
+		RESULT_SCORE,
+		CREATE_TIME,
+		UPDATE_TIME,
+		CREATE_BY,
+		UPDATE_BY
+		) 
+			SELECT UUID(), 
+				concat('积分统计(',
+				  concat(DATE_FORMAT(?, "%Y年%m月%d日"),
+				     concat('至',
+				        concat(DATE_FORMAT(?, "%Y年%m月%d日")
+				        ,')')
+				     )
+				  )
+				), 
+				PLAYER_PROFILE.PROFILE_ID,
+              CASE
+              WHEN TOTAL_SUM.TIMES IS NULL THEN 0
+              ELSE TOTAL_SUM.TIMES
+              END totalTimes,
+              CASE
+              WHEN TOTAL_SUM.SCORES IS NULL THEN 0
+              ELSE TOTAL_SUM.SCORES
+              END totalScores,
+			  CASE
+              WHEN WIN_SUM.TIMES IS NULL THEN 0
+              ELSE WIN_SUM.TIMES
+              END winTimes,
+              CASE
+              WHEN WIN_SUM.SCORES IS NULL THEN 0
+              ELSE WIN_SUM.SCORES
+              END winScores,
+              CASE
+              WHEN LOSE_SUM.TIMES IS NULL THEN 0
+              ELSE LOSE_SUM.TIMES
+              END loseTimes,
+              CASE
+              WHEN LOSE_SUM.SCORES IS NULL THEN 0
+              ELSE LOSE_SUM.SCORES
+              END loseScores,
+              CASE
+              WHEN DRAW_SUM.TIMES IS NULL THEN 0
+              ELSE DRAW_SUM.TIMES
+              END drawTimes,
+              CASE
+              WHEN DRAW_SUM.SCORES IS NULL THEN 0
+              ELSE DRAW_SUM.SCORES
+              END drawScores,
+              CASE
+              WHEN TOTAL_SUM.SYS_SCORE IS NULL THEN 0
+              ELSE TOTAL_SUM.SYS_SCORE
+              END totalSystemScore,
+              ? startDate, ? endDate,
+              PLAYER_PROFILE.CURRENT_SCORE currentScore,
+              PLAYER_PROFILE.INIT_LIMIT initScore,
+              CASE
+              WHEN RECHARGE_SCORE.SCORE IS NULL THEN 0
+              ELSE RECHARGE_SCORE.SCORE
+              END rechargeScore,
+              (PLAYER_PROFILE.CURRENT_SCORE - PLAYER_PROFILE.INIT_LIMIT - (CASE WHEN RECHARGE_SCORE.SCORE IS NULL THEN 0 ELSE RECHARGE_SCORE.SCORE END)) resultScore,
+              CURRENT_DATE, CURRENT_DATE, 'SYSTEM', 'SYSTEM'
+			  FROM PLAYER_PROFILE LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES, SUM(SYS_SCORE) SYS_SCORE
+			  FROM PLAYER_SCORE
+        	WHERE PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) TOTAL_SUM ON PLAYER_PROFILE.PROFILE_ID = TOTAL_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE > 0
+       			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) WIN_SUM ON PLAYER_PROFILE.PROFILE_ID = WIN_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE < 0
+         		AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) LOSE_SUM ON PLAYER_PROFILE.PROFILE_ID = LOSE_SUM.PROFILE_ID LEFT OUTER JOIN (
+			SELECT PROFILE_ID, COUNT(CUR_SCORE) TIMES, SUM(CUR_SCORE) SCORES
+			  FROM PLAYER_SCORE
+			 WHERE CUR_SCORE = 0
+     			AND PLAYER_SCORE.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+			 GROUP BY PROFILE_ID
+			) DRAW_SUM ON PLAYER_PROFILE.PROFILE_ID = DRAW_SUM.PROFILE_ID LEFT JOIN (
+			SELECT
+				RECHARGE_RECORD.TO_PLAYER, SUM(SCORE) SCORE
+		      FROM RECHARGE_RECORD
+		      WHERE RECHARGE_RECORD. CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		      GROUP BY RECHARGE_RECORD.TO_PLAYER
+		    ) RECHARGE_SCORE ON RECHARGE_SCORE.TO_PLAYER = PLAYER_PROFILE.USER_ID
+			WHERE PLAYER_PROFILE.PROFILE_ID IN (:USERLIST)
+	]]>
+	</sql-query>
+	
+	<sql-query name="PLAYER_SCORE_RESULT_COUNT">
+	<![CDATA[
+		SELECT 1 AS ID, COUNT(*) PC_COUNT FROM 
+		PLAYER_SCORE PC
+		WHERE PC.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		AND PC.PROFILE_ID IN (:USERLIST)
+		UNION
+		SELECT 2 AS ID, COUNT(*) PS_COUNT FROM 
+		PLAYER_SCORE PS
+		WHERE PS.PROFILE_ID IN (:USERLIST)
+	]]>
+	</sql-query>
+	<sql-query name="RECHARGE_RECORD_RESULT_COUNT">
+	<![CDATA[
+		SELECT 3 AS ID, COUNT(*) RC_COUNT FROM 
+		RECHARGE_RECORD RC INNER JOIN PLAYER_PROFILE PP
+		ON RC.TO_PLAYER = PP.USER_ID
+		WHERE RC.CREATE_TIME BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY)
+		AND PP.PROFILE_ID IN (:USERLIST)
+		UNION
+		SELECT 4 AS ID, COUNT(*) RS_COUNT FROM 
+		RECHARGE_RECORD RS INNER JOIN PLAYER_PROFILE PPP
+		ON RS.TO_PLAYER = PPP.USER_ID
+		WHERE PPP.PROFILE_ID IN (:USERLIST)
+		]]>
+	</sql-query>
+	
+	  <sql-query name="USER_RELATIONS_SHIP">
+	  <![CDATA[
+		select profile_id
+		  from player_profile 
+		 where (role ='GroupUser' or role = 'User')
+		 and (replace(rls_path, concat("!", user_id), "") = ? or ? = 'null') 
+		 order by rls_path
+	  ]]>
+	  </sql-query>
+</hibernate-mapping>

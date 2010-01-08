@@ -1,0 +1,25 @@
+#MyEclipse Hibernate Properties
+#Thu Jun 04 15:37:23 CST 2009
+sessionFactoryName=info.knightrcom.data.metadata.HibernateSessionFactory
+genBasicCompId=true
+profile=
+daoSFId=
+version=3.2
+jndiPath=
+detectM2M=false
+reStrategyClass=
+detectO2O=false
+springDaoFile=
+useJavaTypes=true
+keyGenerator=assigned
+libInstallFolder=/lib/hibernate
+addLibs2Project=true
+genVersionTag=false
+sessionFactoryId=
+basePersistenceClass=info.knightrcom.data.SimplePojoImpl
+genAnnotations=true
+reSettingsFile=/f3s/hibernate.reveng.xml
+configFile=/f3s/src/info/knightrcom/data/hibernate.cfg.xml
+createConfigFile=true
+addLibs2Classpath=true
+baseDaoClass=info.knightrcom.data.metadata.BaseHibernateDAO
