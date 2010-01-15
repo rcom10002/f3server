@@ -8,6 +8,7 @@ import info.knightrcom.model.global.Player;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.model.EntityInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -73,9 +74,12 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
                 map.put("pupuetname", playerProfile.getName());
                 map.put("currentscore", playerProfile.getCurrentScore());
                 map.put("currentstatus", player.getCurrentStatus());
-                map.put("lastgametime", player.getLastPlayTime());
-                map.put("starttime", playerProfile.getCreateTime());
-                map.put("runingtime", new Date().getTime() - player.getLastPlayTime());
+                Date lastPlayTime = new Date();
+                lastPlayTime.setTime(player.getLastPlayTime());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                map.put("lastgametime", sdf.format(lastPlayTime));
+                map.put("starttime", sdf.format(playerProfile.getCreateTime()));
+                map.put("runingtime", (new Date().getTime() - player.getLastPlayTime())/1000);
                 resultList.add(map);
             }
         }
