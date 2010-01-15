@@ -1,17 +1,27 @@
 package info.knightrcom.web.service;
 
+import info.knightrcom.F3ServerProxy;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.data.metadata.PlayerProfileDAO;
+import info.knightrcom.model.global.Player;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.model.EntityInfo;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.mina.core.session.IoSession;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
@@ -35,13 +45,45 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
         List<PlayerProfile> resultList = HibernateSessionFactory.getSession()
                 .createCriteria(PlayerProfile.class)
                 .add(Restrictions.like(PlayerProfileDAO.STATUS, "puppet~" + gameType, MatchMode.START))
-                .setMaxResults(maxResultsSize).list();
+                .setMaxResults(maxResultsSize)
+                .addOrder(Order.desc("currentScore"))
+                .addOrder(Order.desc("createTime")).list();
         EntityInfo<PlayerProfile> entity = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
         entity.setTag(targetPuppetLauncherURL);
         entity.setEntityList(resultList);
         return toXML(entity, new Class[]{List.class, PlayerProfile.class});
     }
-
+    
+    @SuppressWarnings("unchecked")
+	public String LIST_PUPPET_INFO(HttpServletRequest request,
+            HttpServletResponse response) {
+    	// 游戏类型
+        String gameType = request.getParameter("GAME_TYPE");
+    	Collection<IoSession> sessions = F3ServerProxy.getAllSession();
+    	List resultList = new ArrayList();
+    	synchronized (sessions) {
+            Iterator<IoSession> itr = sessions.iterator();
+            while (itr.hasNext()) {
+                Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
+                PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession()
+                .createCriteria(PlayerProfile.class)
+                .add(Restrictions.like(PlayerProfileDAO.STATUS, "puppet~" + gameType, MatchMode.START))
+                .add(Restrictions.eq("userId", player.getId())).list().get(0);
+                Map map = new HashMap();
+                map.put("pupuetname", playerProfile.getName());
+                map.put("currentscore", playerProfile.getCurrentScore());
+                map.put("currentstatus", player.getCurrentStatus());
+                map.put("lastgametime", player.getLastPlayTime());
+                map.put("starttime", playerProfile.getCreateTime());
+                map.put("runingtime", new Date().getTime() - player.getLastPlayTime());
+                resultList.add(map);
+            }
+        }
+    	EntityInfo<PlayerProfile> entity = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+        entity.setTag(resultList);
+    	return toXML(entity, new Class[]{List.class, Player.class});
+    }
+    
     public static void main(String[] args) {
         System.out.println(new PuppetConsoleService().RETRIEVE_PUPPET_INFO(null, null));
     }
