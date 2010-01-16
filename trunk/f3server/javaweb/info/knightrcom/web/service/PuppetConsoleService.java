@@ -66,21 +66,24 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
             Iterator<IoSession> itr = sessions.iterator();
             while (itr.hasNext()) {
                 Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
-                PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession()
+                List<PlayerProfile> playerProfileList = HibernateSessionFactory.getSession()
                 .createCriteria(PlayerProfile.class)
                 .add(Restrictions.like(PlayerProfileDAO.STATUS, "puppet~" + gameType, MatchMode.START))
-                .add(Restrictions.eq("userId", player.getId())).list().get(0);
-                Map map = new HashMap();
-                map.put("pupuetname", playerProfile.getName());
-                map.put("currentscore", playerProfile.getCurrentScore());
-                map.put("currentstatus", player.getCurrentStatus());
-                Date lastPlayTime = new Date();
-                lastPlayTime.setTime(player.getLastPlayTime());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                map.put("lastgametime", sdf.format(lastPlayTime));
-                map.put("starttime", sdf.format(playerProfile.getCreateTime()));
-                map.put("runingtime", (new Date().getTime() - player.getLastPlayTime())/1000);
-                resultList.add(map);
+                .add(Restrictions.eq("userId", player.getId())).list();
+                if (player != null && playerProfileList != null && playerProfileList.size() > 0) {
+                	PlayerProfile playerProfile = playerProfileList.get(0);
+                	Map map = new HashMap();
+                    map.put("pupuetname", playerProfile.getName());
+                    map.put("currentscore", playerProfile.getCurrentScore());
+                    map.put("currentstatus", player.getCurrentStatus());
+                    Date lastPlayTime = new Date();
+                    lastPlayTime.setTime(player.getLastPlayTime());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    map.put("lastgametime", sdf.format(lastPlayTime));
+                    map.put("starttime", sdf.format(playerProfile.getCreateTime()));
+                    map.put("runingtime", (new Date().getTime() - player.getLastPlayTime())/1000);
+                    resultList.add(map);
+                }
             }
         }
     	EntityInfo<PlayerProfile> entity = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
