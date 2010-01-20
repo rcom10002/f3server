@@ -1,15 +1,19 @@
 package info.knightrcom.web.service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
 import info.knightrcom.model.game.red5.Red5Poker;
+import info.knightrcom.model.plaything.PokerColor;
+import info.knightrcom.model.plaything.PokerValue;
 import info.knightrcom.web.model.EntityInfo;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,6 +99,7 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     	String strUpCards = request.getParameter("UP_POKERS");
     	String strDownCards = request.getParameter("DOWN_POKERS");
     	String isOpen = request.getParameter("IS_OPEN");
+    	String type = request.getParameter("TYPE");
     	EntityInfo<GlobalConfig> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
     	try {
     		GlobalConfig config = new GlobalConfigDAO().findById(id);
@@ -112,7 +117,7 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
 	    		config.setGlobalConfigId(UUID.randomUUID().toString());
     		} 
 	    	config.setName(name);
-	    	config.setValue(strUpCards + "~" + strDownCards);
+	    	config.setValue(strUpCards + "~" + strDownCards + "~" + type);
 	    	config.setStatus(isOpen);
 	    	config.setType("CUSTOM_POKER");
 	    	HibernateSessionFactory.getSession().save(config);
@@ -122,5 +127,64 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     	}
     	return toXML(info, getAliasTypes());
 	}
+    
+    /**
+     * 批量生成
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+	public String BATCH_CUSTOM_POKER(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	String[] num = request.getParameterValues("NUM");
+    	genRandomPokerByRate(num);
+    	String count = request.getParameter("COUNT");
+    	String type = request.getParameter("TYPE");
+    	String name = String.valueOf(new Date().getTime());
+    	String strUpCards = request.getParameter("UP_POKERS");
+    	String strDownCards = request.getParameter("DOWN_POKERS");
+    	String isOpen = request.getParameter("IS_OPEN");
+    	EntityInfo<GlobalConfig> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+    	try {
+//    		for (int time = 0; time < Integer.valueOf(count); time ++) {
+//				Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+//				criteria.add(Expression.eq("name", type + name));
+//				criteria.add(Expression.eq("type", "CUSTOM_POKER"));
+//				List<GlobalConfig> result = criteria.list();
+//				if (result != null && result.size() > 0) {
+//					info.setResult(F3SWebServiceResult.WARNING);
+//					return toXML(info, getAliasTypes());
+//				}
+//				GlobalConfig config = new GlobalConfig();
+//	    		config.setGlobalConfigId(UUID.randomUUID().toString());
+//		    	config.setName(name);
+//		    	config.setValue(strUpCards + "~" + strDownCards + "~" + type);
+//		    	config.setStatus(isOpen);
+//		    	config.setType("CUSTOM_POKER");
+//		    	HibernateSessionFactory.getSession().save(config);
+//    		}
+    		info.setResult(F3SWebServiceResult.SUCCESS);
+    	} catch (Exception e) {
+    		info.setResult(F3SWebServiceResult.FAIL);
+    	}
+    	return toXML(info, getAliasTypes());
+    }
+    
+    
+    /**
+     * 根据各种扑克出现比较生成牌型
+     * @param num
+     */
+    private void genRandomPokerByRate(String[] num) {
+    	int times = 1;
+    	for (int x = 0; x < num.length; x++) {
+    		int i = Integer.valueOf(num[x]);
+    		int random = (int)(new Random().nextInt(i));
+    		int value = random + times;
+    		times+=i;
+    		System.out.println(random + 1);
+    	}
+    }
 
 }
