@@ -153,18 +153,18 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     		for (int times = 0; times < Integer.valueOf(count); times++) {
     			String name = String.valueOf(new Date().getTime());
     			String strUpDownCards = genRandomPokersByRate(num);
-    			
-				Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
-				criteria.add(Expression.eq("name", "BATCH_CUSTOM_POKER_" + name));
-				criteria.add(Expression.eq("type", "CUSTOM_POKER"));
-				List<GlobalConfig> result = criteria.list();
-				if (result != null && result.size() > 0) {
-					info.setResult(F3SWebServiceResult.WARNING);
-					return toXML(info, getAliasTypes());
-				}
+//    			
+//				Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
+//				criteria.add(Expression.eq("name", "CUSTOM_POKER_RED5_" + name));
+//				criteria.add(Expression.eq("type", "CUSTOM_POKER"));
+//				List<GlobalConfig> result = criteria.list();
+//				if (result != null && result.size() > 0) {
+//					info.setResult(F3SWebServiceResult.WARNING);
+//					return toXML(info, getAliasTypes());
+//				}
 				GlobalConfig config = new GlobalConfig();
 	    		config.setGlobalConfigId(UUID.randomUUID().toString());
-		    	config.setName("BATCH_CUSTOM_POKER_" + (times+1) + "_" + name);
+		    	config.setName("CUSTOM_POKER_RED5_" + (times+1) + "_" + name);
 		    	config.setValue(strUpDownCards + "~" + type);
 		    	config.setStatus(isOpen);
 		    	config.setType("CUSTOM_POKER");
