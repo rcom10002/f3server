@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.mina.core.session.IoSession;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -42,13 +43,28 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
         int maxResultsSize = new Integer(request.getParameter("MAX_RESULTS_SIZE"));
         // 取得URL
         final String targetPuppetLauncherURL = ModelUtil.getSystemParameter("PUPPET_LAUNCHER_URL");
-        // 取得PUPPET用户名、密码和游戏类型 TODO 需要排除已经登录的玩家
-        List<PlayerProfile> resultList = HibernateSessionFactory.getSession()
+        // 取得已经登录的玩家
+        List loginUserIds = new ArrayList(); 
+        Collection<IoSession> sessions = F3ServerProxy.getAllSession();
+    	synchronized (sessions) {
+            Iterator<IoSession> itr = sessions.iterator();
+            while (itr.hasNext()) {
+                Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
+                loginUserIds.add(player.getId());
+            }
+    	}
+        // 取得PUPPET用户名、密码和游戏类型
+        Criteria criteria = HibernateSessionFactory.getSession()
                 .createCriteria(PlayerProfile.class)
                 .add(Restrictions.like(PlayerProfileDAO.STATUS, "puppet~" + gameType, MatchMode.START))
                 .setMaxResults(maxResultsSize)
                 .addOrder(Order.desc("currentScore"))
-                .addOrder(Order.desc("createTime")).list();
+                .addOrder(Order.desc("createTime"));
+        // 排除已经登录的玩家
+        if (loginUserIds.size() > 0) {
+        	criteria.add(Restrictions.not(Restrictions.in("userId", loginUserIds)));
+        }
+        List resultList = criteria.list();
         EntityInfo<PlayerProfile> entity = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
         entity.setTag(targetPuppetLauncherURL);
         entity.setEntityList(resultList);
