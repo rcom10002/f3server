@@ -50,7 +50,9 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
             Iterator<IoSession> itr = sessions.iterator();
             while (itr.hasNext()) {
                 Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
-                loginUserIds.add(player.getId());
+                if (player != null) {
+                	loginUserIds.add(player.getId());
+                }
             }
     	}
         // 取得PUPPET用户名、密码和游戏类型
