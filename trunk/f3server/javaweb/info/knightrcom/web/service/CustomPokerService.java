@@ -142,7 +142,6 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
 	public String BATCH_CUSTOM_POKER(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	String[] num = request.getParameterValues("NUM");
     	String count = request.getParameter("COUNT");
@@ -165,7 +164,10 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
 				GlobalConfig config = new GlobalConfig();
 	    		config.setGlobalConfigId(UUID.randomUUID().toString());
 		    	config.setName("CUSTOM_POKER_RED5_" + (times+1) + "_" + name);
-		    	config.setValue(strUpDownCards + "~" + type);
+		    	config.setValue(strUpDownCards + "~" + type); // FIXME
+		    	// 2010-03-02 ADD BY ZWREN BEGIN
+		    	config.setValue(strUpDownCards);
+		    	// 2010-03-02 ADD BY ZWREN END
 		    	config.setStatus(isOpen);
 		    	config.setType("CUSTOM_POKER");
 		    	HibernateSessionFactory.getSession().save(config);
