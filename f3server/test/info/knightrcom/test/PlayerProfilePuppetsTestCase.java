@@ -35,7 +35,7 @@ public class PlayerProfilePuppetsTestCase extends TestCase {
         profile.setCurrentScore(50000d);
         profile.setInitLimit(50000);
         profile.setLevel(0);
-        profile.setStatus("puppet~Red5~Red5Fresh~1~custom_poker_id"); // puppet~game_type_prefix~room_id~game_setting~custom_poker_id
+        profile.setStatus("puppet~Red5~Red5Fresh~currently_game_type_is_unused"); // puppet~class_prefix~room_id~game_type
         HibernateSessionFactory.getSession().save(profile);
         // 添加用户
         for (int i = 1; i <= 100; i++) {
