@@ -170,6 +170,7 @@ public class GamePool {
     public static synchronized <T extends Game> T getGame(String gameId, Class<T> gameType) {
         if (gameId == null) {
             return null;
+            // FIXME here should raise an exception to indicate the game is invalid forever
         }
         return gameType.cast(games.get(gameId));
     }
