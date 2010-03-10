@@ -18,6 +18,11 @@ public class PlatformInMessageHandler extends F3ServerInMessageHandler {
         sessionWrite(session, echoMessage);
     }
 
+    public void PLATFORM_IDLE_ECHO(IoSession session, PlatformMessage message, EchoMessage echoMessage) throws Exception {
+        // this method is used to get echo message from client so that server knows the client is still alive and action for session closing will be canceled.
+        session.setAttribute("ALIVE", "yes"); // refer to the implementation of sessionIdle in F3ServerServiceHandler
+    }
+
     // 玩家掉线
     public static final String PLATFORM_PLAYER_LOST_CONNECTION = "PLATFORM_PLAYER_LOST_CONNECTION";
     public void PLATFORM_PLAYER_LOST_CONNECTION(IoSession session, PlatformMessage message, EchoMessage echoMessage) throws Exception {
@@ -38,6 +43,8 @@ public class PlatformInMessageHandler extends F3ServerInMessageHandler {
         // 刷新房间信息
     }
 
+    // FIXME Not all following declarations are used.
+    public static final String SERVER_IDLE_TEST = "SERVER_IDLE_TEST";
     public static final String GAME_INTERRUPTED = "GAME_INTERRUPTED";
     public static final String PLATFORM_IP_CONFLICT = "PLATFORM_IP_CONFLICT";
 
