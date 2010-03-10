@@ -34,8 +34,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,6 +55,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
     // TODO What's the differences between sessions and managed-sessions of mina ?
     // In the example of mina a third sessions is used for session management. 
     private final Set<IoSession> sessions = Collections.synchronizedSet(new HashSet<IoSession>());
+    private ExecutorService idleFutureExecutor = Executors.newFixedThreadPool(new Integer(ModelUtil.getSystemParameter("MAX_THREADS_IN_IDLE_FUTURE_EXECUTOR", 100)));
 
     /**
      * @param platform
@@ -77,8 +79,9 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
 
     @Override
     public void sessionCreated(IoSession session) {
-        // 24小时后自动超时
-        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, 60 * 60 * 24);
+        // 默认90分钟后自动超时
+        int idleTime = new Integer(ModelUtil.getSystemParameter("IDLE_TIME", 90));
+        session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, idleTime);
         // 添加Session
         sessions.add(session);
     }
@@ -89,10 +92,27 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
     }
 
     @Override
-    public void sessionIdle(IoSession iosession, IdleStatus idlestatus) throws Exception {
-        super.sessionIdle(iosession, idlestatus);
+    public void sessionIdle(IoSession session, IdleStatus idlestatus) throws Exception {
+        // 到达空闲时间时，主动询问客户端
+        EchoMessage echoMessage = F3ServerMessage.createInstance(MessageType.PLATFORM).getEchoMessage();
+        echoMessage.setResult(PlatformInMessageHandler.SERVER_IDLE_TEST);
+        session.setAttribute("ALIVE", null);
+        sessionWrite(session, echoMessage);
+        final IoSession threadSession = session;
+        idleFutureExecutor.execute(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(15 * 1000);
+                } catch (Exception e) {
+                }
+                if (!"yes".equals(threadSession.getAttribute("ALIVE"))) {
+                    threadSession.close(true);
+                }
+            }
+        });
+        // session.setAttributeIfAbsent(obj, obj1);
         // 关闭Session
-        iosession.close(true);
+        // iosession.close(true);
     }
 
     @Override
@@ -111,13 +131,12 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
         // 清除与游戏相关的内容
         Game<?> game = GamePool.getGame(player.getGameId(), Game.class);
         if (game != null) {
-            List<Player> players = game.getPlayers();
-            synchronized (players) {
-                for (Player eachPlayer : players) {
+            synchronized (game) {
+                for (Player eachPlayer : game.getPlayers()) {
                     // 通知游戏中的其他玩家游戏已经中断，如果想重新加入游戏，必须进入游戏队列中
                     if (!session.equals(eachPlayer.getIosession())) {
                         eachPlayer.setCurrentStatus(info.knightrcom.model.global.GameStatus.IDLE);
-                        EchoMessage echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
+                        EchoMessage echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage(); // FIXME THIS SHOULD BE CHANGE TO PLATFORM EVENT TYPE
                         echoMessage.setResult(PlatformInMessageHandler.GAME_INTERRUPTED);
                         sessionWrite(eachPlayer.getIosession(), echoMessage);
                     }
