@@ -3,11 +3,14 @@ package info.knightrcom.web.service;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.GlobalConfig;
 import info.knightrcom.data.metadata.GlobalConfigDAO;
+import info.knightrcom.model.game.red5.Red5GameSetting;
 import info.knightrcom.model.game.red5.Red5Poker;
 import info.knightrcom.model.plaything.PokerColor;
 import info.knightrcom.model.plaything.PokerValue;
+import info.knightrcom.util.StringHelper;
 import info.knightrcom.web.model.EntityInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +33,7 @@ import org.hibernate.transform.ResultTransformer;
 public class CustomPokerService extends F3SWebService<GlobalConfig> {
 	
 	private final String prioritySequence = "V10,VJ,VQ,VK,VA,V2,V5,VX,VY,VM";
+	private final String[] red5GameSettingStrs = {"NO_RUSH", "RUSH", "DEADLY_RUSH", "EXTINCT_RUSH"};
 	private final int pokerCount = 15;
 
 	@Override
@@ -150,7 +154,7 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     	EntityInfo<GlobalConfig> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
     	try {
     		for (int times = 0; times < Integer.valueOf(count); times++) {
-    			String name = String.valueOf(new Date().getTime());
+    			Date date = new Date();
     			String strUpDownCards = genRandomPokersByRate(num);
 //    			
 //				Criteria criteria = HibernateSessionFactory.getSession().createCriteria(GlobalConfig.class);
@@ -163,7 +167,7 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
 //				}
 				GlobalConfig config = new GlobalConfig();
 	    		config.setGlobalConfigId(UUID.randomUUID().toString());
-		    	config.setName("CUSTOM_POKER_RED5_" + (times+1) + "_" + name);
+		    	config.setName("CUSTOM_POKER_RED5_" + StringHelper.formatDate(date).replaceAll("-", "") + "_" + red5GameSettingStrs[Integer.valueOf(type)] + "_" + date.getTime());
 		    	config.setValue(strUpDownCards + "~" + type); // FIXME
 		    	// 2010-03-02 ADD BY ZWREN BEGIN
 		    	config.setValue(strUpDownCards);
@@ -178,6 +182,29 @@ public class CustomPokerService extends F3SWebService<GlobalConfig> {
     	}
     	return toXML(info, getAliasTypes());
     }
+	
+	 /**
+     * 删除牌型
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+	public String DELETE_CUSTOM_POKER(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	String id = request.getParameter("ID");
+    	EntityInfo<GlobalConfig> info = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+    	try {
+    		GlobalConfigDAO dao = new GlobalConfigDAO();
+    		GlobalConfig config = dao.findById(id);
+    		if (config != null) {
+    			dao.delete(config);
+    		} 
+    		info.setResult(F3SWebServiceResult.SUCCESS);
+    	} catch (Exception e) {
+    		info.setResult(F3SWebServiceResult.FAIL);
+    	}
+    	return toXML(info, getAliasTypes());
+	}
     
     /**
      * 根据各种扑克出现比率生成相应牌型
