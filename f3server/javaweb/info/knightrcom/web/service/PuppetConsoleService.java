@@ -91,7 +91,7 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
                 	Map map = new HashMap();
                     map.put("pupuetname", playerProfile.getName());
                     map.put("currentscore", playerProfile.getCurrentScore());
-                    map.put("currentstatus", player.getCurrentStatus());
+                    map.put("currentstatus", player.getCurrentStatusLabel());
                     Date lastPlayTime = new Date();
                     lastPlayTime.setTime(player.getLastPlayTime());
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
