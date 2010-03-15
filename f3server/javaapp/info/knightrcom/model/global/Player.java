@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.proxy.utils.StringUtilities;
 
 
 /**
@@ -79,6 +80,31 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
      */
     public GameStatus getCurrentStatus() {
         return currentStatus;
+    }
+    
+    /**
+     * @return the isGamePlaying
+     */
+    public String getCurrentStatusLabel() {
+    	String result = "";
+    	switch (currentStatus) {
+        	case RAW: 
+        		result = currentStatus.name() + "_原始状态，只是为辅助程序运行，不参与具体业务，可忽略";
+        		break; 
+        	case WANDER: 
+        		result = currentStatus.name() + "_未加入任何游戏房间，仍在徘徊中";
+        		break; 
+        	case IDLE: 
+        		result = currentStatus.name() + "_已加入游戏房间，正在系统配对";
+        		break; 
+        	case MATCHING: 
+        		result = currentStatus.name() + "_已加入游戏房间，正在系统配对";
+        		break; 
+        	case PLAYING: 
+        		result = currentStatus.name() + "_游戏进行中";
+        		break; 
+    	}	
+        return result;
     }
 
     /**
