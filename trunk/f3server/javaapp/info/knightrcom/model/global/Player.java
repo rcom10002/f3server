@@ -96,7 +96,7 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
         		result = currentStatus.name() + "_未加入任何游戏房间，仍在徘徊中";
         		break; 
         	case IDLE: 
-        		result = currentStatus.name() + "_已加入游戏房间，正在系统配对";
+        		result = currentStatus.name() + "_已加入游戏房间，未进入系统配对环节";
         		break; 
         	case MATCHING: 
         		result = currentStatus.name() + "_已加入游戏房间，正在系统配对";
