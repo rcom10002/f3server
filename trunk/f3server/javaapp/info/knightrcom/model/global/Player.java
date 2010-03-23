@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.proxy.utils.StringUtilities;
 
 
 /**
@@ -83,6 +82,8 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     }
     
     /**
+     * FIXME This method should be moved to PuppetConsoleService.java
+     * 
      * @return the isGamePlaying
      */
     public String getCurrentStatusLabel() {
