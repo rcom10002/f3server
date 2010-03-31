@@ -40,7 +40,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         // 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
 
-        if (GameStatus.PLAYING.equals(ModelUtil.getPlayer(session).getCurrentStatus())) {
+        if (!GameStatus.IDLE.equals(currentPlayer.getCurrentStatus())) {
             // 游戏状态判断
             return;
         }
@@ -58,7 +58,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         }
 
         // 将当前玩家加入游戏等待队列中
-        ModelUtil.getPlayer(session).setCurrentStatus(GameStatus.MATCHING);
+        currentPlayer.setCurrentStatus(GameStatus.MATCHING);
 
         // 判断当前房间内等候的玩家个数是否足够以开始游戏
         int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"));
@@ -79,7 +79,8 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                 while (itr.hasNext()) {
                     // 向同房间内的玩家发生消息
                     session = itr.next();
-                    if (GameStatus.MATCHING.equals(ModelUtil.getPlayer(session).getCurrentStatus())) {
+                    currentPlayer = ModelUtil.getPlayer(session);
+                    if (currentPlayer != null && GameStatus.MATCHING.equals(currentPlayer.getCurrentStatus())) {
                         sessionWrite(session, echoMessage);
                     }
                 }
