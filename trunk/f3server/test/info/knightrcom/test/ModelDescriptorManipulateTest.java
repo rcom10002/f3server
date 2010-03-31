@@ -80,6 +80,9 @@ public class ModelDescriptorManipulateTest extends TestCase {
         allConfigParameters.put("RED5_DEADLY7_EXTINCT8", "false"); // 是否启用七独八天功能
         allConfigParameters.put("MAX_ONLINE", "200"); // TODO This should be added for limiting the online player number 最大在线人数
         allConfigParameters.put("PUPPETS_HAPPY_PROHIBIT", "true"); // 是否允许PUPPET帐号自行娱乐
+        allConfigParameters.put("IDLE_TIME", "90"); // 90秒间隔时间来检查空闲
+        allConfigParameters.put("MAX_THREADS_IN_IDLE_FUTURE_EXECUTOR", "100"); // 用于IDLE测试的线程池大小
+        allConfigParameters.put("SECURITY_CONFIGURATION", "<cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>"); // 安全策略文件
 	    for (String key : allConfigParameters.keySet()) {
 	        GlobalConfig config = new GlobalConfig();
 	        config.setGlobalConfigId(UUID.randomUUID().toString());
