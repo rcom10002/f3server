@@ -8,7 +8,9 @@ import info.knightrcom.web.constant.GameConfigureConstant;
 import info.knightrcom.web.model.EntityInfo;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -146,8 +148,8 @@ public class ServerConfigureService extends F3SWebService<GlobalConfig> {
         criteria.add(Expression.eq("name", name));
         return criteria.list();
 	}
-	
-	/**
+    
+    /**
      * 读取大厅状态信息
      * 
      * @param request
@@ -159,4 +161,24 @@ public class ServerConfigureService extends F3SWebService<GlobalConfig> {
         entityInfo.setTag(F3ServerProxy.getLobbyStatus());
         return toXML(entityInfo, getAliasTypes());
     }
+    
+//    /**
+//     * 读取参数配置信息
+//     * 
+//     * @param request
+//     * @param response
+//     * @return
+//     */
+//    public String GET_CONFIGURE_PARAM(HttpServletRequest request, HttpServletResponse response) {
+          // 
+//        StringBuilder results = new StringBuilder();
+//        EntityInfo<GlobalConfig> entityInfo = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
+//        Map<String, String> params = request.getParameterMap();
+//        Iterator<String> keyItr = params.keySet().iterator();
+//        while (keyItr.hasNext()) {
+//            results.append(keyItr.next() + "=" F3ServerProxy.)
+//        }
+//        entityInfo.setTag(F3ServerProxy.getLobbyStatus());
+//        return toXML(entityInfo, getAliasTypes());
+//    }
 }
