@@ -80,7 +80,8 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
     	List resultList = new ArrayList();
         Iterator<IoSession> itr = sessions.iterator();
         while (itr.hasNext()) {
-            Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
+            final Player player = (Player)itr.next().getAttribute(Player.ATTR_NAME);
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (player != null) {
             	List<PlayerProfile> playerProfileList = HibernateSessionFactory.getSession()
                 .createCriteria(PlayerProfile.class)
@@ -92,12 +93,16 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
                     map.put("pupuetname", playerProfile.getName());
                     map.put("currentscore", playerProfile.getCurrentScore());
                     map.put("currentstatus", player.getCurrentStatusLabel());
-                    Date lastPlayTime = new Date();
-                    lastPlayTime.setTime(player.getLastPlayTime());
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    map.put("lastgametime", sdf.format(lastPlayTime));
-                    map.put("starttime", sdf.format(playerProfile.getCreateTime()));
-                    map.put("runingtime", (new Date().getTime() - player.getLastPlayTime())/1000);
+                    map.put("lastgametime", sdf.format(new Date(player.getLastPlayTime())));
+                    map.put("starttime", sdf.format(new Date(player.getLoginTime())));
+                    map.put("runingtime", new Object() {
+                        public String toString() {
+                            long result = new Date().getTime() - player.getLoginTime();
+                            long hours = result / (60 * 60 * 1000);
+                            long minutes = result / (60 * 1000);
+                            return (hours > 0 ? hours + "小时" : "") + minutes + "分";
+                        }
+                    }.toString());
                     resultList.add(map);
             	}
             }
@@ -105,9 +110,5 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
     	EntityInfo<PlayerProfile> entity = createEntityInfo(null, F3SWebServiceResult.SUCCESS);
         entity.setTag(resultList);
     	return toXML(entity, new Class[]{List.class, Player.class});
-    }
-    
-    public static void main(String[] args) {
-        System.out.println(new PuppetConsoleService().RETRIEVE_PUPPET_INFO(null, null));
     }
 }
