@@ -17,6 +17,9 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
     /** 玩家最后一次的游戏时间 */
     private long lastPlayTime = new Date().getTime();
 
+    /** 玩家成功登录时间 */
+    private long loginTime = new Date().getTime();
+
     /** 当前游戏id */
     private String gameId;
 
@@ -132,6 +135,13 @@ public class Player extends AbstractModel<Room, AbstractModel.DummyChildModel> {
      */
     public long getLastPlayTime() {
         return this.lastPlayTime;
+    }
+
+    /**
+     * @return the loginTime
+     */
+    public long getLoginTime() {
+        return loginTime;
     }
 
     /**

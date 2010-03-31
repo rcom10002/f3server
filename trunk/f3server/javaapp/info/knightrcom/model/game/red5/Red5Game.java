@@ -450,8 +450,10 @@ public class Red5Game extends Game<Red5GameSetting> {
         gameRecord.setGameId(this.getId());
         gameRecord.setGameType(Red5Game.class.getSimpleName());
         if (this.getSetting() != null) {
+            this.setSetting(Red5GameSetting.fromOrdinal((short)this.getSetting().ordinal()));
             gameRecord.setGameSetting((short)this.getSetting().ordinal());
         } else {
+            this.setSetting(Red5GameSetting.NO_RUSH);
             gameRecord.setGameSetting((short)Red5GameSetting.NO_RUSH.ordinal());
         }
         gameRecord.setWinnerNumbers(this.getWinnerNumbers());

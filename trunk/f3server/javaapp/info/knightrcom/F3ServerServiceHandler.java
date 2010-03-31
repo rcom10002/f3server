@@ -194,20 +194,6 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-//        try {
-//            log.warn("Exception is found. Try to close socket session and persist current game scores!");
-//            // TODO 通知客户端服务器有错误发生，断开连接 Swallow the exception
-//            // 需要移除内存中相关的在线用户信息
-//            // session.close(false) ???
-//            session.close(true);
-//            LogInfo logInfo = SystemLogger.createLog(LogType.SYSTEM_ERROR.toString(), cause.getMessage(), StringHelper.convertExceptionStack2String(cause), LogType.SYSTEM_ERROR);
-//            HibernateSessionFactory.getSession().save(logInfo);
-//            HibernateSessionFactory.closeSession();
-//    		// super.exceptionCaught(session, cause);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            sessionClosed(session);
-//        }
         try {
             log.warn("Global exception is found.");
             if (cause instanceof IOException) {

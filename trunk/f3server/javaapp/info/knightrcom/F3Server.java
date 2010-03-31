@@ -10,7 +10,7 @@ import info.knightrcom.util.SystemLogger;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +18,8 @@ import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.logging.MdcInjectionFilter;
 import org.apache.mina.filter.ssl.SslFilter;
@@ -92,15 +94,17 @@ class F3Server {
     	}
     	try {
 	        // 加载Flex安全信息
-	        ResourceBundle bundle = ResourceBundle.getBundle("info.knightrcom.sc");
-	        SECURITY_CONFIGURATION = bundle.getString("SECURITY_CONFIGURATION");
+            // FIXME properties file can be deleted because this property can be fetched from model utility.
+	        // ResourceBundle bundle = ResourceBundle.getBundle("info.knightrcom.sc");
+	        // SECURITY_CONFIGURATION = bundle.getString("SECURITY_CONFIGURATION");
+	        SECURITY_CONFIGURATION = ModelUtil.getSystemParameter("SECURITY_CONFIGURATION", "<cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>");
 
 	        acceptor = new NioSocketAcceptor();
 	        DefaultIoFilterChainBuilder chain = acceptor.getFilterChain();
 
 	        MdcInjectionFilter mdcInjectionFilter = new MdcInjectionFilter();
 	        addMdc(chain, mdcInjectionFilter);
-
+	        // addExecutor(chain);
 	        // 启用SSL功能
 	        // TODO 该功能暂时不启用，因为as3对SSL支持尚不成熟
 	        // Keep in mind most web servers with TLS support are not serving a crossdomain.xml policy file that
@@ -185,6 +189,21 @@ class F3Server {
     private static void addMdc(DefaultIoFilterChainBuilder chain, MdcInjectionFilter mdcInjectionFilter) throws Exception {
         chain.addLast("mdc", mdcInjectionFilter);
         log.info("MDC ON");
+    }
+
+    /**
+     * @param chain
+     * @throws Exception
+     */
+    private static void addExecutor(DefaultIoFilterChainBuilder chain) throws Exception {
+        // TODO 控制线程池大小？
+        // http://mina.apache.org/using-an-executor-filter.html
+        // - Using an Executor Filter - Controlling the size of thread pool and choosing the right thread model
+        // *** ExecutorService executor = Executors.newFixedThreadPool(MAX_CONNECTION_LIMIT); ***
+        // About this section: refer to http://mina.apache.org/report/trunk/apidocs/index.html?org/apache/mina/filter/executor/OrderedThreadPoolExecutor.html
+        // USELESS
+        ExecutorService executor = new OrderedThreadPoolExecutor(MAX_CONNECTION_LIMIT < 100 ? MAX_CONNECTION_LIMIT : (MAX_CONNECTION_LIMIT / 2 < 100 ? 100 : MAX_CONNECTION_LIMIT / 2));
+        chain.addLast("executor", new ExecutorFilter(executor));
     }
 
     /**
