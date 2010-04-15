@@ -43,6 +43,12 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 	public void GAME_JOIN_MATCHING_QUEUE(IoSession session, FightLandlordGameMessage message, EchoMessage echoMessage) throws Exception {
 		// 判断当前玩家是否有足够分数加入游戏
         Player currentPlayer = ModelUtil.getPlayer(session);
+
+        if (!GameStatus.IDLE.equals(currentPlayer.getCurrentStatus())) {
+            // 游戏状态判断
+            return;
+        }
+		
         Room currentRoom = currentPlayer.getCurrentRoom();
         HibernateSessionFactory.getSession().clear();
         PlayerProfile currentPlayerProfile = new PlayerProfileDAO().findByUserId(currentPlayer.getId()).get(0);
@@ -60,12 +66,30 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 
         // 判断当前房间内等候的玩家个数是否足够以开始游戏
         int groupQuantity = new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"));
+        
         if (currentRoom.getGameStatusNumber(GameStatus.MATCHING) < FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity) {
-            String content = "当前房间等候的玩家数(" + currentRoom.getGameStatusNumber(GameStatus.MATCHING) + 
-                ")不足以开始新的游戏，请稍候。";
+            int numPlayers = currentRoom.getGameStatusNumber(GameStatus.MATCHING);
+            numPlayers += Math.ceil(numPlayers / (FightLandlordGame.PLAYER_COGAME_NUMBER - 1));
+            int matchingRate = (int)Math.round((double)numPlayers / (FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity) * 100);
+            if (matchingRate == 100) {
+                matchingRate = (int)Math.round(((double)numPlayers - new Integer(ModelUtil.getSystemParameter("WAITING_QUEUE_GROUP_QUANTITY"))) / 
+                        (FightLandlordGame.PLAYER_COGAME_NUMBER * groupQuantity) * 100);
+            }
+            String content = "当前房间等候的玩家数不足以开始新的游戏，系统配对比率为【" + matchingRate + "%】，请稍候。";
             echoMessage.setResult(GAME_WAIT);
             echoMessage.setContent(content);
-            sessionWrite(session, echoMessage);
+            Set<IoSession> sessions = ModelUtil.getSessions();
+            synchronized (sessions) {
+                Iterator<IoSession> itr = sessions.iterator();
+                while (itr.hasNext()) {
+                    // 向同房间内的玩家发生消息
+                    session = itr.next();
+                    currentPlayer = ModelUtil.getPlayer(session);
+                    if (currentPlayer != null && GameStatus.MATCHING.equals(currentPlayer.getCurrentStatus())) {
+                        sessionWrite(session, echoMessage);
+                    }
+                }
+            }
             return;
         }
 
