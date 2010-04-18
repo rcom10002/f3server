@@ -221,7 +221,7 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
                     // 为每位玩家发牌
                     echoMessage = F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
                     echoMessage.setResult(GAME_STARTED);
-                    echoMessage.setContent(playerCards[x].replaceFirst(",$", "~") + pokerNumberOfEachPlayer + "~" + startPorker);
+                    echoMessage.setContent(playerCards[x].replaceFirst(",$", "~") + pokerNumberOfEachPlayer);
                     sessionWrite(playersInGame.get(x).getIosession(), echoMessage);
                     // 记录游戏初始时玩家手中的牌信息
                     game.appendGameRecord(echoMessage.getContent());
@@ -265,9 +265,9 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
 				echoMessage.setContent(message.getContent());
 				sessionWrite(player.getIosession(), echoMessage);
 			}
-			// 记录当前牌序
-			game.appendGameRecord(message.getContent());
 		}
+		// 记录当前牌序
+        game.appendGameRecord(message.getContent());
 	}
 	
 	public void GAME_BOMB(IoSession session, FightLandlordGameMessage message, EchoMessage echoMessage) throws Exception {
@@ -315,26 +315,31 @@ public class FightLandlordGameInMessageHandler extends GameInMessageHandler<Figh
             }
         }
 		log.debug(setting);
-
+	}
+	
+	public void GAME_SETTING_UPDATE_FINISH(IoSession session, FightLandlordGameMessage message, EchoMessage echoMessage) throws Exception {
+		// 玩家游戏设置结束
+		Player currentPlayer = ModelUtil.getPlayer(session);
+		FightLandlordGame game = GamePool.getGame(currentPlayer.getGameId(), FightLandlordGame.class);
+		String[] results = message.getContent().split("~");
+		// 游戏最终设置的玩家序号，首次发牌玩家序号
+		String playerNumber = results[0];
 		// 为地主发底牌,并为其它两家显示底牌
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < FightLandlordPoker.handlePokers.length; i++) {
 			builder.append(FightLandlordPoker.handlePokers[i].getValue() + ",");
 		}
-		boolean isHandlerPokers = true;
+		List<Player> players = game.getPlayers();
 		synchronized (players) {
 			for (Player player : players) {
 				echoMessage = F3ServerMessage.createInstance(MessageType.FIGHT_LANDLORD).getEchoMessage();
 				echoMessage.setResult(GAME_SETTING_UPDATE_FINISH);
 				echoMessage.setContent(builder.toString().replaceFirst(",$","~") + playerNumber);
 				sessionWrite(player.getIosession(), echoMessage);
-				// 记录底牌
-				if (isHandlerPokers) {
-					game.appendGameRecord(echoMessage.getContent());
-					isHandlerPokers = false;
-				}
 			}
 		}
+		// 记录底牌
+		game.appendGameRecord(echoMessage.getContent());
 	}
 
 	@Override
