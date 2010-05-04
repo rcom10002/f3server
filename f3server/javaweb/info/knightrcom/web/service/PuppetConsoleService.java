@@ -99,7 +99,7 @@ public class PuppetConsoleService extends F3SWebServiceAdaptor<PlayerProfile> {
                         public String toString() {
                             long result = new Date().getTime() - player.getLoginTime();
                             long hours = result / (60 * 60 * 1000);
-                            long minutes = result / (60 * 1000);
+                            long minutes = (result / (60 * 1000)) % 60;
                             return (hours > 0 ? hours + "小时" : "") + minutes + "分";
                         }
                     }.toString());
