@@ -3,7 +3,11 @@ package info.knightrcom.web.service;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.PlayerProfile;
 import info.knightrcom.util.EncryptionUtil;
+import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.model.EntityInfo;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +22,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
 	public String LOGIN_ADMIN_SERVER(HttpServletRequest request, HttpServletResponse response) {
 		String username = request.getParameter("USERNAME");
 		String password = EncryptionUtil.encryptSHA(request.getParameter("PASSWORD"));
+		String userClientVersion = request.getParameter("CLIENTVERSION");
         final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
                 PlayerProfile.class).add(
                         Restrictions.eq("userId", username)).add(
@@ -25,6 +30,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                         Restrictions.ne("role", "User")).add(
                         Restrictions.eq("status", "1")).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
+        
         if (profile != null && !"User".equals(profile.getRole())) {
             info.setEntity(new Object() {
                 @SuppressWarnings("unused")
@@ -36,7 +42,13 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 @SuppressWarnings("unused")
                 String role = profile.getRole();
             });
-        	info.setResult(F3SWebServiceResult.SUCCESS);
+            Pattern clientVersionPattern = Pattern.compile(ModelUtil.getSystemParameter("ALLOWED_CLIENT_VERSION"));
+            Matcher fit = clientVersionPattern.matcher(userClientVersion);
+            if (fit.find()) {
+            	info.setResult(F3SWebServiceResult.SUCCESS);
+            } else {
+            	info.setResult(F3SWebServiceResult.WARNING);
+            }
         } else {
         	info.setResult(F3SWebServiceResult.FAIL);
         }
