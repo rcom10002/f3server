@@ -83,6 +83,7 @@ public class ModelDescriptorManipulateTest extends TestCase {
         allConfigParameters.put("IDLE_TIME", "90"); // 90秒间隔时间来检查空闲
         allConfigParameters.put("MAX_THREADS_IN_IDLE_FUTURE_EXECUTOR", "100"); // 用于IDLE测试的线程池大小
         allConfigParameters.put("SECURITY_CONFIGURATION", "<cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>"); // 安全策略文件
+        allConfigParameters.put("ALLOWED_CLIENT_VERSION", ".*0\\.8\\.2.*"); // 后台客户端版本号
 	    for (String key : allConfigParameters.keySet()) {
 	        GlobalConfig config = new GlobalConfig();
 	        config.setGlobalConfigId(UUID.randomUUID().toString());
