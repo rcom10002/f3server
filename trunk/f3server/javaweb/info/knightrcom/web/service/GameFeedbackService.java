@@ -63,6 +63,7 @@ public class GameFeedbackService extends F3SWebService<GameFeedback>{
 	public String GET_JOIN_GAME_PLAYER_INFO(HttpServletRequest request, HttpServletResponse response) {
     	Criteria criteria = HibernateSessionFactory.getSession().createCriteria(PlayerScore.class);
         criteria.add(Expression.eq("gameId", request.getParameter("GAME_ID")));
+        criteria.add(Expression.isNull("status"));
         List<PlayerScore> result = criteria.list();
         StringBuffer strBuf = new StringBuffer();
         for (PlayerScore player : result) {
