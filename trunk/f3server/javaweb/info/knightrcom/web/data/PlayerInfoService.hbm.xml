@@ -27,6 +27,13 @@ SELECT
        END AS winandlose,
        player_score.cur_score AS score,
        player_score.sys_score  AS systemscore,
+       CASE 
+         WHEN player_score.status is null
+         THEN ""
+         WHEN INSTR(player_score.status, 'PLAYVEDIO') > 0
+         THEN "观看录像"
+         ELSE "未知"
+       END AS memo,
        game_record.game_id       AS gameId,
        DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
 FROM   player_profile

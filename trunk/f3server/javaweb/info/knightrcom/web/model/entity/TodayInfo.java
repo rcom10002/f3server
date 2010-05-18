@@ -14,7 +14,7 @@ public class TodayInfo {
 
     private String createTime;
     
-    
+    private String memo;
 
     /**
 	 * @return the gametype
@@ -100,5 +100,13 @@ public class TodayInfo {
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 
 }
