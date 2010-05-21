@@ -35,7 +35,7 @@ SELECT
          ELSE "未知"
        END AS memo,
        game_record.game_id       AS gameId,
-       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime
+       CAST(DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) AS createTime
 FROM   player_profile
        LEFT JOIN player_score
          ON player_score.profile_id = player_profile.profile_id
@@ -87,7 +87,7 @@ FROM   player_profile
 SELECT from_player,
        to_org_score,
        to_cur_score,
-       DATE_FORMAT(recharge_record.create_time, "%Y年%m月%d日%H时%i分%S秒") create_time
+       CAST(DATE_FORMAT(recharge_record.create_time, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) create_time
   FROM recharge_record
  WHERE to_player = ?
  ORDER BY create_time DESC

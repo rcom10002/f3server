@@ -10,9 +10,9 @@
 		    `NAME`,
 		    `VALUE`,
 		    `STATUS`,
-		    DATE_FORMAT(`CREATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS `CREATE_TIME`,
+		    CAST(DATE_FORMAT(`CREATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS CHAR) AS `CREATE_TIME`,
 		    `CREATE_BY`,
-		    DATE_FORMAT(`UPDATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS `UPDATE_TIME`,
+		    CAST(DATE_FORMAT(`UPDATE_TIME`, "%Y年%M月%D日%H时%I分%S秒") AS CHAR) AS `UPDATE_TIME`,
 		    `UPDATE_BY` 
 		FROM
 		    `GLOBAL_CONFIG`

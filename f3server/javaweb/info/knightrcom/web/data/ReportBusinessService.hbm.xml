@@ -29,9 +29,9 @@ SELECT
          THEN "穷胡"
          ELSE "未知"
        END AS gameType,
-       DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS createTime,
-       DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS startTime,
-       DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS endTime
+       CAST(DATE_FORMAT(player_score.create_time, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) AS createTime,
+       CAST(DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) AS startTime,
+       CAST(DATE_FORMAT(?, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) AS endTime
 FROM   player_profile
        LEFT JOIN player_score
          ON player_score.profile_id = player_profile.profile_id
