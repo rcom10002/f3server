@@ -13,7 +13,7 @@
 			TO_PLAYER toPlayer,
 			TO_ORG_SCORE toOrgScore,
 			TO_CUR_SCORE toCurScore,
-			DATE_FORMAT(CREATE_TIME, "%Y年%m月%d日%H时%i分%S秒") createTime
+			CAST(DATE_FORMAT(CREATE_TIME, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) createTime
 		FROM
 			RECHARGE_RECORD
 		WHERE 

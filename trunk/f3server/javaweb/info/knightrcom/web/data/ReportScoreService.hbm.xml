@@ -9,8 +9,8 @@
 			player_profile.USER_ID userId,
 			periodly_sum.NUMBER number,
 			periodly_sum.TITLE title,
-			DATE_FORMAT(periodly_sum.START_DATE, "%Y年%m月%d日") startDate,
-			DATE_FORMAT(periodly_sum.END_DATE, "%Y年%m月%d日") endDate,
+			CAST(DATE_FORMAT(periodly_sum.START_DATE, "%Y年%m月%d日") AS CHAR) startDate,
+			CAST(DATE_FORMAT(periodly_sum.END_DATE, "%Y年%m月%d日") AS CHAR) endDate,
 			periodly_sum.WIN_TIMES winTimes,
 			periodly_sum.WIN_SCORES winScores,
 			periodly_sum.LOSE_TIMES loseTimes,
@@ -69,9 +69,9 @@
 		) 
 			SELECT UUID(), 
 				concat('积分统计(',
-				  concat(DATE_FORMAT(?, "%Y年%m月%d日"),
+				  concat(CAST(DATE_FORMAT(?, "%Y年%m月%d日") AS CHAR),
 				     concat('至',
-				        concat(DATE_FORMAT(?, "%Y年%m月%d日")
+				        concat(CAST(DATE_FORMAT(?, "%Y年%m月%d日") AS CHAR)
 				        ,')')
 				     )
 				  )
@@ -318,9 +318,9 @@
 		) 
 			SELECT UUID(), 
 				concat('积分统计(',
-				  concat(DATE_FORMAT(?, "%Y年%m月%d日"),
+				  concat(CAST(DATE_FORMAT(?, "%Y年%m月%d日") AS CHAR),
 				     concat('至',
-				        concat(DATE_FORMAT(?, "%Y年%m月%d日")
+				        concat(CAST(DATE_FORMAT(?, "%Y年%m月%d日") AS CHAR)
 				        ,')')
 				     )
 				  )

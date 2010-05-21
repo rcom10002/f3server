@@ -8,7 +8,7 @@
 			log_info.log_id logId,
 			log_info.number number,
 			log_info.caption caption,
-			DATE_FORMAT(log_info.create_time, "%Y年%m月%d日%H时%i分%S秒") createTime,
+			CAST(DATE_FORMAT(log_info.create_time, "%Y年%m月%d日%H时%i分%S秒") AS CHAR) createTime,
 			log_info.key_cause1 keyCause1,
 			log_info.key_cause2 keyCause2,
 			log_info.key_cause3 keyCause3,
