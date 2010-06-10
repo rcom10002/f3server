@@ -87,7 +87,8 @@ public class PlayerInMessageHandler extends F3ServerInMessageHandler {
         player.setId(profile.getUserId());
         player.setName(profile.getName());
         player.setDisplayIndex(String.valueOf(new Date().getTime()));
-        player.setPuppet(String.valueOf(profile.getStatus()).indexOf("puppet") > -1);
+        player.setPuppet(String.valueOf(profile.getStatus()).indexOf("puppet") >= 0 &&
+                String.valueOf(profile.getStatus()).indexOf("puppet_disabled") < 0); // 状态可以设置为puppet或puppet_disabled，这个可以启用或禁用puppet标识
         ModelUtil.setPlayer(session, player);
         echoMessage.setContent(profile.getProfileId());
         echoMessage.setResult(LOGIN_SUCCESS);
