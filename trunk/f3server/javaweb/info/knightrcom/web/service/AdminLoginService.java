@@ -6,9 +6,6 @@ import info.knightrcom.util.EncryptionUtil;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.web.model.EntityInfo;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,15 +19,16 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
 	public String LOGIN_ADMIN_SERVER(HttpServletRequest request, HttpServletResponse response) {
 		String username = request.getParameter("USERNAME");
 		String password = EncryptionUtil.encryptSHA(request.getParameter("PASSWORD"));
-		String userClientVersion = request.getParameter("CLIENTVERSION");
-        final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
+		String userClientVersion = request.getParameter("CLIENTVERSION").replaceAll("^.*\\((.*?)\\).*$", "$1");
+
+		final PlayerProfile profile = (PlayerProfile)HibernateSessionFactory.getSession().createCriteria(
                 PlayerProfile.class).add(
                         Restrictions.eq("userId", username)).add(
                         Restrictions.eq("password", password)).add(
                         Restrictions.ne("role", "User")).add(
                         Restrictions.eq("status", "1")).uniqueResult();
         EntityInfo<Object> info = new EntityInfo<Object>();
-        
+
         if (profile != null && !"User".equals(profile.getRole())) {
             info.setEntity(new Object() {
                 @SuppressWarnings("unused")
@@ -42,9 +40,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
                 @SuppressWarnings("unused")
                 String role = profile.getRole();
             });
-            Pattern clientVersionPattern = Pattern.compile(ModelUtil.getSystemParameter("ALLOWED_CLIENT_VERSION"));
-            Matcher fit = clientVersionPattern.matcher(userClientVersion);
-            if (fit.find()) {
+            if (userClientVersion.matches(ModelUtil.getSystemParameter("ALLOWED_ADMIN_CLIENT_VERSION", "^.*$"))) {
             	info.setResult(F3SWebServiceResult.SUCCESS);
             } else {
             	info.setResult(F3SWebServiceResult.WARNING);
@@ -52,6 +48,7 @@ public class AdminLoginService extends F3SWebServiceAdaptor<Object> {
         } else {
         	info.setResult(F3SWebServiceResult.FAIL);
         }
+
         return toXML(info);
 	}
 }
