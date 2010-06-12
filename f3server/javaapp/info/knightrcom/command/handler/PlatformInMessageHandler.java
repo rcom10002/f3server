@@ -12,10 +12,22 @@ import org.apache.mina.core.session.IoSession;
 public class PlatformInMessageHandler extends F3ServerInMessageHandler {
 
     public static final String PLATFORM_ENVIRONMENT_INIT = "PLATFORM_ENVIRONMENT_INIT";
+    public static final String LOGIN_CLIENT_VERSION_LIMIT = "LOGIN_CLIENT_VERSION_LIMIT";
     public void PLATFORM_REQUEST_ENVIRONMENT(IoSession session, PlatformMessage message, EchoMessage echoMessage) throws Exception {
         echoMessage.setResult(PLATFORM_ENVIRONMENT_INIT);
         echoMessage.setContent(ModelUtil.getModelDesc());
         sessionWrite(session, echoMessage);
+    }
+    
+    public void CLIENT_VERSION_VALIDATE(IoSession session, PlatformMessage message, EchoMessage echoMessage) throws Exception{
+    	String results = message.getContent();
+    	String userClientVersion = results.replaceAll("^.*\\((.*?)\\).*$", "$1");
+        if (!userClientVersion.matches(ModelUtil.getSystemParameter("ALLOWED_GAME_CLIENT_VERSION", "^.*$"))) {
+        	// 客户端版本限制
+        	echoMessage.setResult(LOGIN_CLIENT_VERSION_LIMIT);
+            sessionWrite(session, echoMessage);
+            return;
+        }
     }
 
     public void PLATFORM_IDLE_ECHO(IoSession session, PlatformMessage message, EchoMessage echoMessage) throws Exception {
