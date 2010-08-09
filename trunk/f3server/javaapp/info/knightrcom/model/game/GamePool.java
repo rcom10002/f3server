@@ -76,6 +76,7 @@ public class GamePool {
             game.involvePlayer(player);
             game.getPlayerNumberMap().put(String.valueOf(i), player);
         }
+        // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
         int gameMark = players.get(0).getParent().getGameMark();
         int lowLevelMark = players.get(0).getParent().getGameLowLevelMark();
         int midLevelMark = players.get(0).getParent().getGameMidLevelMark();
@@ -95,7 +96,7 @@ public class GamePool {
      * 
      * @param players
      */
-    public static void preparePushdownWinGame(List<Player> players) {
+    public static String preparePushdownWinGame(List<Player> players) {
         // 创建游戏信息
         PushdownWinGame game = new PushdownWinGame();
         String gameId = game.getId();
@@ -114,6 +115,7 @@ public class GamePool {
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);
+        return gameId;
     }
 
     /**
