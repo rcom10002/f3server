@@ -74,7 +74,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
             echoMessage.setResult(GAME_WAIT);
             echoMessage.setContent(content);
             Set<IoSession> sessions = ModelUtil.getSessions();
-            synchronized (sessions) {
+            synchronized (sessions) { // FIXME remove synchronized block here but try ... catch block is necessary
                 Iterator<IoSession> itr = sessions.iterator();
                 while (itr.hasNext()) {
                     // 向同房间内的玩家发生消息
@@ -96,7 +96,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
     public synchronized void GAME_START(IoSession session, Red5GameMessage message, EchoMessage echoMessage) throws Exception {
         // 取得玩家所在房间内所有的玩家
         Map<String, Player> playersInRoom = ModelUtil.getPlayer(session).getCurrentRoom().getChildren();
-        synchronized (playersInRoom) {
+        synchronized (playersInRoom) { // FIXME This line should be removed because the whole method is marked with the keyword "synchronized"~
             // 取得当前房间内的等待队列中的玩家
             List<Player> playersInQueue = new ArrayList<Player>();
             Set<String> tempPool4IP = new HashSet<String>();
@@ -177,7 +177,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     // 禁止PUPPET自行娱乐
                     boolean allPuppets = true;
                     for (Player eachPlayer : playersInGroup) {
-                        allPuppets = allPuppets && eachPlayer.isPuppet();
+                        allPuppets &= eachPlayer.isPuppet();
                     }
                     if (allPuppets) {
                         playersInGroup.clear();
@@ -198,7 +198,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
                     echoMessage.setContent(
                             eachPlayer.getGameId() + "~" + 
                             eachPlayer.getCurrentNumber() + "~" + 
-                            Red5Game.PLAYER_COGAME_NUMBER);
+                            Red5Game.PLAYER_COGAME_NUMBER); // FIXME Creating new echo message should be completed outside of loop
                     sessionWrite(eachPlayer.getIosession(), echoMessage);
                 }
                 // 根据当前触发游戏开始的玩家所携带的游戏id来取得游戏实例
@@ -272,7 +272,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         Player currentPlayer = ModelUtil.getPlayer(session);
         Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
         List<Player> players = game.getPlayers();
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             Iterator<Player> itr = players.iterator();
             // 保存七独八天的积分
             String result = game.persistGameDeadly7Extinct8();
@@ -295,7 +295,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         Player currentPlayer = ModelUtil.getPlayer(session);
         Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
         List<Player> players = game.getPlayers();
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             Iterator<Player> itr = players.iterator();
             while (itr.hasNext()) {
                 Player player = itr.next();
@@ -326,7 +326,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         setting.setPlayerNumber(playerNumber);
         game.setSetting(setting);
         List<Player> players = game.getPlayers();
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             for (Player eachPlayer : players) {
                 echoMessage = F3ServerMessage.createInstance(MessageType.RED5GAME).getEchoMessage();
                 echoMessage.setResult(GAME_SETTING_OVER);
@@ -343,7 +343,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         Player currentPlayer = ModelUtil.getPlayer(session);
         Red5Game game = GamePool.getGame(currentPlayer.getGameId(), Red5Game.class);
         List<Player> players = game.getPlayers();
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             Iterator<Player> itr = players.iterator();
             while (itr.hasNext()) {
                 Player player = itr.next();
@@ -373,7 +373,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         }
         game.addWinnerNumber(String.valueOf(currentPlayer.getCurrentNumber()));
         List<Player> players = game.getPlayers();
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             Iterator<Player> itr = players.iterator();
             while (itr.hasNext()) {
                 Player player = itr.next();
@@ -401,7 +401,7 @@ public class Red5GameInMessageHandler extends GameInMessageHandler<Red5GameMessa
         log.debug(game.getSetting().getDisplayName());
         // 记录当前牌序
         game.appendGameRecord(message.getContent());
-        synchronized (players) {
+        synchronized (players) { // FIXME remove synchronized block here
             // 设置名次并计算积分
             if (Red5GameSetting.NO_RUSH.equals(game.getSetting())) {
                 // 不独，添加第三名、第四名玩家
