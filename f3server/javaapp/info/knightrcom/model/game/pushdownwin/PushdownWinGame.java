@@ -34,7 +34,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
     /** 获胜者牌序 */
     private String winnerMahjongSeq;
 
-	@Override
+    @Override
 	public void persistScore() {
         log.debug("计算积分 START");
         // 取得玩家以及游戏等信息
@@ -62,9 +62,11 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             String winnerNumber = getWinnerNumbers().substring(0, 1);
             String loserNumber = getWinnerNumbers().substring(2, 3);
             persistNarrowWinScore(itr, gameRecord, winnerNumber, loserNumber);
-        } else {
+        } else if (PushdownWinGameSetting.CLEAR_VICTORY.equals(this.getSetting())) {
             // 自摸
             persistClearWinScore(itr, gameRecord, getWinnerNumbers());
+        } else {
+            persistDummyScore(itr, gameRecord);
         }
         log.debug("计算积分 END");
 	}
@@ -165,6 +167,45 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             	resultScore *= -1;
             }
         	playerScore.setCurScore(resultScore); // 玩家当前得分
+            playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
+            playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
+            playerScore.setSysScore(getCustomSystemScore(playerScore.getCurScore())); // 系统当前得分
+            // 设置本场比赛得分
+            playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
+            HibernateSessionFactory.getSession().merge(playerProfile);
+            HibernateSessionFactory.getSession().merge(playerScore);
+            // 保存内存模型玩家得分信息
+            getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
+            getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
+        }
+        gameRecord.setPlayers(playerIds);
+    }
+
+    /**
+     * 计算流局时的游戏积分
+     * 
+     * @param itr
+     * @param gameRecord
+     */
+    public void persistDummyScore(Iterator<Player> itr, GameRecord gameRecord) {
+        // 自摸 => 取得底分与每番分
+        double resultScore = 0;
+        String playerIds = "";
+        while (itr.hasNext()) {
+            // 取得玩家信息
+            Player player = itr.next();
+            String playerId = player.getId();
+            PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
+            playerIds += player.getCurrentNumber() + "~" + playerId + "~";
+
+            // 保存玩家得分信息
+            PlayerScore playerScore = new PlayerScore();
+            playerScore.setScoreId(UUID.randomUUID().toString());
+            playerScore.setProfileId(playerProfile.getProfileId());
+            playerScore.setGameId(gameRecord.getGameId());
+            playerScore.setUserId(playerProfile.getUserId());
+            playerScore.setCurrentNumber(player.getCurrentNumber());
+            playerScore.setCurScore(resultScore); // 玩家当前得分
             playerScore.setOrgScores(playerProfile.getCurrentScore()); // 玩家原始总积分
             playerScore.setCurScores(playerProfile.getCurrentScore() + resultScore); // 玩家当前总积分
             playerScore.setSysScore(getCustomSystemScore(playerScore.getCurScore())); // 系统当前得分

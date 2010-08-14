@@ -4,6 +4,7 @@ import info.knightrcom.F3ServerProxy.LogType;
 import info.knightrcom.data.HibernateSessionFactory;
 import info.knightrcom.data.metadata.LogInfo;
 import info.knightrcom.ssl.BogusSslContextFactory;
+import info.knightrcom.util.DeadlockMonitor;
 import info.knightrcom.util.ModelUtil;
 import info.knightrcom.util.StringHelper;
 import info.knightrcom.util.SystemLogger;
@@ -124,6 +125,11 @@ class F3Server {
 
 	        log.info("F3S SERVER HAS STARTED!");
 	        RUNNING = true;
+	        
+	        if (!"false".equalsIgnoreCase(ModelUtil.getSystemParameter("DEADLOCK_MONITOR_ENABLED", true))) {
+	            DeadlockMonitor.go();
+	        }
+	        log.info("DEADLOCK MONITOR ENABLED!");
     	} catch (Exception e) {
     		// 启动失败日志
 	        LogInfo logInfo = SystemLogger.createLog("F3Server was failed to start!", 

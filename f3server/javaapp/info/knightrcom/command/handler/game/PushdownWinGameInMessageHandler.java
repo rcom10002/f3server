@@ -285,6 +285,20 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         if (StringHelper.isEmpty(message.getContent()) || "null".equalsIgnoreCase(message.getContent())) {
             // 流局
             // FIXME persist the record and destory game instance
+            game.setSetting(PushdownWinGameSetting.NOBODY_VICTORY);
+            game.persistScore();
+            synchronized (game.getPlayers()) {
+                Iterator<Player> itr = game.getPlayers().iterator();
+                // 构造积分显示信息
+                while (itr.hasNext()) {
+                    Player player = itr.next();
+                    player.setCurrentStatus(GameStatus.IDLE);
+                    echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
+                    echoMessage.setResult(GAME_OVER);
+                    echoMessage.setContent("0;0;0;0");
+                    sessionWrite(player.getIosession(), echoMessage);
+                }
+            }
             return;
         }
         String[] results = message.getContent().split("~");
