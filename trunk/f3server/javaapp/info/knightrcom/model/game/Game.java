@@ -223,7 +223,8 @@ public abstract class Game<T> {
     public abstract void persistDisconnectScore(Player disconnectedPlayer);
 
     /**
-     * 为客户端提供游戏积分明细
+     * 为客户端提供游戏积分明细，格式为：编号~当前得分~系统分~玩家总积分<br>
+     * 除指定编号玩家外，其余玩家不显示总积分
      * 
      * @return the gameResultScore
      */

@@ -80,7 +80,7 @@ public class F3ServerServiceHandler extends DemuxingIoHandler {
     @Override
     public void sessionCreated(IoSession session) {
         // 默认90分钟后自动超时
-        int idleTime = new Integer(ModelUtil.getSystemParameter("IDLE_TIME", 90));
+        int idleTime = new Integer(ModelUtil.getSystemParameter("IDLE_TIME", 30));
         session.getConfig().setIdleTime(IdleStatus.BOTH_IDLE, idleTime);
         // 添加Session
         sessions.add(session);

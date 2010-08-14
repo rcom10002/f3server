@@ -5,8 +5,10 @@ public enum PushdownWinGameSetting {
 
 	/** 点炮 */
 	NARROW_VICTORY("点炮"),
-	/** 自摸 */
-	CLEAR_VICTORY("自摸"); 
+    /** 自摸 */
+    CLEAR_VICTORY("自摸"),
+    /** 流局 */
+    NOBODY_VICTORY("流局");
 
     private String playerNumber;
 
