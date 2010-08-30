@@ -277,14 +277,11 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
         // 游戏结束，向游戏中的其他玩家发送消息
         Player currentPlayer = ModelUtil.getPlayer(session);
         PushdownWinGame game = GamePool.getGame(currentPlayer.getGameId(), PushdownWinGame.class);
-        // 消息格式：无内容
-        if (StringHelper.isEmpty(message.getContent())) {
-            // 流局，扑
-        }
+        // 记录当前牌序
+        game.appendGameRecord(message.getContent());
         // 消息格式：1.胜者~牌~败者(胡别的玩家牌) 2.胜者~牌(自摸) 3.无消息内容(流局，扑)
         if (StringHelper.isEmpty(message.getContent()) || "null".equalsIgnoreCase(message.getContent())) {
-            // 流局
-            // FIXME persist the record and destory game instance
+            // 流局，扑
             game.setSetting(PushdownWinGameSetting.NOBODY_VICTORY);
             game.persistScore();
             synchronized (game.getPlayers()) {
@@ -295,41 +292,41 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
                     player.setCurrentStatus(GameStatus.IDLE);
                     echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
                     echoMessage.setResult(GAME_OVER);
-                    echoMessage.setContent("0;0;0;0");
+                    echoMessage.setContent(game.getGameDetailScore(player.getCurrentNumber()));
                     sessionWrite(player.getIosession(), echoMessage);
                 }
             }
             return;
-        }
-        String[] results = message.getContent().split("~");
-        List<Player> players = game.getPlayers();
-        // 记录当前牌序
-        game.appendGameRecord(message.getContent());
-        synchronized (players) {
-            // 设置名次并计算积分
-        	if (results.length == 2) {
-                // 自摸
-        		game.addWinnerNumber(results[0]);
-                game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
-        	} else {
-        		// 点炮
-                game.addWinnerNumber(results[0]);
-                game.addWinnerNumber(results[2]);
-                game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
-        	}
-            // 保存游戏积分
-            game.persistScore();
-            // 显示游戏积分
-            Iterator<Player> itr = players.iterator();
-            // 构造积分显示信息
-            message.setContent(message.getContent() + "~" + game.getGameDetailScore());
-            while (itr.hasNext()) {
-                Player player = itr.next();
-                player.setCurrentStatus(GameStatus.IDLE);
-                echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
-                echoMessage.setResult(GAME_OVER);
-                echoMessage.setContent(message.getContent());
-                sessionWrite(player.getIosession(), echoMessage);
+        } else {
+            // 自摸或点炮
+            String[] results = message.getContent().split("~");
+            List<Player> players = game.getPlayers();
+            synchronized (players) {
+                // 设置名次并计算积分
+            	if (results.length == 3) {
+                    // 自摸
+            		game.addWinnerNumber(results[0]);
+                    game.setSetting(PushdownWinGameSetting.CLEAR_VICTORY);
+            	} else {
+            		// 点炮
+                    game.addWinnerNumber(results[0]);
+                    game.addWinnerNumber(results[2]);
+                    game.setSetting(PushdownWinGameSetting.NARROW_VICTORY);
+            	}
+                // 保存游戏积分
+                game.persistScore();
+                // 显示游戏积分
+                Iterator<Player> itr = players.iterator();
+                // 构造积分显示信息
+                String content = message.getContent().replaceFirst("~[^~]*$", ""); // 去除玩家记录
+                while (itr.hasNext()) {
+                    Player player = itr.next();
+                    player.setCurrentStatus(GameStatus.IDLE);
+                    echoMessage = F3ServerMessage.createInstance(MessageType.PUSHDOWN_WIN).getEchoMessage();
+                    echoMessage.setResult(GAME_OVER);
+                    echoMessage.setContent(content + "~" + game.getGameDetailScore(player.getCurrentNumber()));
+                    sessionWrite(player.getIosession(), echoMessage);
+                }
             }
         }
         // 清除内存中本次游戏的相关信息
