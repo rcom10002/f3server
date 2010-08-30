@@ -227,7 +227,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
             getPlayerNumberMap().get(player.getCurrentNumber()).setPlayerCurrentScore(playerProfile.getCurrentScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
@@ -295,7 +294,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
             getPlayerNumberMap().get(player.getCurrentNumber()).setPlayerCurrentScore(playerProfile.getCurrentScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
@@ -363,7 +361,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
             getPlayerNumberMap().get(player.getCurrentNumber()).setPlayerCurrentScore(playerProfile.getCurrentScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
@@ -431,7 +428,6 @@ public class Red5Game extends Game<Red5GameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
             getPlayerNumberMap().get(player.getCurrentNumber()).setPlayerCurrentScore(playerProfile.getCurrentScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
