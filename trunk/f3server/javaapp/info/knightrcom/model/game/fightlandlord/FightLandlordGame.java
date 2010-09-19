@@ -57,6 +57,10 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
     @Override
     public void persistScore() {
     	log.debug("计算积分 START");
+    	if (this.getSetting() == null) {
+            // FIXME http://code.google.com/p/f3server/issues/detail?id=26
+            return;
+        }
         // 取得玩家以及游戏等信息
     	List<Player> players = this.getPlayers();
         String winnerNumber = getWinnerNumbers().substring(0, 1);
@@ -64,6 +68,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         Iterator<Player> itr = players.iterator();
         // 创建游戏记录
         GameRecord gameRecord = new GameRecord();
+        // FIXME DROP THIS LINE
         gameRecord.setGameId(UUID.randomUUID().toString());
         gameRecord.setGameId(this.getId());
         gameRecord.setGameType(FightLandlordGame.class.getSimpleName());
@@ -141,13 +146,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
                     resultScore = -1 * 2 * gameMark * pointMark;
                 }
             }
-            // FIXME SJ ADD START
             // 在赢分玩家中直接从本局当前得分中扣除系统分
             double currentSysytemScore = getCustomSystemScore(resultScore);
             if (resultScore > 0) {
             	resultScore -= currentSysytemScore;
             }
-            // FIXME SJ ADD END
             playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
             // 保存玩家得分信息
             PlayerScore playerScore = new PlayerScore();
@@ -163,7 +166,6 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
             HibernateSessionFactory.getSession().merge(playerProfile);
             HibernateSessionFactory.getSession().merge(playerScore);
             // 保存内存模型玩家得分信息
-            // FIXME SJ 2009-11-10 积分板 追加 玩家当前总积分
             getPlayerNumberMap().get(player.getCurrentNumber()).setPlayerCurrentScore(playerProfile.getCurrentScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setCurrentScore(playerScore.getCurScore());
             getPlayerNumberMap().get(player.getCurrentNumber()).setSystemScore(playerScore.getSysScore());
@@ -247,13 +249,11 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
 					// 非掉线玩家
 					resultScore = deductedMark;
 				}
-	            // FIXME SJ ADD START
 	            // 在赢分玩家中直接从本局当前得分中扣除系统分
 	            double currentSysytemScore = getCustomSystemScore(resultScore);
 	            if (resultScore > 0) {
 	            	resultScore -= currentSysytemScore;
 	            }
-	            // FIXME SJ ADD END
 				playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
 	            // 保存玩家得分信息
 	            PlayerScore playerScore = new PlayerScore();
