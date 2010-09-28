@@ -84,7 +84,7 @@ public class FightLandlordGame extends Game<FightLandlordGameSetting> {
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
         // 根据当前游戏规则进行分数计算
-        /**
+        /*
          * 一幅牌计分：
          * 基础分：叫牌的底分，有“1分”“2分”“3分”；
          * 地主胜：地主得 2 × 叫牌的底分，其余两家各得： —叫牌的底分；
