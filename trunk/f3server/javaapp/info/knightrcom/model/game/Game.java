@@ -16,6 +16,11 @@ import java.util.UUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * 
+ *
+ * @param <T>
+ */
 public abstract class Game<T> {
 
     protected Log log = LogFactory.getLog(Game.class);

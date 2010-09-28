@@ -111,7 +111,9 @@ public class GamePool {
         }
         // 从房间中取得当前房间设置的游戏每局得分数以及游戏开始所需最小分数
         int gameMark = players.get(0).getParent().getGameMark();
+        int pointMark = players.get(0).getParent().getGamePointMark();
         game.setGameMark(gameMark);
+        game.setPointMark(pointMark);
         int minGameStartMark = players.get(0).getParent().getMinGameMarks();
         game.setMinGameStartMark(minGameStartMark);
         postInitProcess(game);

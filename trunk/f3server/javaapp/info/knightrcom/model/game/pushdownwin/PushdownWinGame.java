@@ -53,6 +53,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         // gameRecord.setPlayers();
         // gameRecord.setSysScore(systemScore);
         gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setScore(this.getGameMark());
         gameRecord.setCreateTime(this.getCreateTime());
         // 保存游戏历史记录
         HibernateSessionFactory.getSession().merge(gameRecord);
@@ -95,7 +96,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
 
             // 计算番数
-            points = getPoints();
+            points = getPoints(gameRecord);
             // 计算得分
             resultScore = basicScore + pointScore * points;
             if (loserNumber.equals(player.getCurrentNumber())) {
@@ -156,7 +157,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
             
             // 计算番数
-            points = getPoints();
+            points = getPoints(gameRecord);
             // 计算得分
             resultScore = basicScore + pointScore * points;
             if (winnerNumber.equals(player.getCurrentNumber())) {
@@ -237,7 +238,18 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	/**
 	 * 番数计算
 	 */
-	private int getPoints() {
+	private int getPoints(GameRecord gameRecord) {
+        // 记录格式说明：常规记录~最后一条常规记录~(逗号分隔的玩家手中牌;逗号分隔的玩家亮出牌;){4}
+        // 4~W3~1~21;1~W1;1~W1~2;2~T7;2~T7~3;3~W2;3~W2~4;4~W5;4~W5~1;1~EAST;1~EAST~2;2~T8;2~T8~3;3~W1;3~W1~4;4~B5;4~B5~1;1~T1;1~T1~2;2~B7;2~B7~3;1~B7,B7,B7~2~2~B7~2;1~B9~2;2~W7;2~W7~3;3~T1;3~T1~4;4~W9;4~W9~1;1~NORTH;1~NORTH~2;2~WEST;2~WEST~3;3~T2;3~T2~4;1~T2~3~
+        // B6,B6,T3,T4;W2,W3,W4,W8,W8,W8,B7,B7,B7;EAST,EAST,WEST,RED,WHITE,W3,W3,W8,B2,B6,B7,T5,T7;;SOUTH,NORTH,W2,B1,B1,B2,B4,B5,T1,T4,T6,T6,T7;;SOUTH,WEST,RED,WHITE,W6,W6,W6,B8,B8,T3,T4,T8,T9;;
+
+	    // 字一色　由字牌的刻子（杠）、将组成的和牌。不计碰碰和。
+	    // 碰碰和　由4副刻子（或杠）、将牌组成的和牌。
+	    // 清一色　由一种花色的序数牌组成和各牌。不无字。
+	    // 七对　由7个对子组成和牌。不计不求人、单钓。
+	    if (true) {
+	        return 0;
+	    }
 		if (points > 0) {
 			return points;
 		}
@@ -275,11 +287,79 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 
 	@Override
 	public void persistDisconnectScore(Player disconnectedPlayer) {
-		// TODO Auto-generated method stub
+	    // TODO test this function
+        // 创建游戏记录
+        GameRecord gameRecord = new GameRecord();
+        gameRecord.setGameId(UUID.randomUUID().toString());
+        gameRecord.setGameId(this.getId());
+        gameRecord.setGameType(PushdownWinGame.class.getSimpleName());
+//        if (this.getSetting() != null) {
+//            // this.setSetting(PushdownWinGameSetting.); TODO delete this line ?
+//            gameRecord.setGameSetting((short)this.getSetting().ordinal());
+//        } else {
+//            // this.setSetting(Red5GameSetting.NO_RUSH);
+//            gameRecord.setGameSetting((short)Red5GameSetting.NO_RUSH.ordinal());
+//        }
+        gameRecord.setWinnerNumbers(this.getWinnerNumbers());
+        gameRecord.setSystemScore(this.getGameMark());
+        gameRecord.setStatus("DISCONNECTED");
+        gameRecord.setRecord(this.getGameRecord());
+        gameRecord.setCreateTime(this.getCreateTime());
+        // 保存游戏历史记录
+        HibernateSessionFactory.getSession().merge(gameRecord);
+        // 根据当前游戏设置，取得惩罚标准，默认扣一倍
+        double deductStandard = 1;
+//        if (this.getSetting().equals(Red5GameSetting.RUSH)) {
+//            // 独牌
+//            deductStandard = this.getLowLevelMark();
+//        } else if (this.getSetting().equals(Red5GameSetting.DEADLY_RUSH)) {
+//            // 天独
+//            deductStandard = this.getMidLevelMark();
+//        } else if (this.getSetting().equals(Red5GameSetting.EXTINCT_RUSH)) {
+//            // 天外天
+//            deductStandard = this.getHighLevelMark();
+//        }
+        synchronized(this.getPlayers()) {
+            String playerIds = "";
+            String playerId = null;
+            double resultScore = 0;
+            // 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
+            double deductedMark = this.getGameMark() * deductStandard;
+            for (Player player : this.getPlayers()) {
+                playerId = player.getId();
+                PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq("userId", playerId)).uniqueResult();
+                playerIds += player.getCurrentNumber() + "~" + player.getId() + "~";
+                if (player.getId().equals(disconnectedPlayer.getId())) {
+                    // 掉线玩家
+                    resultScore = -1 * (deductedMark * 3);
+                } else {
+                    // 非掉线玩家
+                    resultScore = deductedMark;
+                }
+    
+                // 在赢分玩家中直接从本局当前得分中扣除系统分
+                double currentSystemScore = getCustomSystemScore(resultScore);
+                if (resultScore > 0) {
+                    resultScore -= currentSystemScore;
+                }
 
-		// 掉线玩家需要为其他玩家补偿积分，补偿标准为基本分 × 当前设置等级
-		// int deductedMark = this.getGameMark() * deductStandard;
-		// 另拿出一份基本分作为系统分
+                playerProfile.setCurrentScore(playerProfile.getCurrentScore() + resultScore);
+                // 保存玩家得分信息
+                PlayerScore playerScore = new PlayerScore();
+                playerScore.setScoreId(UUID.randomUUID().toString());
+                playerScore.setProfileId(playerProfile.getProfileId());
+                playerScore.setGameId(gameRecord.getGameId());
+                playerScore.setUserId(playerProfile.getUserId());
+                playerScore.setCurrentNumber(player.getCurrentNumber());
+                playerScore.setCurScore(resultScore); // 玩家当前得分
+                playerScore.setSysScore(currentSystemScore); // 系统当前得分
+                playerScore.setOrgScores(playerProfile.getCurrentScore() - resultScore); // 玩家原始总积分
+                playerScore.setCurScores(playerProfile.getCurrentScore()); // 玩家当前总积分
+                HibernateSessionFactory.getSession().merge(playerProfile);
+                HibernateSessionFactory.getSession().merge(playerScore);
+            }
+            gameRecord.setPlayers(playerIds);
+        }
 	}
 
 //	　　88番
