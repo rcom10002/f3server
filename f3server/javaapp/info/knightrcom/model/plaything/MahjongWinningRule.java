@@ -93,6 +93,9 @@ public enum MahjongWinningRule {
 //　　44．妙手回春　自摸牌墙上最后一张牌和牌。不计自摸。
 //　　45．海底捞月　和打出的最后一张牌。
 //　　46．杠上开花　开杠抓进的牌成和牌（不包括补花）不计自摸。
+    public static boolean 杠上开花(String mahjongs) {
+        return false;
+    }
 //　　47．抢杠和　和别人自抓开明杠的牌。不计和绝张。
 //　　6番
 //　　48．碰碰和　由4副刻子（或杠）、将牌组成的和牌。
