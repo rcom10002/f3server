@@ -7,6 +7,7 @@ import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.model.game.Game;
 import info.knightrcom.model.global.Player;
+import info.knightrcom.model.plaything.MahjongWinningRule;
 
 import java.util.Iterator;
 import java.util.List;
@@ -247,6 +248,29 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	    // 碰碰和　由4副刻子（或杠）、将牌组成的和牌。
 	    // 清一色　由一种花色的序数牌组成和各牌。不无字。
 	    // 七对　由7个对子组成和牌。不计不求人、单钓。
+		String result = gameRecord.getRecord().replaceAll(".*#(.*)", "$1").replaceAll(";$", "");
+		if (points == 0) {
+			points = 1;
+		}
+		if (MahjongWinningRule.十三幺(result)) {
+			points *= 100;
+			return points;
+		}
+		if (MahjongWinningRule.字一色(result)) {
+			points *= 8;
+			return points;
+		} 
+		if (MahjongWinningRule.碰碰和(result)) {
+			points *= 4;
+		}
+		if (MahjongWinningRule.清一色(result)) {
+			points *= 4;
+		}
+		if (MahjongWinningRule.七对(result)) {
+			points *= 8;
+		}
+		return points;
+		/*
 	    if (true) {
 	        return 0;
 	    }
@@ -255,6 +279,11 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 		}
 		// this.winnerMahjongSeq : split
 		return (points = new Random().nextInt(10));
+		*/
+	}
+	
+	public int testGetPoints(GameRecord gameRecord) {
+		return this.getPoints(gameRecord);
 	}
 
 	/**
