@@ -135,17 +135,6 @@ public class SystemInfoService extends F3SWebServiceAdaptor<GameRecord> {
      * @param request
      * @param response
      * @return
-     * 
-     * ゲームビデオの放送について
-     * 
-     * このユーザはゲームを参加しない時、いろいろな情報を取得しない。
-     * ゲームを参加しないユーザはビデオの放送を使用できる。
-     * 正確の検索条件はユーザのプロファイルIDとゲームIDとPLAYVEDIO状態を使用する。
-     * 検索件数は一件以上の時、ログを記録だけ。
-     * ゼロ件数を検索する時、ユーザプロファイルテーブルのレコードの分数フィールドを更新して、
-     * 分数テーブルのに新しいレコードを追加する、ログを記録する。
-     * 
-     * 業務をよく考えして、テストをして下さいな！
      */
     public String READ_GAME_INFO(HttpServletRequest request, HttpServletResponse response) {
     	EntityInfo<GameRecord> info = new EntityInfo<GameRecord>();

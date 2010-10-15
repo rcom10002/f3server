@@ -27,11 +27,26 @@ public enum MahjongWinningRule {
 //　　5．四杠　4个杠。
 //　　6．连七对　由一种花色序数牌组成序数相连的7个对子的和牌。不计清一色、不求人、单钓。
 //　　7．十三幺　由3种序数牌的一、九牌，7种字牌及其中一对作将组成的和牌。不计五门齐、不求人、单钓。
+    public static boolean 十三幺(String mahjongs) {
+        return mahjongs.split("~").length == 13;
+    }
 //　　64番
 //　　8．清幺九　由序数牌一、九刻子组成的和牌。不计碰碰和、同刻、元字。
 //　　9．小四喜　和牌时有风牌的3副刻子及将牌。不计三风刻。
 //　　10．小三元　和牌时有箭牌的两副刻子及将牌。不计箭刻。
 //　　11．字一色　由字牌的刻子（杠）、将组成的和牌。不计碰碰和。
+    public static boolean 字一色(String mahjongs) {
+        if (碰碰和(mahjongs)) {
+            for (String eachMahjongs : mahjongs.split("~")) {
+                // 东、南、西、北，中、发、白
+                if ("EAST,SOUTH,WEST,NORTH,RED,GREEN,WHITE".indexOf(eachMahjongs.split(",")[0]) == -1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 //　　12．四暗刻　4个暗刻（暗杠）。不计门前清、碰碰和。
 //　　13．一色双龙会　一种花色的两个老少副，5为将牌。不计平各、七对、清一色。
 //　　48番
@@ -43,9 +58,15 @@ public enum MahjongWinningRule {
 //　　18．混幺九由字牌和序数牌一、九的刻了用将牌组成的各牌。不计碰碰和。
 //　　24番
 //　　19．七对　由7个对子组成和牌。不计不求人、单钓。
+    public static boolean 七对(String mahjongs) {
+        return mahjongs.split("~").length == 7;
+    }
 //　　20．七星不靠　必须有7个单张的东西南北中发白，加上3种花色，数位按147、258、369中的7张序数牌组成没有将牌的和牌。不计五门齐、不求人、单钓。
 //　　21．全双刻　由2、4、6、8序数牌的刻了、将牌组成的和牌。不计碰碰和、断幺。
 //　　22．清一色　由一种花色的序数牌组成和各牌。不无字。
+    public static boolean 清一色(String mahjongs) {
+        return mahjongs.matches("^([WBT][1-9][~,]?){5,}$");
+    }
 //　　23．一色三同顺　和牌时有一种花色3副序数相同的顺了。不计一色三节高。
 //　　24．一色三节高　和牌时有一种花色3副依次递增一位数字的刻了。不计一色三同顺。
 //　　25．全大　由序数牌789组成的顺了、刻子（杠）、将牌的和牌。不计无字。
@@ -75,6 +96,17 @@ public enum MahjongWinningRule {
 //　　47．抢杠和　和别人自抓开明杠的牌。不计和绝张。
 //　　6番
 //　　48．碰碰和　由4副刻子（或杠）、将牌组成的和牌。
+    public static boolean 碰碰和(String mahjongs) {
+        if (mahjongs.split("~").length == 5) {
+            for (String eachMahjongs : mahjongs.split("~")) {
+                if (!eachMahjongs.matches("^(\\w+),\\1.*$")) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 //　　49．混一色　由一种花色序数牌及字牌组成的和牌。
 //　　50三色三步高　3种花色3副依次递增一位序数的顺子。
 //　　51．五门齐　和牌时3种序数牌、风、箭牌齐全。
