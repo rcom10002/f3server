@@ -7,7 +7,8 @@ import info.knightrcom.data.metadata.PlayerProfileDAO;
 import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.model.game.Game;
 import info.knightrcom.model.global.Player;
-import info.knightrcom.model.plaything.MahjongWinningRule;
+import info.knightrcom.model.plaything.MahjongPointCalculator;
+import info.knightrcom.model.plaything.MahjongWinningRule.FullRecordSupport;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,10 +27,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
     public static final int PLAYER_COGAME_NUMBER = 4;
 
     /** 番分 */
-    private int pointMark;
-
-    /** 番数 */
-    private int points = 0;
+    private double pointMark;
 
     /** 获胜者牌序 */
     private String winnerMahjongSeq;
@@ -82,10 +80,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
      */
     private void persistNarrowWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber, String loserNumber) {
         // 点炮 => 取得底分与每番分
-        final int basicScore = 20;
-        final int pointScore = 10;
         double resultScore = 0;
-        double points = 0;
         String playerIds = "";
 
         while (itr.hasNext()) {
@@ -95,10 +90,8 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             PlayerProfile playerProfile = (PlayerProfile) HibernateSessionFactory.getSession().createCriteria(PlayerProfile.class).add(Restrictions.eq(PlayerProfileDAO.USER_ID, playerId)).uniqueResult();
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
 
-            // 计算番数
-            points = getPoints(gameRecord);
             // 计算得分
-            resultScore = basicScore + pointScore * points;
+            resultScore = this.getGameMark() + getPointScore(gameRecord);
             if (loserNumber.equals(player.getCurrentNumber())) {
                 resultScore *= -1;
             } else if (winnerNumber.equals(player.getCurrentNumber())) {
@@ -144,10 +137,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
      */
     private void persistClearWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber) {
         // 自摸 => 取得底分与每番分
-        final int basicScore = 20;
-        final int pointScore = 10;
         double resultScore = 0;
-        double points = 0;
         String playerIds = "";
         while (itr.hasNext()) {
             // 取得玩家信息
@@ -157,9 +147,8 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
             
             // 计算番数
-            points = getPoints(gameRecord);
             // 计算得分
-            resultScore = basicScore + pointScore * points;
+            resultScore = this.getGameMark() + getPointScore(gameRecord);
             if (winnerNumber.equals(player.getCurrentNumber())) {
                 resultScore *= 3;
             } else {
@@ -237,69 +226,28 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 
 	/**
 	 * 番数计算
-	 */
-	private int getPoints(GameRecord gameRecord) {
-        // 记录格式说明：常规记录~最后一条常规记录~(逗号分隔的玩家手中牌;逗号分隔的玩家亮出牌;){4}
-        // 4~W3~1~21;1~W1;1~W1~2;2~T7;2~T7~3;3~W2;3~W2~4;4~W5;4~W5~1;1~EAST;1~EAST~2;2~T8;2~T8~3;3~W1;3~W1~4;4~B5;4~B5~1;1~T1;1~T1~2;2~B7;2~B7~3;1~B7,B7,B7~2~2~B7~2;1~B9~2;2~W7;2~W7~3;3~T1;3~T1~4;4~W9;4~W9~1;1~NORTH;1~NORTH~2;2~WEST;2~WEST~3;3~T2;3~T2~4;1~T2~3~
-        // B6,B6,T3,T4;W2,W3,W4,W8,W8,W8,B7,B7,B7;EAST,EAST,WEST,RED,WHITE,W3,W3,W8,B2,B6,B7,T5,T7;;SOUTH,NORTH,W2,B1,B1,B2,B4,B5,T1,T4,T6,T6,T7;;SOUTH,WEST,RED,WHITE,W6,W6,W6,B8,B8,T3,T4,T8,T9;;
-
-		String result = gameRecord.getRecord().replaceAll(".*#(.*)", "$1").replaceAll(";$", "");
-		if (points == 0) {
-			points = 1;
-		}
-		if (MahjongWinningRule.十三幺(result)) {
-			points *= 100;
-			return points;
-		}
-		if (MahjongWinningRule.字一色(result)) {
-			points *= 8;
-			return points;
-		} 
-		if (MahjongWinningRule.碰碰和(result)) {
-			points *= 4;
-		}
-		if (MahjongWinningRule.清一色(result)) {
-			points *= 4;
-		}
-		if (MahjongWinningRule.七对(result)) {
-			points *= 8;
-		}
-		return points;
-		/*
-	    if (true) {
-	        return 0;
-	    }
-		if (points > 0) {
-			return points;
-		}
-		// this.winnerMahjongSeq : split
-		return (points = new Random().nextInt(10));
-		*/
-	}
-	
-	/**
-	 * FIXME drop this method or make this an interface for testing
 	 * 
 	 * @param gameRecord
 	 * @return
-	 * 
-     * @deprecated
 	 */
-	public int testGetPoints(GameRecord gameRecord) {
-		return this.getPoints(gameRecord);
+	private double getPointScore(GameRecord gameRecord) {
+        // 记录格式说明：常规记录~最后一条常规记录~(逗号分隔的玩家手中牌;逗号分隔的玩家亮出牌;){4}
+        // 4~W3~1~21;1~W1;1~W1~2;2~T7;2~T7~3;3~W2;3~W2~4;4~W5;4~W5~1;1~EAST;1~EAST~2;2~T8;2~T8~3;3~W1;3~W1~4;4~B5;4~B5~1;1~T1;1~T1~2;2~B7;2~B7~3;1~B7,B7,B7~2~2~B7~2;1~B9~2;2~W7;2~W7~3;3~T1;3~T1~4;4~W9;4~W9~1;1~NORTH;1~NORTH~2;2~WEST;2~WEST~3;3~T2;3~T2~4;1~T2~3~
+        // B6,B6,T3,T4;W2,W3,W4,W8,W8,W8,B7,B7,B7;EAST,EAST,WEST,RED,WHITE,W3,W3,W8,B2,B6,B7,T5,T7;;SOUTH,NORTH,W2,B1,B1,B2,B4,B5,T1,T4,T6,T6,T7;;SOUTH,WEST,RED,WHITE,W6,W6,W6,B8,B8,T3,T4,T8,T9;;
+	    return MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), "/info/knightrcom/model/game/pushdownwin/pushdownwin.properties");
 	}
 
 	/**
 	 * @return
 	 */
-	public int getPointMark() {
+	public double getPointMark() {
 		return pointMark;
 	}
 
 	/**
 	 * @param pointMark
 	 */
-	public void setPointMark(int pointMark) {
+	public void setPointMark(double pointMark) {
 		this.pointMark = pointMark;
 	}
 
@@ -395,11 +343,14 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	}
 
 	public static class NativeRule {
+        @FullRecordSupport
         public static boolean 天和(String mahjongs) {
             return false;
         }
+
+        @FullRecordSupport
         public static boolean 地和(String mahjongs) {
             return false;
         }
-	}
+    }
 }
