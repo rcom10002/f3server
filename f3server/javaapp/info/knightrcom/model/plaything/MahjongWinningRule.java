@@ -1,5 +1,8 @@
 package info.knightrcom.model.plaything;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 
 public enum MahjongWinningRule {
     NO_RUSH("");
@@ -93,6 +96,7 @@ public enum MahjongWinningRule {
 //　　44．妙手回春　自摸牌墙上最后一张牌和牌。不计自摸。
 //　　45．海底捞月　和打出的最后一张牌。
 //　　46．杠上开花　开杠抓进的牌成和牌（不包括补花）不计自摸。
+    @FullRecordSupport
     public static boolean 杠上开花(String mahjongs) {
         return false;
     }
@@ -146,4 +150,8 @@ public enum MahjongWinningRule {
 //　　79．单钓将　钓单张牌作将成和。
 //　　80．自摸　自己抓进牌成和牌。
 //　　81．花牌　即春夏秋冬，梅兰竹菊，每花计一分。不计在起和分内，和牌后才能计分。花牌补花成和计自摸分，不计杠上开花。
+
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface FullRecordSupport {
+    }
 }
