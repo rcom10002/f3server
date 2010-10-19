@@ -131,6 +131,19 @@ public enum MahjongWinningRule {
 //　　61．门风刻　与本门风相同的风刻。
 //　　62．门前清　没有吃、碰、明杠，和别人打出的牌。
 //　　63．平和　由4副顺子及序数牌作将组成的和牌，边、坎、钓不影响平和。
+    public static boolean 平和(String mahjongs) {
+        if (mahjongs.split("~").length == 5) {
+            int seqCount = 0;
+            mahjongs = mahjongs.replaceAll("EAST|SOUTH|WEST|NORTH|RED|GREEN|WHITE|,", "").replaceAll("[WBT]", "");
+            for (String eachMahjongs : mahjongs.split("~")) {
+                if ("123456789".indexOf(eachMahjongs) > -1) {
+                    seqCount++;
+                }
+            }
+            return seqCount == 4;
+        }
+        return false;
+    }
 //　　64．四归一　和牌中，有4张相同的牌归于一家的顺、刻子、对、将牌中（不包括杠牌）。
 //　　65．双同刻　2副序数相同的刻子。
 //　　66．双暗刻　2个暗刻。
