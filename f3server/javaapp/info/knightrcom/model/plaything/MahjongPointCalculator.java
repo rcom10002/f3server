@@ -3,6 +3,7 @@ package info.knightrcom.model.plaything;
 import info.knightrcom.model.plaything.MahjongWinningRule.FullRecordSupport;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,26 +26,39 @@ public class MahjongPointCalculator {
      * 规则容器
      */
     private static Map<String, Map<String, MahjongRule>> ruleContainer = new HashMap<String, Map<String, MahjongRule>>();
-
+public static void main(String[] args) {
+}
     static {
         // 装载默认规则
         try {
-            Map<String, MahjongRule> standardConflicts = new LinkedHashMap<String, MahjongRule>();
-            Properties props = new LinkedProperties();
-            props.load(MahjongPointCalculator.class.getResourceAsStream("/info/knightrcom/model/plaything/mahjong.rule.properties"));
-            Enumeration<?> enumeration = props.propertyNames();
-            while (enumeration.hasMoreElements()) {
-                String ruleName = (String)enumeration.nextElement();
-                String ruleMeta = (String)props.getProperty(ruleName);
-                MahjongRule mahjongRule = new MahjongRule();
-                mahjongRule.setName(ruleName);
-                mahjongRule.setPoint(new Integer(ruleMeta.split(";")[0]));
-                if (ruleMeta.split(";").length == 2) {
-                    mahjongRule.setConflicts(ruleMeta.split(";")[1]);
+            // TODO 最好改成自动发现规则配置文件，暂时采用硬编码
+            String[] propertiesFiles = {
+                    "info/knightrcom/model/game/resources/mahjong.rule.properties",
+                    "info/knightrcom/model/game/pushdownwin/pushdownwingame.common.rule.properties",
+                    "info/knightrcom/model/game/pushdownwin/pushdownwingame.native.rule.properties"
+            };
+            for (String file : propertiesFiles) {
+                Map<String, MahjongRule> mahjongRules = new LinkedHashMap<String, MahjongRule>();
+                Properties props = new LinkedProperties();
+                InputStream is = MahjongPointCalculator.class.getResourceAsStream(file);
+                if (is == null) {
+                    continue;
                 }
-                standardConflicts.put(ruleName, mahjongRule);
+                props.load(is);
+                Enumeration<?> enumeration = props.propertyNames();
+                while (enumeration.hasMoreElements()) {
+                    String ruleName = (String)enumeration.nextElement();
+                    String ruleMeta = (String)props.getProperty(ruleName);
+                    MahjongRule mahjongRule = new MahjongRule();
+                    mahjongRule.setName(ruleName);
+                    mahjongRule.setPoint(new Integer(ruleMeta.split(";")[0]));
+                    if (ruleMeta.split(";").length == 2) {
+                        mahjongRule.setConflicts(ruleMeta.split(";")[1]);
+                    }
+                    mahjongRules.put(ruleName, mahjongRule);
+                }
+                ruleContainer.put(file, mahjongRules);
             }
-            ruleContainer.put("DEFAULT", standardConflicts);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,11 +66,12 @@ public class MahjongPointCalculator {
 
     /**
      * @param mahjongs 麻将记录
-     * @param pointMark 番分
+     * @param pointMark 标准番分
      * @param rulePropertiesPath 规则属性定义文件路径
+     * @param ruleProcessorClazz 自定义规则判断类
      * @return
      */
-    public static double calculatePointMark(String mahjongs, double pointMark, String rulePropertiesPath) {
+    public static double calculatePointMark(String mahjongs, double pointMark, String rulePropertiesPath, Class<?> ruleProcessorClazz) {
         // 总得分
         double marks = 0;
         // 总番数
@@ -102,7 +117,7 @@ public class MahjongPointCalculator {
                 if (hasConflicts) {
                     continue;
                 }
-                if (matchRule(ruleName, mahjongs)) {
+                if (matchRule(ruleProcessorClazz, ruleName, mahjongs)) {
                     matchedRules.add(myRule);
                     if ("+".equals(myRule.getCalculateMethod())) {
                         marks += pointMark * myRule.getPoint();
@@ -119,14 +134,15 @@ public class MahjongPointCalculator {
     }
 
     /**
+     * @param ruleProcessorClazz
      * @param ruleName
      * @param mahjongs
      * @return
      */
-    private static boolean matchRule(String ruleName, String mahjongs) {
+    private static boolean matchRule(Class<?> ruleProcessorClazz, String ruleName, String mahjongs) {
         Object result = null;
         try {
-            Method ruleMethod = MahjongWinningRule.class.getMethod(ruleName, String.class);
+            Method ruleMethod = ruleProcessorClazz.getMethod(ruleName, String.class);
             // 是否使用全记录。只需牌型分析的情况(清一色、碰碰和)，不使用全记录，而杠上开花这样需要分析之前记录的，需全记录
             if (!ruleMethod.isAnnotationPresent(FullRecordSupport.class)) {
                 mahjongs = mahjongs.replaceAll(".*#(.*);", "$1");
