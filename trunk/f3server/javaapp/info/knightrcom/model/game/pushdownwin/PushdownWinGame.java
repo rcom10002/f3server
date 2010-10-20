@@ -8,6 +8,7 @@ import info.knightrcom.data.metadata.PlayerScore;
 import info.knightrcom.model.game.Game;
 import info.knightrcom.model.global.Player;
 import info.knightrcom.model.plaything.MahjongPointCalculator;
+import info.knightrcom.model.plaything.MahjongWinningRule;
 import info.knightrcom.model.plaything.MahjongWinningRule.FullRecordSupport;
 
 import java.util.Iterator;
@@ -231,10 +232,12 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	 * @return
 	 */
 	private double getPointScore(GameRecord gameRecord) {
-        // 记录格式说明：常规记录~最后一条常规记录~(逗号分隔的玩家手中牌;逗号分隔的玩家亮出牌;){4}
-        // 4~W3~1~21;1~W1;1~W1~2;2~T7;2~T7~3;3~W2;3~W2~4;4~W5;4~W5~1;1~EAST;1~EAST~2;2~T8;2~T8~3;3~W1;3~W1~4;4~B5;4~B5~1;1~T1;1~T1~2;2~B7;2~B7~3;1~B7,B7,B7~2~2~B7~2;1~B9~2;2~W7;2~W7~3;3~T1;3~T1~4;4~W9;4~W9~1;1~NORTH;1~NORTH~2;2~WEST;2~WEST~3;3~T2;3~T2~4;1~T2~3~
-        // B6,B6,T3,T4;W2,W3,W4,W8,W8,W8,B7,B7,B7;EAST,EAST,WEST,RED,WHITE,W3,W3,W8,B2,B6,B7,T5,T7;;SOUTH,NORTH,W2,B1,B1,B2,B4,B5,T1,T4,T6,T6,T7;;SOUTH,WEST,RED,WHITE,W6,W6,W6,B8,B8,T3,T4,T8,T9;;
-	    return MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), "/info/knightrcom/model/game/pushdownwin/pushdownwin.properties");
+        // 记录格式说明：常规记录~最后一条常规记录~(玩家胡牌记录)?
+	    String commonRulePropertiesPath = "/info/knightrcom/model/game/pushdownwin/pushdownwin.common.rule.properties";
+	    String nativeRulePropertiesPath = "/info/knightrcom/model/game/pushdownwin/pushdownwin.native.rule.properties";
+	    double standardMark = MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), commonRulePropertiesPath, MahjongWinningRule.class);
+	    standardMark += MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), nativeRulePropertiesPath, NativeRule.class);
+	    return standardMark;
 	}
 
 	/**
