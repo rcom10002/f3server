@@ -1,5 +1,6 @@
 package info.knightrcom.model.plaything;
 
+import info.knightrcom.data.metadata.GameRecord;
 import info.knightrcom.model.plaything.MahjongWinningRule.FullRecordSupport;
 
 import java.io.IOException;
@@ -26,16 +27,15 @@ public class MahjongPointCalculator {
      * 规则容器
      */
     private static Map<String, Map<String, MahjongRule>> ruleContainer = new HashMap<String, Map<String, MahjongRule>>();
-public static void main(String[] args) {
-}
+
     static {
         // 装载默认规则
         try {
             // TODO 最好改成自动发现规则配置文件，暂时采用硬编码
             String[] propertiesFiles = {
-                    "info/knightrcom/model/game/resources/mahjong.rule.properties",
-                    "info/knightrcom/model/game/pushdownwin/pushdownwingame.common.rule.properties",
-                    "info/knightrcom/model/game/pushdownwin/pushdownwingame.native.rule.properties"
+                    // "info/knightrcom/model/game/resources/mahjong.rule.properties",
+                    "/info/knightrcom/model/game/pushdownwin/pushdownwingame.common.rule.properties",
+                    "/info/knightrcom/model/game/pushdownwin/pushdownwingame.native.rule.properties"
             };
             for (String file : propertiesFiles) {
                 Map<String, MahjongRule> mahjongRules = new LinkedHashMap<String, MahjongRule>();
@@ -45,7 +45,7 @@ public static void main(String[] args) {
                     continue;
                 }
                 props.load(is);
-                Enumeration<?> enumeration = props.propertyNames();
+                Enumeration<?> enumeration = props.keys();
                 while (enumeration.hasMoreElements()) {
                     String ruleName = (String)enumeration.nextElement();
                     String ruleMeta = (String)props.getProperty(ruleName);
@@ -53,7 +53,12 @@ public static void main(String[] args) {
                     mahjongRule.setName(ruleName);
                     mahjongRule.setPoint(new Integer(ruleMeta.split(";")[0]));
                     if (ruleMeta.split(";").length == 2) {
+                        mahjongRule.setCalculateMethod(ruleMeta.split(";")[1]);
+                    } else if (ruleMeta.split(";").length == 3) {
                         mahjongRule.setConflicts(ruleMeta.split(";")[1]);
+                        mahjongRule.setCalculateMethod(ruleMeta.split(";")[2]);
+                    } else {
+                        throw new RuntimeException("Can not parse the '" + ruleName + "' rule.");
                     }
                     mahjongRules.put(ruleName, mahjongRule);
                 }
@@ -65,24 +70,28 @@ public static void main(String[] args) {
     }
 
     /**
-     * @param mahjongs 麻将记录
+     * @param gameRecord 麻将记录
      * @param pointMark 标准番分
-     * @param rulePropertiesPath 规则属性定义文件路径
      * @param ruleProcessorClazz 自定义规则判断类
+     * @param ruleProperties 自定义规则配置文件
      * @return
      */
-    public static double calculatePointMark(String mahjongs, double pointMark, String rulePropertiesPath, Class<?> ruleProcessorClazz) {
+    public static double calculatePointMark(
+            GameRecord gameRecord, 
+            double pointMark, 
+            Class<?> ruleProcessorClazz,
+            String ruleProperties) {
         // 总得分
         double marks = 0;
         // 总番数
         int points = 1;
         try {
             // 规则装载
-            Map<String, MahjongRule> myRules = ruleContainer.get(rulePropertiesPath);
+            Map<String, MahjongRule> myRules = ruleContainer.get(ruleProperties);
             if (myRules == null) {
                 myRules = new LinkedHashMap<String, MahjongRule>();
                 Properties props = new LinkedProperties();
-                props.load(MahjongPointCalculator.class.getResourceAsStream(rulePropertiesPath));
+                props.load(MahjongPointCalculator.class.getResourceAsStream(ruleProperties));
                 Enumeration<?> keys = props.keys();
                 while (keys.hasMoreElements()) {
                     String ruleName = (String)keys.nextElement();
@@ -98,7 +107,7 @@ public static void main(String[] args) {
                     }
                     myRules.put(ruleName, mahjongRule);
                 }
-                ruleContainer.put(rulePropertiesPath, myRules);
+                ruleContainer.put(ruleProperties, myRules);
             }
 
             // 番数计算
@@ -117,7 +126,7 @@ public static void main(String[] args) {
                 if (hasConflicts) {
                     continue;
                 }
-                if (matchRule(ruleProcessorClazz, ruleName, mahjongs)) {
+                if (matchRule(ruleProcessorClazz, ruleName, gameRecord)) {
                     matchedRules.add(myRule);
                     if ("+".equals(myRule.getCalculateMethod())) {
                         marks += pointMark * myRule.getPoint();
@@ -136,18 +145,21 @@ public static void main(String[] args) {
     /**
      * @param ruleProcessorClazz
      * @param ruleName
-     * @param mahjongs
+     * @param gameRecord
      * @return
      */
-    private static boolean matchRule(Class<?> ruleProcessorClazz, String ruleName, String mahjongs) {
+    private static boolean matchRule(Class<?> ruleProcessorClazz, String ruleName, GameRecord gameRecord) {
         Object result = null;
+        String mahjongs = gameRecord.getRecord();
         try {
-            Method ruleMethod = ruleProcessorClazz.getMethod(ruleName, String.class);
+            Method ruleMethod = ruleProcessorClazz.getMethod(ruleName, String.class, String.class);
             // 是否使用全记录。只需牌型分析的情况(清一色、碰碰和)，不使用全记录，而杠上开花这样需要分析之前记录的，需全记录
-            if (!ruleMethod.isAnnotationPresent(FullRecordSupport.class)) {
+            if (ruleMethod.isAnnotationPresent(FullRecordSupport.class)) {
+                mahjongs = mahjongs.replaceAll(".*?;(.*)#.*", "$1");
+            } else {
                 mahjongs = mahjongs.replaceAll(".*#(.*);", "$1");
             }
-            result = ruleMethod.invoke(null, mahjongs);
+            result = ruleMethod.invoke(null, mahjongs, gameRecord.getWinnerNumbers().substring(0, 1));
         } catch (Exception e) {
             e.printStackTrace();
         }
