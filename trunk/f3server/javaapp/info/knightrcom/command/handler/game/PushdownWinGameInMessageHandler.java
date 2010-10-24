@@ -318,7 +318,7 @@ public class PushdownWinGameInMessageHandler extends GameInMessageHandler<Pushdo
                 // 显示游戏积分
                 Iterator<Player> itr = players.iterator();
                 // 构造积分显示信息
-                String content = message.getContent().replaceFirst("~[^~]*$", ""); // 去除玩家记录
+                String content = message.getContent().replaceFirst("#.*", ""); // 去除玩家记录
                 while (itr.hasNext()) {
                     Player player = itr.next();
                     player.setCurrentStatus(GameStatus.IDLE);

@@ -4,6 +4,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 
+/**
+ * 麻将记录格式以及分析参考
+ * 
+ * PushdownWinGameVedioWindow.playPushdownWinGame
+ */
 public enum MahjongWinningRule {
     NO_RUSH("");
     private String displayName;
@@ -30,7 +35,7 @@ public enum MahjongWinningRule {
 //　　5．四杠　4个杠。
 //　　6．连七对　由一种花色序数牌组成序数相连的7个对子的和牌。不计清一色、不求人、单钓。
 //　　7．十三幺　由3种序数牌的一、九牌，7种字牌及其中一对作将组成的和牌。不计五门齐、不求人、单钓。
-    public static boolean 十三幺(String mahjongs) {
+    public static boolean 十三幺(String mahjongs, String winnerNumber) {
         return mahjongs.split("~").length == 13;
     }
 //　　64番
@@ -38,8 +43,8 @@ public enum MahjongWinningRule {
 //　　9．小四喜　和牌时有风牌的3副刻子及将牌。不计三风刻。
 //　　10．小三元　和牌时有箭牌的两副刻子及将牌。不计箭刻。
 //　　11．字一色　由字牌的刻子（杠）、将组成的和牌。不计碰碰和。
-    public static boolean 字一色(String mahjongs) {
-        if (碰碰和(mahjongs)) {
+    public static boolean 字一色(String mahjongs, String winnerNumber) {
+        if (碰碰和(mahjongs, winnerNumber)) {
             for (String eachMahjongs : mahjongs.split("~")) {
                 // 东、南、西、北，中、发、白
                 if ("EAST,SOUTH,WEST,NORTH,RED,GREEN,WHITE".indexOf(eachMahjongs.split(",")[0]) == -1) {
@@ -61,14 +66,16 @@ public enum MahjongWinningRule {
 //　　18．混幺九由字牌和序数牌一、九的刻了用将牌组成的各牌。不计碰碰和。
 //　　24番
 //　　19．七对　由7个对子组成和牌。不计不求人、单钓。
-    public static boolean 七对(String mahjongs) {
+    public static boolean 七对(String mahjongs, String winnerNumber) {
         return mahjongs.split("~").length == 7;
     }
 //　　20．七星不靠　必须有7个单张的东西南北中发白，加上3种花色，数位按147、258、369中的7张序数牌组成没有将牌的和牌。不计五门齐、不求人、单钓。
 //　　21．全双刻　由2、4、6、8序数牌的刻了、将牌组成的和牌。不计碰碰和、断幺。
 //　　22．清一色　由一种花色的序数牌组成和各牌。不无字。
-    public static boolean 清一色(String mahjongs) {
-        return mahjongs.matches("^([WBT][1-9][~,]?){5,}$");
+    public static boolean 清一色(String mahjongs, String winnerNumber) {
+        return mahjongs.matches("^([W][1-9][~,]?)*$") || 
+               mahjongs.matches("^([B][1-9][~,]?)*$") ||
+               mahjongs.matches("^([T][1-9][~,]?)*$");
     }
 //　　23．一色三同顺　和牌时有一种花色3副序数相同的顺了。不计一色三节高。
 //　　24．一色三节高　和牌时有一种花色3副依次递增一位数字的刻了。不计一色三同顺。
@@ -94,16 +101,52 @@ public enum MahjongWinningRule {
 //　　42．三色三节高　和牌时，有3种花色3副依次递增一位数的刻子。
 //　　43．无番　和和牌后，数不出任何番种分（花牌不计算在内）。
 //　　44．妙手回春　自摸牌墙上最后一张牌和牌。不计自摸。
+    @FullRecordSupport
+    public static boolean 妙手回春(String mahjongs, String winnerNumber) {
+        // 判断摸牌次数是否等于84(136 - 13 * 4)
+        int randCount = 0;
+        String[] mahjongsHistory = mahjongs.replaceFirst("#.*", "").replaceFirst(";$", "").split(";");
+        for (String eachMahjongs : mahjongsHistory) {
+            if (eachMahjongs.split("~").length == 2) {
+                randCount++;
+            }
+        }
+        return randCount == 84 && mahjongsHistory[mahjongsHistory.length - 1].toString().split("~").length == 2;
+    }
 //　　45．海底捞月　和打出的最后一张牌。
+    @FullRecordSupport
+    public static boolean 海底捞月(String mahjongs, String winnerNumber) {
+        // 判断摸牌次数是否等于84(136 - 13 * 4)
+        int randCount = 0;
+        String[] mahjongsHistory = mahjongs.replaceFirst("#.*", "").replaceFirst(";$", "").split(";");
+        for (String eachMahjongs : mahjongsHistory) {
+            if (eachMahjongs.split("~").length == 3) {
+                randCount++;
+            }
+        }
+        return randCount == 84 && mahjongsHistory[mahjongsHistory.length - 1].toString().split("~").length != 2;
+    }
 //　　46．杠上开花　开杠抓进的牌成和牌（不包括补花）不计自摸。
     @FullRecordSupport
-    public static boolean 杠上开花(String mahjongs) {
-        return false;
+    public static boolean 杠上开花(String mahjongs, String winnerNumber) {
+        // 分析记录
+        String[] mahjongArray = mahjongs.replaceFirst("#(.*)$", "").split(";");
+        if (mahjongArray.length < 3) {
+            return false;
+        }
+        // 倒数第三条记录为杠
+        boolean isKong = mahjongArray[mahjongArray.length - 3].matches("^" + winnerNumber + "~(\\w+)(,\\1){3}.*");
+        // 倒数第二条记录摸牌
+        boolean isRand = mahjongArray[mahjongArray.length - 2].matches("^" + winnerNumber + "~\\w+");
+        // 倒数第一条记录为和
+        boolean isWin = mahjongArray[mahjongArray.length - 1].matches("^" + winnerNumber + "~.*");
+
+        return isKong && isRand && isWin;
     }
 //　　47．抢杠和　和别人自抓开明杠的牌。不计和绝张。
 //　　6番
 //　　48．碰碰和　由4副刻子（或杠）、将牌组成的和牌。
-    public static boolean 碰碰和(String mahjongs) {
+    public static boolean 碰碰和(String mahjongs, String winnerNumber) {
         if (mahjongs.split("~").length == 5) {
             for (String eachMahjongs : mahjongs.split("~")) {
                 if (!eachMahjongs.matches("^(\\w+),\\1.*$")) {
@@ -131,16 +174,18 @@ public enum MahjongWinningRule {
 //　　61．门风刻　与本门风相同的风刻。
 //　　62．门前清　没有吃、碰、明杠，和别人打出的牌。
 //　　63．平和　由4副顺子及序数牌作将组成的和牌，边、坎、钓不影响平和。
-    public static boolean 平和(String mahjongs) {
+    public static boolean 平和(String mahjongs, String winnerNumber) {
         if (mahjongs.split("~").length == 5) {
             int seqCount = 0;
             mahjongs = mahjongs.replaceAll("EAST|SOUTH|WEST|NORTH|RED|GREEN|WHITE|,", "").replaceAll("[WBT]", "");
             for (String eachMahjongs : mahjongs.split("~")) {
                 if ("123456789".indexOf(eachMahjongs) > -1) {
                     seqCount++;
+                } else if (eachMahjongs.matches("^([WBT][1-9]),\\1$")) {
+                    seqCount++;
                 }
             }
-            return seqCount == 4;
+            return seqCount == 5;
         }
         return false;
     }

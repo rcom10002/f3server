@@ -81,6 +81,7 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
      */
     private void persistNarrowWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber, String loserNumber) {
         // 点炮 => 取得底分与每番分
+        final double standardResultScore = this.getGameMark() + getPointScore(gameRecord);
         double resultScore = 0;
         String playerIds = "";
 
@@ -92,11 +93,11 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             playerIds += player.getCurrentNumber() + "~" + playerId + "~";
 
             // 计算得分
-            resultScore = this.getGameMark() + getPointScore(gameRecord);
+            resultScore = standardResultScore;
             if (loserNumber.equals(player.getCurrentNumber())) {
-                resultScore *= -1;
-            } else if (winnerNumber.equals(player.getCurrentNumber())) {
-                resultScore = 0;
+                resultScore *= -1; // 点炮玩家
+            } else if (!winnerNumber.equals(player.getCurrentNumber())) {
+                resultScore = 0; // 非获胜玩家
             }
 
             // 在赢分玩家中直接从本局当前得分中扣除系统分
@@ -138,8 +139,10 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
      */
     private void persistClearWinScore(Iterator<Player> itr, GameRecord gameRecord, String winnerNumber) {
         // 自摸 => 取得底分与每番分
+        final double standardResultScore = this.getGameMark() + getPointScore(gameRecord);
         double resultScore = 0;
         String playerIds = "";
+
         while (itr.hasNext()) {
             // 取得玩家信息
             Player player = itr.next();
@@ -149,11 +152,11 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
             
             // 计算番数
             // 计算得分
-            resultScore = this.getGameMark() + getPointScore(gameRecord);
+            resultScore = standardResultScore;
             if (winnerNumber.equals(player.getCurrentNumber())) {
-                resultScore *= 3;
+                resultScore *= 3; // 获胜玩家
             } else {
-                resultScore *= -1;
+                resultScore *= -1; // 非获胜玩家
             }
 
             // 在赢分玩家中直接从本局当前得分中扣除系统分
@@ -233,10 +236,14 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
 	 */
 	private double getPointScore(GameRecord gameRecord) {
         // 记录格式说明：常规记录~最后一条常规记录~(玩家胡牌记录)?
-	    String commonRulePropertiesPath = "/info/knightrcom/model/game/pushdownwin/pushdownwin.common.rule.properties";
-	    String nativeRulePropertiesPath = "/info/knightrcom/model/game/pushdownwin/pushdownwin.native.rule.properties";
-	    double standardMark = MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), commonRulePropertiesPath, MahjongWinningRule.class);
-	    standardMark += MahjongPointCalculator.calculatePointMark(gameRecord.getRecord(), this.getGameMark(), nativeRulePropertiesPath, NativeRule.class);
+	    // 计算公共规则
+	    double standardMark = MahjongPointCalculator.calculatePointMark(
+	            gameRecord, this.getGameMark(), MahjongWinningRule.class, 
+	            "/info/knightrcom/model/game/pushdownwin/pushdownwingame.common.rule.properties");
+	    // 计算特有规则
+	    standardMark += MahjongPointCalculator.calculatePointMark(
+	            gameRecord, this.getGameMark(), NativeWinningRule.class,
+	            "/info/knightrcom/model/game/pushdownwin/pushdownwingame.native.rule.properties");
 	    return standardMark;
 	}
 
@@ -345,15 +352,19 @@ public class PushdownWinGame extends Game<PushdownWinGameSetting> {
         }
 	}
 
-	public static class NativeRule {
+	public static class NativeWinningRule {
         @FullRecordSupport
-        public static boolean 天和(String mahjongs) {
-            return false;
+        public static boolean 天和(String mahjongs, String winnerNumber) {
+            // 在第一轮庄家得到十四张牌后即和牌
+            return mahjongs.matches("^(" + winnerNumber + "~\\w+);\\1#.*$");
         }
 
         @FullRecordSupport
-        public static boolean 地和(String mahjongs) {
-            return false;
+        public static boolean 地和(String mahjongs, String winnerNumber) {
+            // 说法一：第一轮，某闲家和庄家打出的第一张牌
+            // 说法二：第一轮闲家自摸和牌
+            // 说法三：第一轮闲家和非庄家打出的牌
+            return mahjongs.matches("^1~\\w+;1~(\\w+)~2;" + winnerNumber + "~\\1~1#.*$"); // 说法一实现
         }
     }
 }
