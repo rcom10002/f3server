@@ -1,0 +1,1 @@
+This project is a flex application server. It consists of application module and web module. Application module is based on Apache's Mina Project with adding some game application service for socket communication. Web module is providing none-game service that reduce the pressures of application module.
